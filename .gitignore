@@ -1,0 +1,41 @@
+# Build artifacts
+bin/
+obj/
+artifacts/
+TestResults/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE and tooling
+.vs/
+.vscode/
+.idea/
+
+# Package managers and local tools
+packages/
+.config/dotnet-tools.json
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Environment and secrets
+.env
+.env.*
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Local operational files
+roadmap.md
+agents.md
