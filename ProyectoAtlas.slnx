@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/ProyectoAtlas.Api/ProyectoAtlas.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ProyectoAtlas.Api.Tests/ProyectoAtlas.Api.Tests.csproj" />
+  </Folder>
 </Solution>
