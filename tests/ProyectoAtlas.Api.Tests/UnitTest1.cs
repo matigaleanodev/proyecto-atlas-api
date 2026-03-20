@@ -1,12 +1,24 @@
-﻿namespace ProyectoAtlas.Api.Tests;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 
-public class SmokeTests
+namespace ProyectoAtlas.Api.Tests;
+
+public class ApiIntegrationTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
-    [Fact]
-    public void Should_pass_basic_assertion()
-    {
-        Assert.True(true);
+    private readonly WebApplicationFactory<Program> _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.UseEnvironment("Development");
+        });
 
-        Assert.False(false);
+    [Fact]
+    public async Task GetOpenApiDocument_ShouldReturnOk()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/openapi/v1.json");
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
     }
 }
