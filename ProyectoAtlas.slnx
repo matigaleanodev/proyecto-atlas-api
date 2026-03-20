@@ -1,8 +1,11 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/ProyectoAtlas.Api/ProyectoAtlas.Api.csproj" />
+    <Project Path="src/ProyectoAtlas.Application/ProyectoAtlas.Application.csproj" />
+    <Project Path="src/ProyectoAtlas.Domain/ProyectoAtlas.Domain.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ProyectoAtlas.Api.Tests/ProyectoAtlas.Api.Tests.csproj" />
+    <Project Path="tests/ProyectoAtlas.Application.Tests/ProyectoAtlas.Application.Tests.csproj" />
   </Folder>
 </Solution>

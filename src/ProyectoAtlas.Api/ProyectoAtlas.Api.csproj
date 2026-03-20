@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ProyectoAtlas.Application\ProyectoAtlas.Application.csproj" />
+  </ItemGroup>
+
 </Project>
