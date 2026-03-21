@@ -18,7 +18,6 @@ TestResults/
 
 # Package managers and local tools
 packages/
-.config/dotnet-tools.json
 
 # Logs and temp files
 *.log

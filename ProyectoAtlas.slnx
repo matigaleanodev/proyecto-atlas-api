@@ -3,6 +3,7 @@
     <Project Path="src/ProyectoAtlas.Api/ProyectoAtlas.Api.csproj" />
     <Project Path="src/ProyectoAtlas.Application/ProyectoAtlas.Application.csproj" />
     <Project Path="src/ProyectoAtlas.Domain/ProyectoAtlas.Domain.csproj" />
+    <Project Path="src/ProyectoAtlas.Infrastructure/ProyectoAtlas.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ProyectoAtlas.Api.Tests/ProyectoAtlas.Api.Tests.csproj" />
