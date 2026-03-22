@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProyectoAtlas.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using ProyectoAtlas.Infrastructure.Persistence;
 namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ProyectoAtlasDbContext))]
-    partial class ProyectoAtlasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260322173318_AddProjectTimestamps")]
+    partial class AddProjectTimestamps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

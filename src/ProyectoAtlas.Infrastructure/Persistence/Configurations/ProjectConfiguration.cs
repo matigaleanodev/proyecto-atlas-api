@@ -35,5 +35,13 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .HasColumnName("color")
             .HasMaxLength(9)
             .IsRequired();
+
+        builder.Property(project => project.CreatedAtUtc)
+            .HasColumnName("created_at_utc")
+            .IsRequired();
+
+        builder.Property(project => project.UpdatedAtUtc)
+            .HasColumnName("updated_at_utc")
+            .IsRequired();
     }
 }
