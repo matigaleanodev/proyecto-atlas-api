@@ -147,4 +147,45 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Fact]
+    public async Task PatchProject_ShouldUpdateProject_WhenSlugExists()
+    {
+        var client = _factory.CreateClient();
+        var input = new UpdateProjectInput(
+            "Atlas Platform",
+            "Updated backend for project documentation",
+            "https://github.com/matigaleanodev/proyecto-atlas-platform",
+            "#0F172A");
+
+        var response = await client.PatchAsJsonAsync("/projects/proyecto-atlas", input);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+        var content = await response.Content.ReadAsStringAsync();
+        using var jsonDocument = JsonDocument.Parse(content);
+        var root = jsonDocument.RootElement;
+
+        Assert.Equal(input.Title, root.GetProperty("title").GetString());
+        Assert.Equal(input.Description, root.GetProperty("description").GetString());
+        Assert.Equal(input.RepositoryUrl, root.GetProperty("repositoryUrl").GetString());
+        Assert.Equal(input.Color, root.GetProperty("color").GetString());
+        Assert.Equal("atlas-platform", root.GetProperty("slug").GetString());
+    }
+
+    [Fact]
+    public async Task PatchProject_ShouldReturnNotFound_WhenSlugDoesNotExist()
+    {
+        var client = _factory.CreateClient();
+        var input = new UpdateProjectInput(
+            "Atlas Platform",
+            null,
+            null,
+            null);
+
+        var response = await client.PatchAsJsonAsync("/projects/missing-project", input);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoAtlas.Application;
-
 namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]

@@ -9,10 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
 builder.Services.AddScoped<HealthCheckUseCase>();
 builder.Services.AddScoped<CreateProjectUseCase>();
 builder.Services.AddScoped<ListProjectsUseCase>();
 builder.Services.AddScoped<GetProjectBySlugUseCase>();
+builder.Services.AddScoped<UpdateProjectUseCase>();
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 

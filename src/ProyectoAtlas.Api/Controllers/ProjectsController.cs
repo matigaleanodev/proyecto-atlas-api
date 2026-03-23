@@ -8,7 +8,8 @@ namespace ProyectoAtlas.Api.Controllers;
 public class ProjectsController(
     CreateProjectUseCase createProjectUseCase,
     ListProjectsUseCase listProjectsUseCase,
-    GetProjectBySlugUseCase getProjectBySlugUseCase
+    GetProjectBySlugUseCase getProjectBySlugUseCase,
+    UpdateProjectUseCase updateProjectUseCase
   ) : ControllerBase
 {
 
@@ -34,6 +35,23 @@ public class ProjectsController(
     try
     {
       var project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+      return Ok(project);
+    }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
+  }
+
+  [HttpPatch("{slug}")]
+  public async Task<IActionResult> UpdateProject(
+      string slug,
+      [FromBody] UpdateProjectInput input,
+      CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
       return Ok(project);
     }
     catch (KeyNotFoundException)

@@ -46,4 +46,10 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
     return await dbContext.Projects.FirstOrDefaultAsync(p => p.Slug == slug, cancellationToken);
   }
 
+  public async Task Update(Project project, CancellationToken cancellationToken = default)
+  {
+    dbContext.Projects.Update(project);
+    await dbContext.SaveChangesAsync(cancellationToken);
+  }
+
 }
