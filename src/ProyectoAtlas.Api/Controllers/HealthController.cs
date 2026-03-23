@@ -6,11 +6,11 @@ namespace ProyectoAtlas.Api.Controllers;
 [Route("health")]
 public class HealthController(HealthCheckUseCase healthCheckUseCase) : ControllerBase
 {
-    [HttpGet]
-    public IActionResult Get()
-    {
-        var status = healthCheckUseCase.Execute();
+  [HttpGet]
+  public IActionResult Get()
+  {
+    var status = healthCheckUseCase.Execute();
 
-        return Ok(new { status });
-    }
+    return Ok(new { status });
+  }
 }

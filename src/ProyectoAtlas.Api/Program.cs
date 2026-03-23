@@ -32,12 +32,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "Proyecto Atlas API v1");
-        options.DocumentTitle = "Proyecto Atlas API";
-    });
+  app.MapOpenApi();
+  app.UseSwaggerUI(options =>
+  {
+    options.SwaggerEndpoint("/openapi/v1.json", "Proyecto Atlas API v1");
+    options.DocumentTitle = "Proyecto Atlas API";
+  });
 }
 
 app.UseHttpsRedirection();
