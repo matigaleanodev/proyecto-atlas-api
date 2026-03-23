@@ -1,0 +1,90 @@
+name: CI - Validate API
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: atlas
+          POSTGRES_PASSWORD: atlas_dev_password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlas -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=atlas_dev;Username=atlas;Password=atlas_dev_password
+      PGPASSWORD: atlas_dev_password
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Create CI databases
+        run: |
+          psql -h localhost -U atlas -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'atlas_dev'" | grep -q 1 || psql -h localhost -U atlas -d postgres -c "CREATE DATABASE atlas_dev"
+          psql -h localhost -U atlas -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'atlas_test'" | grep -q 1 || psql -h localhost -U atlas -d postgres -c "CREATE DATABASE atlas_test"
+
+      - name: Restore
+        run: dotnet restore ProyectoAtlas.slnx
+
+      - name: Lint
+        run: dotnet format ProyectoAtlas.slnx --verify-no-changes
+
+      - name: Build
+        run: dotnet build ProyectoAtlas.slnx --no-restore
+
+      - name: Unit tests
+        run: dotnet test tests/ProyectoAtlas.Application.Tests/ProyectoAtlas.Application.Tests.csproj --no-build
+
+      - name: E2E tests
+        run: dotnet test tests/ProyectoAtlas.Api.Tests/ProyectoAtlas.Api.Tests.csproj --no-build
+
+      - name: Generate Postman collection
+        run: npx --yes openapi2postmanv2 -s openapi.json -o postman-collection.json -p
+
+      - name: Upload OpenAPI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec
+          path: openapi.json
+
+      - name: Upload Postman collection artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: postman-collection
+          path: postman-collection.json
