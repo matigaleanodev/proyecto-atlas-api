@@ -7,6 +7,7 @@ internal sealed class FakeProjectRepository : IProjectRepository
 {
     public Project? AddedProject { get; private set; }
     public Project? UpdatedProject { get; private set; }
+    public Project? DeletedProject { get; private set; }
     public int ReceivedPage { get; private set; }
     public int ReceivedPageSize { get; private set; }
     public string? ReceivedQuery { get; private set; }
@@ -41,6 +42,12 @@ internal sealed class FakeProjectRepository : IProjectRepository
     public Task Update(Project project, CancellationToken cancellationToken = default)
     {
         UpdatedProject = project;
+        return Task.CompletedTask;
+    }
+
+    public Task Delete(Project project, CancellationToken cancellationToken = default)
+    {
+        DeletedProject = project;
         return Task.CompletedTask;
     }
 }

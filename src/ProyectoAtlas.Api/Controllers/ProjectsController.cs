@@ -9,7 +9,8 @@ public class ProjectsController(
     CreateProjectUseCase createProjectUseCase,
     ListProjectsUseCase listProjectsUseCase,
     GetProjectBySlugUseCase getProjectBySlugUseCase,
-    UpdateProjectUseCase updateProjectUseCase
+    UpdateProjectUseCase updateProjectUseCase,
+    DeleteProjectUseCase deleteProjectUseCase
   ) : ControllerBase
 {
 
@@ -53,6 +54,22 @@ public class ProjectsController(
     {
       var project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
       return Ok(project);
+    }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
+  }
+
+  [HttpDelete("{slug}")]
+  public async Task<IActionResult> DeleteProject(
+      string slug,
+      CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var project = await deleteProjectUseCase.Execute(slug, cancellationToken);
+      return NoContent();
     }
     catch (KeyNotFoundException)
     {

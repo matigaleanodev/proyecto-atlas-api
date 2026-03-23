@@ -15,6 +15,7 @@ builder.Services.AddScoped<CreateProjectUseCase>();
 builder.Services.AddScoped<ListProjectsUseCase>();
 builder.Services.AddScoped<GetProjectBySlugUseCase>();
 builder.Services.AddScoped<UpdateProjectUseCase>();
+builder.Services.AddScoped<DeleteProjectUseCase>();
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 

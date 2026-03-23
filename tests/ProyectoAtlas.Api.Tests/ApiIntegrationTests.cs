@@ -188,4 +188,24 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Fact]
+    public async Task DeleteProject_ShouldReturnNoContent_WhenSlugExists()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.DeleteAsync("/projects/proyecto-atlas");
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteProject_ShouldReturnNotFound_WhenSlugDoesNotExist()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.DeleteAsync("/projects/missing-project");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }

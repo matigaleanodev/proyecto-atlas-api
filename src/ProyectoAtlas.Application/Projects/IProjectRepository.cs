@@ -12,4 +12,6 @@ public interface IProjectRepository
 
     Task Update(Project project, CancellationToken cancellationToken = default);
 
+    Task Delete(Project project, CancellationToken cancellationToken = default);
+
 }

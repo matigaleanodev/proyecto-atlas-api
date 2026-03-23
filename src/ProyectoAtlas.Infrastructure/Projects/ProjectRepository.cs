@@ -52,4 +52,10 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
     await dbContext.SaveChangesAsync(cancellationToken);
   }
 
+  public async Task Delete(Project project, CancellationToken cancellationToken = default)
+  {
+    dbContext.Projects.Remove(project);
+    await dbContext.SaveChangesAsync(cancellationToken);
+  }
+
 }
