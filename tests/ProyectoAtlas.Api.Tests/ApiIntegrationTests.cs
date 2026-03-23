@@ -33,6 +33,17 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     }
 
     [Fact]
+    public async Task GetSwaggerUi_ShouldReturnOk()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/swagger/index.html");
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.Equal("text/html", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
     public async Task GetHealth_ShouldReturnOk()
     {
         var client = _factory.CreateClient();
