@@ -1,4 +1,4 @@
-﻿namespace ProyectoAtlas.Application.Tests;
+namespace ProyectoAtlas.Application.Tests;
 
 public class HealthCheckUseCaseTests
 {

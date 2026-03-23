@@ -14,76 +14,76 @@ public class ProjectsController(
   ) : ControllerBase
 {
 
-  [HttpGet]
-  public async Task<IActionResult> GetProjects(
-      [FromQuery] int page = 1,
-      [FromQuery] int pageSize = 10,
-      [FromQuery] string? query = null,
-      CancellationToken cancellationToken = default)
-  {
-    var input = new ListProjectsInput(page, pageSize, query);
-
-    var output = await listProjectsUseCase.Execute(input, cancellationToken);
-
-    return Ok(output);
-  }
-
-  [HttpGet("{slug}")]
-  public async Task<IActionResult> GetProjectBySlug(
-      string slug,
-      CancellationToken cancellationToken = default)
-  {
-    try
+    [HttpGet]
+    public async Task<IActionResult> GetProjects(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? query = null,
+        CancellationToken cancellationToken = default)
     {
-      var project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
-      return Ok(project);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-  }
+        var input = new ListProjectsInput(page, pageSize, query);
 
-  [HttpPatch("{slug}")]
-  public async Task<IActionResult> UpdateProject(
-      string slug,
-      [FromBody] UpdateProjectInput input,
-      CancellationToken cancellationToken = default)
-  {
-    try
-    {
-      var project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
-      return Ok(project);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-  }
+        var output = await listProjectsUseCase.Execute(input, cancellationToken);
 
-  [HttpDelete("{slug}")]
-  public async Task<IActionResult> DeleteProject(
-      string slug,
-      CancellationToken cancellationToken = default)
-  {
-    try
-    {
-      var project = await deleteProjectUseCase.Execute(slug, cancellationToken);
-      return NoContent();
+        return Ok(output);
     }
-    catch (KeyNotFoundException)
+
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetProjectBySlug(
+        string slug,
+        CancellationToken cancellationToken = default)
     {
-      return NotFound();
+        try
+        {
+            var project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+            return Ok(project);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
-  }
 
-  [HttpPost]
-  public async Task<IActionResult> CreateProject(
-      [FromBody] CreateProjectInput input,
-      CancellationToken cancellationToken)
-  {
-    var project = await createProjectUseCase.Execute(input, cancellationToken);
+    [HttpPatch("{slug}")]
+    public async Task<IActionResult> UpdateProject(
+        string slug,
+        [FromBody] UpdateProjectInput input,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
+            return Ok(project);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 
-    return Created($"/projects/{project.Id}", project);
-  }
+    [HttpDelete("{slug}")]
+    public async Task<IActionResult> DeleteProject(
+        string slug,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var project = await deleteProjectUseCase.Execute(slug, cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateProject(
+        [FromBody] CreateProjectInput input,
+        CancellationToken cancellationToken)
+    {
+        var project = await createProjectUseCase.Execute(input, cancellationToken);
+
+        return Created($"/projects/{project.Id}", project);
+    }
 }
