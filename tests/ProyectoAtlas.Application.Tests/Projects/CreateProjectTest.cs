@@ -1,5 +1,4 @@
 using ProyectoAtlas.Application.Projects;
-using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Application.Tests;
 
@@ -49,25 +48,5 @@ public class CreateProjectUseCaseTests
     var input = new CreateProjectInput(title!, description!, repositoryUrl!, color!);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() => createProjectUseCase.Execute(input));
-  }
-
-  private sealed class FakeProjectRepository : IProjectRepository
-  {
-    public Project? AddedProject { get; private set; }
-
-    public Task Add(Project project, CancellationToken cancellationToken = default)
-    {
-      AddedProject = project;
-      return Task.CompletedTask;
-    }
-
-    public Task<(IEnumerable<Project> Projects, int TotalCount)> GetPagedList(
-        int page,
-        int pageSize,
-        string? query = null,
-        CancellationToken cancellationToken = default)
-    {
-      return Task.FromResult((Enumerable.Empty<Project>(), 0));
-    }
   }
 }

@@ -5,7 +5,11 @@ namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("projects")]
-public class ProjectsController(CreateProjectUseCase createProjectUseCase, ListProjectsUseCase listProjectsUseCase) : ControllerBase
+public class ProjectsController(
+    CreateProjectUseCase createProjectUseCase,
+    ListProjectsUseCase listProjectsUseCase,
+    GetProjectBySlugUseCase getProjectBySlugUseCase
+  ) : ControllerBase
 {
 
   [HttpGet]
@@ -20,6 +24,22 @@ public class ProjectsController(CreateProjectUseCase createProjectUseCase, ListP
     var output = await listProjectsUseCase.Execute(input, cancellationToken);
 
     return Ok(output);
+  }
+
+  [HttpGet("{slug}")]
+  public async Task<IActionResult> GetProjectBySlug(
+      string slug,
+      CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+      return Ok(project);
+    }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
   }
 
   [HttpPost]

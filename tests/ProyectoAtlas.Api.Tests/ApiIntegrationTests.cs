@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using ProyectoAtlas.Application.Projects;
 using System.Net;
 using System.Net.Http.Json;
@@ -7,12 +6,20 @@ using System.Text.Json;
 
 namespace ProyectoAtlas.Api.Tests;
 
-public class ApiIntegrationTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassFixture<ApiTestWebApplicationFactory>, IAsyncLifetime
 {
-    private readonly WebApplicationFactory<Program> _factory = factory.WithWebHostBuilder(builder =>
+    private readonly ApiTestWebApplicationFactory _factory = factory;
+
+    public async Task InitializeAsync()
     {
-        builder.UseEnvironment("Development");
-    });
+        await _factory.ResetDatabaseAsync();
+        await _factory.SeedProjectsAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _factory.ResetDatabaseAsync();
+    }
 
     [Fact]
     public async Task GetOpenApiDocument_ShouldReturnOk()
@@ -41,8 +48,9 @@ public class ApiIntegrationTests(WebApplicationFactory<Program> factory) : IClas
     public async Task PostProjects_ShouldReturnCreatedProject()
     {
         var client = _factory.CreateClient();
+        var suffix = Guid.NewGuid().ToString("N")[..8];
         var input = new CreateProjectInput(
-            "Proyecto Atlas",
+            $"Proyecto Atlas {suffix}",
             "Backend for project documentation based on markdown",
             "https://github.com/matigaleanodev/proyecto-atlas-api",
             "#1E293B");
@@ -110,5 +118,33 @@ public class ApiIntegrationTests(WebApplicationFactory<Program> factory) : IClas
                 title.Contains("atlas", StringComparison.OrdinalIgnoreCase) ||
                 description.Contains("atlas", StringComparison.OrdinalIgnoreCase));
         }
+    }
+
+    [Fact]
+    public async Task GetProjectBySlug_ShouldReturnProject_WhenSlugExists()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/projects/proyecto-atlas");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+        var content = await response.Content.ReadAsStringAsync();
+        using var jsonDocument = JsonDocument.Parse(content);
+        var root = jsonDocument.RootElement;
+
+        Assert.Equal("proyecto-atlas", root.GetProperty("slug").GetString());
+        Assert.Equal("Proyecto Atlas", root.GetProperty("title").GetString());
+    }
+
+    [Fact]
+    public async Task GetProjectBySlug_ShouldReturnNotFound_WhenSlugDoesNotExist()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/projects/missing-project");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

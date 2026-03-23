@@ -40,4 +40,10 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
 
     return (projects, totalCount);
   }
+
+  public async Task<Project?> GetBySlug(string slug, CancellationToken cancellationToken = default)
+  {
+    return await dbContext.Projects.FirstOrDefaultAsync(p => p.Slug == slug, cancellationToken);
+  }
+
 }

@@ -9,6 +9,12 @@ public class ListProjectsUseCaseTests
   public async Task Execute_ShouldReturnPagedProjects()
   {
     var projectRepository = new FakeProjectRepository();
+    projectRepository.PagedProjects = new[]
+    {
+      new Project("Proyecto Atlas", "Backend for project documentation", "https://github.com/matigaleanodev/proyecto-atlas-api", "#1E293B"),
+      new Project("Atlas Docs", "Documentation explorer", "https://github.com/matigaleanodev/atlas-docs", "#0F172A")
+    };
+    projectRepository.PagedTotalCount = 3;
     var useCase = new ListProjectsUseCase(projectRepository);
     var input = new ListProjectsInput(Page: 2, PageSize: 2, Query: "atlas");
 
@@ -26,6 +32,7 @@ public class ListProjectsUseCaseTests
   public async Task Execute_ShouldPassPagingArgumentsToRepository()
   {
     var projectRepository = new FakeProjectRepository();
+    projectRepository.PagedProjects = [];
     var useCase = new ListProjectsUseCase(projectRepository);
     var input = new ListProjectsInput(Page: 3, PageSize: 5, Query: "docs");
 
@@ -34,36 +41,5 @@ public class ListProjectsUseCaseTests
     Assert.Equal(input.Page, projectRepository.ReceivedPage);
     Assert.Equal(input.PageSize, projectRepository.ReceivedPageSize);
     Assert.Equal(input.Query, projectRepository.ReceivedQuery);
-  }
-
-  private sealed class FakeProjectRepository : IProjectRepository
-  {
-    public int ReceivedPage { get; private set; }
-    public int ReceivedPageSize { get; private set; }
-    public string? ReceivedQuery { get; private set; }
-
-    public Task Add(Project project, CancellationToken cancellationToken = default)
-    {
-      throw new NotSupportedException();
-    }
-
-    public Task<(IEnumerable<Project> Projects, int TotalCount)> GetPagedList(
-        int page,
-        int pageSize,
-        string? query = null,
-        CancellationToken cancellationToken = default)
-    {
-      ReceivedPage = page;
-      ReceivedPageSize = pageSize;
-      ReceivedQuery = query;
-
-      var projects = new[]
-      {
-        new Project("Proyecto Atlas", "Backend for project documentation", "https://github.com/matigaleanodev/proyecto-atlas-api", "#1E293B"),
-        new Project("Atlas Docs", "Documentation explorer", "https://github.com/matigaleanodev/atlas-docs", "#0F172A")
-      };
-
-      return Task.FromResult<(IEnumerable<Project> Projects, int TotalCount)>((projects, 3));
-    }
   }
 }

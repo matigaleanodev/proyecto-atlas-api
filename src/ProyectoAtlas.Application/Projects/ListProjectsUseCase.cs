@@ -1,5 +1,3 @@
-using ProyectoAtlas.Domain.Projects;
-
 namespace ProyectoAtlas.Application.Projects
 {
   public class ListProjectsUseCase(IProjectRepository projectRepository)

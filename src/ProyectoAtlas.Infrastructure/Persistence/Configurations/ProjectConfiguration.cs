@@ -11,6 +11,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.ToTable("projects");
 
         builder.HasKey(project => project.Id);
+        builder.HasIndex(project => project.Slug).IsUnique();
 
         builder.Property(project => project.Id)
             .HasColumnName("id")
