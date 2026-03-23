@@ -8,7 +8,7 @@ public class Documentation
 
   public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder)
   {
-    var now = DateTime.UtcNow;
+    DateTime now = DateTime.UtcNow;
 
     Id = Guid.NewGuid();
     ProjectId = projectId;

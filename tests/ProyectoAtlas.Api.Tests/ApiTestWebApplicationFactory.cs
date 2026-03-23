@@ -28,8 +28,8 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
 
   public async Task ResetDatabaseAsync()
   {
-    using var scope = Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
+    using IServiceScope scope = Services.CreateScope();
+    ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
 
     await dbContext.Database.EnsureDeletedAsync();
     await dbContext.Database.MigrateAsync();
@@ -37,10 +37,10 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
 
   public async Task SeedProjectsAsync()
   {
-    using var scope = Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
+    using IServiceScope scope = Services.CreateScope();
+    ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
 
-    var projects = new[]
+    Project[] projects = new[]
     {
             new Project(
                 "Proyecto Atlas",

@@ -37,7 +37,7 @@ public partial class AddDocumentations : Migration
     migrationBuilder.CreateIndex(
         name: "IX_documentations_project_id_slug",
         table: "documentations",
-        columns: new[] { "project_id", "slug" },
+        columns: ["project_id", "slug"],
         unique: true);
   }
 

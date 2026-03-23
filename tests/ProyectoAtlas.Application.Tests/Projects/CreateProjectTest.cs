@@ -1,4 +1,5 @@
 using ProyectoAtlas.Application.Projects;
+using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Application.Tests;
 
@@ -7,15 +8,15 @@ public class CreateProjectUseCaseTests
   [Fact]
   public async Task Execute_ShouldReturnProject()
   {
-    var projectRepository = new FakeProjectRepository();
-    var createProjectUseCase = new CreateProjectUseCase(projectRepository);
-    var input = new CreateProjectInput(
+    FakeProjectRepository projectRepository = new FakeProjectRepository();
+    CreateProjectUseCase createProjectUseCase = new CreateProjectUseCase(projectRepository);
+    CreateProjectInput input = new CreateProjectInput(
         "Proyecto Atlas",
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
 
-    var result = await createProjectUseCase.Execute(input);
+    Project result = await createProjectUseCase.Execute(input);
 
     Assert.Equal(input.Title, result.Title);
     Assert.Equal(input.Description, result.Description);
@@ -44,8 +45,8 @@ public class CreateProjectUseCaseTests
       string? repositoryUrl,
       string? color)
   {
-    var createProjectUseCase = new CreateProjectUseCase(new FakeProjectRepository());
-    var input = new CreateProjectInput(title!, description!, repositoryUrl!, color!);
+    CreateProjectUseCase createProjectUseCase = new CreateProjectUseCase(new FakeProjectRepository());
+    CreateProjectInput input = new CreateProjectInput(title!, description!, repositoryUrl!, color!);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() => createProjectUseCase.Execute(input));
   }

@@ -8,7 +8,7 @@ public class Project
 
   public Project(string title, string description, string repositoryUrl, string color)
   {
-    var now = DateTime.UtcNow;
+    DateTime now = DateTime.UtcNow;
 
     Id = Guid.NewGuid();
     Title = title;

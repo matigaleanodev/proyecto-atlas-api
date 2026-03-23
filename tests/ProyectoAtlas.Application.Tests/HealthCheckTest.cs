@@ -6,10 +6,10 @@ public class HealthCheckUseCaseTests
   public void Execute_ShouldReturnOk()
   {
 
-    var healthCheckUseCase = new HealthCheckUseCase();
+    HealthCheckUseCase healthCheckUseCase = new HealthCheckUseCase();
 
 
-    var result = healthCheckUseCase.Execute();
+    string result = healthCheckUseCase.Execute();
 
     // Assert
     Assert.Equal("ok", result);

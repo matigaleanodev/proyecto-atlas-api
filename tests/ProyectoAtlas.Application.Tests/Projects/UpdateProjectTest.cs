@@ -8,23 +8,23 @@ public class UpdateProjectUseCaseTests
   [Fact]
   public async Task Execute_ShouldUpdateProvidedFieldsAndReturnProject()
   {
-    var existingProject = new Project(
+    Project existingProject = new Project(
         "Proyecto Atlas",
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
-    var projectRepository = new FakeProjectRepository
+    FakeProjectRepository projectRepository = new FakeProjectRepository
     {
       ProjectBySlug = existingProject
     };
-    var useCase = new UpdateProjectUseCase(projectRepository);
-    var input = new UpdateProjectInput(
+    UpdateProjectUseCase useCase = new UpdateProjectUseCase(projectRepository);
+    UpdateProjectInput input = new UpdateProjectInput(
         "Proyecto Atlas API",
         "Updated backend for project documentation",
         "https://github.com/matigaleanodev/proyecto-atlas-api-updated",
         "#0F172A");
 
-    var result = await useCase.Execute("proyecto-atlas", input);
+    Project result = await useCase.Execute("proyecto-atlas", input);
 
     Assert.Equal(input.Title, result.Title);
     Assert.Equal(input.Description, result.Description);
@@ -37,19 +37,19 @@ public class UpdateProjectUseCaseTests
   [Fact]
   public async Task Execute_ShouldRecalculateSlug_WhenTitleChanges()
   {
-    var existingProject = new Project(
+    Project existingProject = new Project(
         "Proyecto Atlas",
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
-    var projectRepository = new FakeProjectRepository
+    FakeProjectRepository projectRepository = new FakeProjectRepository
     {
       ProjectBySlug = existingProject
     };
-    var useCase = new UpdateProjectUseCase(projectRepository);
-    var input = new UpdateProjectInput("Atlas Platform", null, null, null);
+    UpdateProjectUseCase useCase = new UpdateProjectUseCase(projectRepository);
+    UpdateProjectInput input = new UpdateProjectInput("Atlas Platform", null, null, null);
 
-    var result = await useCase.Execute("proyecto-atlas", input);
+    Project result = await useCase.Execute("proyecto-atlas", input);
 
     Assert.Equal("atlas-platform", result.Slug);
   }
@@ -57,8 +57,8 @@ public class UpdateProjectUseCaseTests
   [Fact]
   public async Task Execute_ShouldThrowKeyNotFoundException_WhenProjectDoesNotExist()
   {
-    var useCase = new UpdateProjectUseCase(new FakeProjectRepository());
-    var input = new UpdateProjectInput("Atlas Platform", null, null, null);
+    UpdateProjectUseCase useCase = new UpdateProjectUseCase(new FakeProjectRepository());
+    UpdateProjectInput input = new UpdateProjectInput("Atlas Platform", null, null, null);
 
     await Assert.ThrowsAsync<KeyNotFoundException>(() => useCase.Execute("missing-project", input));
   }

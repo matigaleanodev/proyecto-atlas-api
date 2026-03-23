@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoAtlas.Application.Projects;
+using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.Controllers;
 
@@ -21,9 +22,9 @@ public class ProjectsController(
       [FromQuery] string? query = null,
       CancellationToken cancellationToken = default)
   {
-    var input = new ListProjectsInput(page, pageSize, query);
+    ListProjectsInput input = new(page, pageSize, query);
 
-    var output = await listProjectsUseCase.Execute(input, cancellationToken);
+    ListProjectsOutput output = await listProjectsUseCase.Execute(input, cancellationToken);
 
     return Ok(output);
   }
@@ -35,7 +36,7 @@ public class ProjectsController(
   {
     try
     {
-      var project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+      Project project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
       return Ok(project);
     }
     catch (KeyNotFoundException)
@@ -52,7 +53,7 @@ public class ProjectsController(
   {
     try
     {
-      var project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
+      Project project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
       return Ok(project);
     }
     catch (KeyNotFoundException)
@@ -68,7 +69,7 @@ public class ProjectsController(
   {
     try
     {
-      var project = await deleteProjectUseCase.Execute(slug, cancellationToken);
+      Project project = await deleteProjectUseCase.Execute(slug, cancellationToken);
       return NoContent();
     }
     catch (KeyNotFoundException)
@@ -82,7 +83,7 @@ public class ProjectsController(
       [FromBody] CreateProjectInput input,
       CancellationToken cancellationToken)
   {
-    var project = await createProjectUseCase.Execute(input, cancellationToken);
+    Project project = await createProjectUseCase.Execute(input, cancellationToken);
 
     return Created($"/projects/{project.Id}", project);
   }

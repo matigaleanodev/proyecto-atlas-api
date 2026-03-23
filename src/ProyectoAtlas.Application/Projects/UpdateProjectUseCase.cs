@@ -8,7 +8,7 @@ public class UpdateProjectUseCase(IProjectRepository projectRepository)
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
 
 
-    var project = await projectRepository.GetBySlug(slug, cancellationToken) ?? throw new KeyNotFoundException($"Project with slug '{slug}' not found."); ;
+    Project project = await projectRepository.GetBySlug(slug, cancellationToken) ?? throw new KeyNotFoundException($"Project with slug '{slug}' not found."); ;
 
 
     project.Update(input.Title, input.Description, input.RepositoryUrl, input.Color);

@@ -17,6 +17,48 @@
         }
       }
     },
+    "/projects/{projectSlug}/documentations": {
+      "post": {
+        "tags": [
+          "ProjectDocumentations"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationInput"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationInput"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/projects": {
       "get": {
         "tags": [
@@ -179,6 +221,30 @@
   },
   "components": {
     "schemas": {
+      "CreateDocumentationInput": {
+        "required": [
+          "title",
+          "contentMarkdown",
+          "sortOrder"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "contentMarkdown": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "CreateProjectInput": {
         "required": [
           "title",
@@ -242,6 +308,9 @@
   "tags": [
     {
       "name": "Health"
+    },
+    {
+      "name": "ProjectDocumentations"
     },
     {
       "name": "Projects"

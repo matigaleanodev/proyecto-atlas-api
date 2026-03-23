@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoAtlas.Application;
+using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Application.Projects;
+using ProyectoAtlas.Infrastructure.Documentations;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.Projects;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -16,8 +18,12 @@ builder.Services.AddScoped<ListProjectsUseCase>();
 builder.Services.AddScoped<GetProjectBySlugUseCase>();
 builder.Services.AddScoped<UpdateProjectUseCase>();
 builder.Services.AddScoped<DeleteProjectUseCase>();
+builder.Services.AddScoped<CreateDocumentationUseCase>();
+
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IDocumentationRepository, DocumentationRepository>();
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -27,7 +33,7 @@ builder.Services.AddDbContext<ProyectoAtlasDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

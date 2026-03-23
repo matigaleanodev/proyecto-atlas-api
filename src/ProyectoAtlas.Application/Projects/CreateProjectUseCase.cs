@@ -12,7 +12,7 @@ public class CreateProjectUseCase(IProjectRepository projectRepository)
     ArgumentException.ThrowIfNullOrWhiteSpace(input.RepositoryUrl);
     ArgumentException.ThrowIfNullOrWhiteSpace(input.Color);
 
-    var project = new Project(
+    Project project = new(
         input.Title,
         input.Description,
         input.RepositoryUrl,

@@ -23,16 +23,16 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
 
     if (!string.IsNullOrWhiteSpace(query))
     {
-      var normalizedQuery = $"%{query.Trim()}%";
+      string normalizedQuery = $"%{query.Trim()}%";
 
       projectsQuery = projectsQuery.Where(project =>
           EF.Functions.ILike(project.Title, normalizedQuery) ||
           EF.Functions.ILike(project.Description, normalizedQuery));
     }
 
-    var totalCount = await projectsQuery.CountAsync(cancellationToken);
+    int totalCount = await projectsQuery.CountAsync(cancellationToken);
 
-    var projects = await projectsQuery
+    List<Project> projects = await projectsQuery
         .OrderByDescending(project => project.CreatedAtUtc)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)

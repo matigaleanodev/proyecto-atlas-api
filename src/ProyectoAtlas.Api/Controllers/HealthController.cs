@@ -9,7 +9,7 @@ public class HealthController(HealthCheckUseCase healthCheckUseCase) : Controlle
   [HttpGet]
   public IActionResult Get()
   {
-    var status = healthCheckUseCase.Execute();
+    string status = healthCheckUseCase.Execute();
 
     return Ok(new { status });
   }

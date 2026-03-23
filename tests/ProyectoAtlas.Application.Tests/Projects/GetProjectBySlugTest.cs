@@ -8,7 +8,7 @@ public class GetProjectBySlugUseCaseTests
   [Fact]
   public async Task Execute_ShouldReturnProject_WhenSlugExists()
   {
-    var projectRepository = new FakeProjectRepository
+    FakeProjectRepository projectRepository = new FakeProjectRepository
     {
       ProjectBySlug = new Project(
           "Proyecto Atlas",
@@ -16,9 +16,9 @@ public class GetProjectBySlugUseCaseTests
           "https://github.com/matigaleanodev/proyecto-atlas-api",
           "#1E293B")
     };
-    var useCase = new GetProjectBySlugUseCase(projectRepository);
+    GetProjectBySlugUseCase useCase = new GetProjectBySlugUseCase(projectRepository);
 
-    var result = await useCase.Execute("proyecto-atlas");
+    Project result = await useCase.Execute("proyecto-atlas");
 
     Assert.NotNull(result);
     Assert.Equal(projectRepository.ProjectBySlug!.Title, result.Title);
@@ -27,7 +27,7 @@ public class GetProjectBySlugUseCaseTests
   [Fact]
   public async Task Execute_ShouldThrowKeyNotFoundException_WhenSlugDoesNotExist()
   {
-    var useCase = new GetProjectBySlugUseCase(new FakeProjectRepository());
+    GetProjectBySlugUseCase useCase = new GetProjectBySlugUseCase(new FakeProjectRepository());
 
     await Assert.ThrowsAsync<KeyNotFoundException>(() => useCase.Execute("missing-project"));
   }
@@ -38,7 +38,7 @@ public class GetProjectBySlugUseCaseTests
   [InlineData("   ")]
   public async Task Execute_ShouldThrowArgumentException_WhenSlugIsInvalid(string? slug)
   {
-    var useCase = new GetProjectBySlugUseCase(new FakeProjectRepository());
+    GetProjectBySlugUseCase useCase = new GetProjectBySlugUseCase(new FakeProjectRepository());
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() => useCase.Execute(slug!));
   }
