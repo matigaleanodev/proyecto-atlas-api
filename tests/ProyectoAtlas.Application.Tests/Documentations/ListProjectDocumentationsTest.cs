@@ -1,0 +1,92 @@
+using ProyectoAtlas.Application.Documentations;
+using ProyectoAtlas.Domain.Documentations;
+using ProyectoAtlas.Domain.Projects;
+
+namespace ProyectoAtlas.Application.Tests;
+
+public class ListProjectDocumentationsUseCaseTests
+{
+  [Fact]
+  public async Task Execute_ShouldReturnPagedDocumentations()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      PagedDocumentations =
+      [
+        new Documentation(project.Id, "Getting Started", "# Atlas", 1),
+        new Documentation(project.Id, "Architecture", "## Layers", 2),
+      ],
+      PagedTotalCount = 2,
+    };
+    ListProjectDocumentationsUseCase useCase = new(documentationRepository, projectRepository);
+    ListProjectDocumentationsInput input = new(1, 10, "atlas");
+
+    ListProjectDocumentationsOutput result = await useCase.Execute("proyecto-atlas", input);
+
+    Assert.Equal(1, result.Page);
+    Assert.Equal(10, result.PageSize);
+    Assert.Equal(2, result.TotalItems);
+    Assert.Equal(1, result.TotalPages);
+    Assert.Equal(2, result.Items.Count);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldPassArgumentsToRepository()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new();
+    ListProjectDocumentationsUseCase useCase = new(documentationRepository, projectRepository);
+    ListProjectDocumentationsInput input = new(2, 5, "docs");
+
+    await useCase.Execute("proyecto-atlas", input);
+
+    Assert.Equal(project.Id, documentationRepository.ReceivedProjectId);
+    Assert.Equal(2, documentationRepository.ReceivedPage);
+    Assert.Equal(5, documentationRepository.ReceivedPageSize);
+    Assert.Equal("docs", documentationRepository.ReceivedQuery);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowKeyNotFoundException_WhenProjectDoesNotExist()
+  {
+    ListProjectDocumentationsUseCase useCase = new(
+        new FakeDocumentationRepository(),
+        new FakeProjectRepository());
+    ListProjectDocumentationsInput input = new();
+
+    await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+        useCase.Execute("missing-project", input));
+  }
+
+  [Theory]
+  [InlineData(null)]
+  [InlineData("")]
+  [InlineData("   ")]
+  public async Task Execute_ShouldThrowArgumentException_WhenProjectSlugIsInvalid(string? projectSlug)
+  {
+    ListProjectDocumentationsUseCase useCase = new(
+        new FakeDocumentationRepository(),
+        new FakeProjectRepository());
+    ListProjectDocumentationsInput input = new();
+
+    await Assert.ThrowsAnyAsync<ArgumentException>(() =>
+        useCase.Execute(projectSlug!, input));
+  }
+}

@@ -20,7 +20,7 @@ public class CreateDocumentationUseCase(
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
         ?? throw new KeyNotFoundException($"Project with slug '{projectSlug}' not found.");
 
-    Documentation documentation = new Documentation(
+    Documentation documentation = new(
         project.Id,
         input.Title,
         input.ContentMarkdown,

@@ -8,7 +8,7 @@ public class ListProjectsUseCase(IProjectRepository projectRepository)
   {
     (int page, int pageSize, string? query) = input;
     (IEnumerable<Project>? projects, int totalCount) = await projectRepository.GetPagedList(page, pageSize, query, cancellationToken);
-    List<Project> items = projects.ToList();
+    List<Project> items = [.. projects];
     int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
     return new ListProjectsOutput(items, page, pageSize, totalPages, totalCount);

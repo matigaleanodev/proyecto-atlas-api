@@ -124,6 +124,69 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task GetProjectDocumentations_ShouldReturnPagedDocumentations()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    await client.PostAsJsonAsync(
+        "/projects/proyecto-atlas/documentations",
+        new CreateDocumentationInput("Getting Started", "# Proyecto Atlas", 1));
+    await client.PostAsJsonAsync(
+        "/projects/proyecto-atlas/documentations",
+        new CreateDocumentationInput("Architecture", "## Layers", 2));
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations?page=1&pageSize=1");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal(1, root.GetProperty("page").GetInt32());
+    Assert.Equal(1, root.GetProperty("pageSize").GetInt32());
+    Assert.Equal(2, root.GetProperty("totalItems").GetInt32());
+    Assert.Equal(2, root.GetProperty("totalPages").GetInt32());
+    Assert.Single(root.GetProperty("items").EnumerateArray());
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentations_ShouldFilterByQuery()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    await client.PostAsJsonAsync(
+        "/projects/proyecto-atlas/documentations",
+        new CreateDocumentationInput("Getting Started", "# Proyecto Atlas", 1));
+    await client.PostAsJsonAsync(
+        "/projects/proyecto-atlas/documentations",
+        new CreateDocumentationInput("Architecture", "## Layers", 2));
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations?query=arch");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement items = root.GetProperty("items");
+
+    Assert.Equal(1, items.GetArrayLength());
+    Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentations_ShouldReturnNotFound_WhenProjectDoesNotExist()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/missing-project/documentations");
+
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
   public async Task GetProjects_ShouldReturnPagedProjects()
   {
     HttpClient client = _factory.CreateClient();
