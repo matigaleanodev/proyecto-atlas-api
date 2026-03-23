@@ -1,26 +1,27 @@
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Projects;
 
-namespace ProyectoAtlas.Application.Projects.CreateProject;
-
-public class CreateProjectUseCase(IProjectRepository projectRepository)
+namespace ProyectoAtlas.Application.Projects
 {
-
-    public async Task<Project> Execute(CreateProjectInput input, CancellationToken cancellationToken = default)
+    public class CreateProjectUseCase(IProjectRepository projectRepository)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(input.Title);
-        ArgumentException.ThrowIfNullOrWhiteSpace(input.Description);
-        ArgumentException.ThrowIfNullOrWhiteSpace(input.RepositoryUrl);
-        ArgumentException.ThrowIfNullOrWhiteSpace(input.Color);
 
-        var project = new Project(
-            input.Title,
-            input.Description,
-            input.RepositoryUrl,
-            input.Color);
+        public async Task<Project> Execute(CreateProjectInput input, CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(input.Title);
+            ArgumentException.ThrowIfNullOrWhiteSpace(input.Description);
+            ArgumentException.ThrowIfNullOrWhiteSpace(input.RepositoryUrl);
+            ArgumentException.ThrowIfNullOrWhiteSpace(input.Color);
 
-        await projectRepository.Add(project, cancellationToken);
+            var project = new Project(
+                input.Title,
+                input.Description,
+                input.RepositoryUrl,
+                input.Color);
 
-        return project;
+            await projectRepository.Add(project, cancellationToken);
+
+            return project;
+        }
     }
+
 }

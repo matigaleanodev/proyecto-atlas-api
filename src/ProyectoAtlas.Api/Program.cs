@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoAtlas.Application;
 using ProyectoAtlas.Application.Projects;
-using ProyectoAtlas.Application.Projects.CreateProject;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.Projects;
 
@@ -12,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<HealthCheckUseCase>();
 builder.Services.AddScoped<CreateProjectUseCase>();
+builder.Services.AddScoped<ListProjectsUseCase>();
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 

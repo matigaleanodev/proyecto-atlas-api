@@ -15,6 +15,7 @@ public class Project
     Description = description;
     RepositoryUrl = repositoryUrl;
     Color = color;
+    Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
     CreatedAtUtc = now;
     UpdatedAtUtc = now;
   }
@@ -24,6 +25,7 @@ public class Project
   public string Description { get; private set; } = null!;
   public string RepositoryUrl { get; private set; } = null!;
   public string Color { get; private set; } = null!;
+  public string Slug { get; private set; } = null!;
   public DateTime CreatedAtUtc { get; private set; }
   public DateTime UpdatedAtUtc { get; private set; }
 }

@@ -1,5 +1,4 @@
 using ProyectoAtlas.Application.Projects;
-using ProyectoAtlas.Application.Projects.CreateProject;
 using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Application.Tests;
@@ -60,6 +59,15 @@ public class CreateProjectUseCaseTests
     {
       AddedProject = project;
       return Task.CompletedTask;
+    }
+
+    public Task<(IEnumerable<Project> Projects, int TotalCount)> GetPagedList(
+        int page,
+        int pageSize,
+        string? query = null,
+        CancellationToken cancellationToken = default)
+    {
+      return Task.FromResult((Enumerable.Empty<Project>(), 0));
     }
   }
 }

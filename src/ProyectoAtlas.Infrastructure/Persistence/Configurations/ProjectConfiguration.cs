@@ -31,6 +31,11 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .HasColumnType("text")
             .IsRequired();
 
+        builder.Property(project => project.Slug)
+            .HasColumnName("slug")
+            .HasMaxLength(200)
+            .IsRequired();
+
         builder.Property(project => project.Color)
             .HasColumnName("color")
             .HasMaxLength(9)
