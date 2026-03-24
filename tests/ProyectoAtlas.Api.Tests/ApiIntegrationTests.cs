@@ -212,6 +212,73 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PatchProjectDocumentation_ShouldUpdateDocumentation_WhenDocumentationExists()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationInput input = new(
+        "Quick Start",
+        "## Updated",
+        3);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started", input);
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal(input.Title, root.GetProperty("title").GetString());
+    Assert.Equal(input.ContentMarkdown, root.GetProperty("contentMarkdown").GetString());
+    Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
+    Assert.Equal("quick-start", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnNotFound_WhenDocumentationDoesNotExist()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationInput input = new(
+        "Quick Start",
+        "## Updated",
+        3);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/missing-doc", input);
+
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteProjectDocumentation_ShouldReturnNoContent_WhenDocumentationExists()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage deleteResponse =
+        await client.DeleteAsync("/projects/proyecto-atlas/documentations/getting-started");
+
+    Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+
+    HttpResponseMessage getResponse =
+        await client.GetAsync("/projects/proyecto-atlas/documentations/getting-started");
+
+    Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteProjectDocumentation_ShouldReturnNotFound_WhenDocumentationDoesNotExist()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.DeleteAsync("/projects/proyecto-atlas/documentations/missing-doc");
+
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
   public async Task GetProjects_ShouldReturnPagedProjects()
   {
     HttpClient client = _factory.CreateClient();

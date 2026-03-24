@@ -19,9 +19,8 @@ public class DeleteProjectUseCaseTests
     };
     DeleteProjectUseCase useCase = new DeleteProjectUseCase(projectRepository);
 
-    Project result = await useCase.Execute("proyecto-atlas");
+    await useCase.Execute("proyecto-atlas");
 
-    Assert.Same(existingProject, result);
     Assert.Same(existingProject, projectRepository.DeletedProject);
   }
 
