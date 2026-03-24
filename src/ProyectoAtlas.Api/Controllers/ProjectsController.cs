@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoAtlas.Application.Projects;
+using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.Controllers;
 
@@ -14,76 +15,76 @@ public class ProjectsController(
   ) : ControllerBase
 {
 
-    [HttpGet]
-    public async Task<IActionResult> GetProjects(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? query = null,
-        CancellationToken cancellationToken = default)
+  [HttpPost]
+  public async Task<IActionResult> CreateProject(
+      [FromBody] CreateProjectInput input,
+      CancellationToken cancellationToken)
+  {
+    Project project = await createProjectUseCase.Execute(input, cancellationToken);
+
+    return Created($"/projects/{project.Id}", project);
+  }
+
+  [HttpGet]
+  public async Task<IActionResult> GetProjects(
+      [FromQuery] int page = 1,
+      [FromQuery] int pageSize = 10,
+      [FromQuery] string? query = null,
+      CancellationToken cancellationToken = default)
+  {
+    ListProjectsInput input = new(page, pageSize, query);
+
+    ListProjectsOutput output = await listProjectsUseCase.Execute(input, cancellationToken);
+
+    return Ok(output);
+  }
+
+  [HttpGet("{slug}")]
+  public async Task<IActionResult> GetProjectBySlug(
+      string slug,
+      CancellationToken cancellationToken = default)
+  {
+    try
     {
-        var input = new ListProjectsInput(page, pageSize, query);
-
-        var output = await listProjectsUseCase.Execute(input, cancellationToken);
-
-        return Ok(output);
+      Project project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+      return Ok(project);
     }
-
-    [HttpGet("{slug}")]
-    public async Task<IActionResult> GetProjectBySlug(
-        string slug,
-        CancellationToken cancellationToken = default)
+    catch (KeyNotFoundException)
     {
-        try
-        {
-            var project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
-            return Ok(project);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
+      return NotFound();
     }
+  }
 
-    [HttpPatch("{slug}")]
-    public async Task<IActionResult> UpdateProject(
-        string slug,
-        [FromBody] UpdateProjectInput input,
-        CancellationToken cancellationToken = default)
+  [HttpPatch("{slug}")]
+  public async Task<IActionResult> UpdateProject(
+      string slug,
+      [FromBody] UpdateProjectInput input,
+      CancellationToken cancellationToken = default)
+  {
+    try
     {
-        try
-        {
-            var project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
-            return Ok(project);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
+      Project project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
+      return Ok(project);
     }
-
-    [HttpDelete("{slug}")]
-    public async Task<IActionResult> DeleteProject(
-        string slug,
-        CancellationToken cancellationToken = default)
+    catch (KeyNotFoundException)
     {
-        try
-        {
-            var project = await deleteProjectUseCase.Execute(slug, cancellationToken);
-            return NoContent();
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
+      return NotFound();
     }
+  }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateProject(
-        [FromBody] CreateProjectInput input,
-        CancellationToken cancellationToken)
+  [HttpDelete("{slug}")]
+  public async Task<IActionResult> DeleteProject(
+      string slug,
+      CancellationToken cancellationToken = default)
+  {
+    try
     {
-        var project = await createProjectUseCase.Execute(input, cancellationToken);
-
-        return Created($"/projects/{project.Id}", project);
+      await deleteProjectUseCase.Execute(slug, cancellationToken);
+      return NoContent();
     }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
+  }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 using ProyectoAtlas.Infrastructure.Persistence;
 
@@ -10,38 +11,38 @@ namespace ProyectoAtlas.Api.Tests;
 
 public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private const string TestConnectionString =
-        "Host=localhost;Port=5432;Database=atlas_test;Username=atlas;Password=atlas_dev_password";
+  private const string TestConnectionString =
+      "Host=localhost;Port=5432;Database=atlas_test;Username=atlas;Password=atlas_dev_password";
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+  protected override void ConfigureWebHost(IWebHostBuilder builder)
+  {
+    builder.UseEnvironment("Development");
+
+    builder.ConfigureServices(services =>
     {
-        builder.UseEnvironment("Development");
+      services.RemoveAll<DbContextOptions<ProyectoAtlasDbContext>>();
 
-        builder.ConfigureServices(services =>
-        {
-            services.RemoveAll<DbContextOptions<ProyectoAtlasDbContext>>();
+      services.AddDbContext<ProyectoAtlasDbContext>(options =>
+              options.UseNpgsql(TestConnectionString));
+    });
+  }
 
-            services.AddDbContext<ProyectoAtlasDbContext>(options =>
-                options.UseNpgsql(TestConnectionString));
-        });
-    }
+  public async Task ResetDatabaseAsync()
+  {
+    using IServiceScope scope = Services.CreateScope();
+    ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
 
-    public async Task ResetDatabaseAsync()
+    await dbContext.Database.EnsureDeletedAsync();
+    await dbContext.Database.MigrateAsync();
+  }
+
+  public async Task SeedProjectsAsync()
+  {
+    using IServiceScope scope = Services.CreateScope();
+    ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
+
+    Project[] projects = new[]
     {
-        using var scope = Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
-
-        await dbContext.Database.EnsureDeletedAsync();
-        await dbContext.Database.MigrateAsync();
-    }
-
-    public async Task SeedProjectsAsync()
-    {
-        using var scope = Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
-
-        var projects = new[]
-        {
             new Project(
                 "Proyecto Atlas",
                 "Backend for project documentation based on markdown",
@@ -59,7 +60,17 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
                 "#0EA5E9")
         };
 
-        await dbContext.Projects.AddRangeAsync(projects);
-        await dbContext.SaveChangesAsync();
-    }
+    await dbContext.Projects.AddRangeAsync(projects);
+    await dbContext.SaveChangesAsync();
+
+    Documentation[] documentations = new[]
+    {
+      new Documentation(projects[0].Id, "Getting Started", "# Proyecto Atlas", 1),
+      new Documentation(projects[0].Id, "Architecture", "## Layers", 2),
+      new Documentation(projects[1].Id, "Overview", "# Atlas Docs", 1),
+    };
+
+    await dbContext.Documentations.AddRangeAsync(documentations);
+    await dbContext.SaveChangesAsync();
+  }
 }

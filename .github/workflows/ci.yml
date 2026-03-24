@@ -75,7 +75,7 @@ jobs:
         run: dotnet test tests/ProyectoAtlas.Api.Tests/ProyectoAtlas.Api.Tests.csproj --no-build
 
       - name: Generate Postman collection
-        run: npx --yes openapi2postmanv2 -s openapi.json -o postman-collection.json -p
+        run: npx --yes --package openapi-to-postmanv2 openapi2postmanv2 -s openapi.json -o postman-collection.json -p
 
       - name: Upload OpenAPI artifact
         uses: actions/upload-artifact@v4
