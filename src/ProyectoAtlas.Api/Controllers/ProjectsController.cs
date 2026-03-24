@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Projects;
 
@@ -6,6 +7,8 @@ namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("projects")]
+[Produces("application/json")]
+[ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
 public class ProjectsController(
     CreateProjectUseCase createProjectUseCase,
     ListProjectsUseCase listProjectsUseCase,
@@ -16,6 +19,9 @@ public class ProjectsController(
 {
 
   [HttpPost]
+  [ProducesResponseType(typeof(Project), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> CreateProject(
       [FromBody] CreateProjectInput input,
       CancellationToken cancellationToken)
@@ -26,6 +32,7 @@ public class ProjectsController(
   }
 
   [HttpGet]
+  [ProducesResponseType(typeof(ListProjectsOutput), StatusCodes.Status200OK)]
   public async Task<IActionResult> GetProjects(
       [FromQuery] int page = 1,
       [FromQuery] int pageSize = 10,
@@ -40,6 +47,8 @@ public class ProjectsController(
   }
 
   [HttpGet("{slug}")]
+  [ProducesResponseType(typeof(Project), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> GetProjectBySlug(
       string slug,
       CancellationToken cancellationToken = default)
@@ -49,6 +58,10 @@ public class ProjectsController(
   }
 
   [HttpPatch("{slug}")]
+  [ProducesResponseType(typeof(Project), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> UpdateProject(
       string slug,
       [FromBody] UpdateProjectInput input,
@@ -59,6 +72,8 @@ public class ProjectsController(
   }
 
   [HttpDelete("{slug}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> DeleteProject(
       string slug,
       CancellationToken cancellationToken = default)

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoAtlas.Api.Errors;
+using ProyectoAtlas.Api.OpenApi;
 using ProyectoAtlas.Application;
 using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Application.Errors;
@@ -45,7 +46,10 @@ builder.Services.AddScoped<IDocumentationRepository, DocumentationRepository>();
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+  options.AddSchemaTransformer(OpenApiExampleTransformers.ApplyExamples);
+});
 
 builder.Services.AddDbContext<ProyectoAtlasDbContext>(options =>
     options.UseNpgsql(

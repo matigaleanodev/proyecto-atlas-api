@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Domain.Documentations;
 
@@ -6,6 +7,8 @@ namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("projects/{projectSlug}/documentations")]
+[Produces("application/json")]
+[ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
 public class ProjectDocumentationsController(
   CreateProjectDocumentationUseCase createDocumentationUseCase,
   ListProjectDocumentationsUseCase listProjectDocumentationsUseCase,
@@ -16,6 +19,10 @@ public class ProjectDocumentationsController(
 {
 
   [HttpPost]
+  [ProducesResponseType(typeof(Documentation), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> CreateDocumentation(
       string projectSlug,
       [FromBody] CreateProjectDocumentationInput input,
@@ -29,6 +36,8 @@ public class ProjectDocumentationsController(
   }
 
   [HttpGet]
+  [ProducesResponseType(typeof(ListProjectDocumentationsOutput), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> GetDocumentations(
       string projectSlug,
       [FromQuery] int page = 1,
@@ -44,6 +53,8 @@ public class ProjectDocumentationsController(
   }
 
   [HttpGet("{slug}")]
+  [ProducesResponseType(typeof(Documentation), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> GetDocumentation(
       string projectSlug,
       string slug,
@@ -54,6 +65,10 @@ public class ProjectDocumentationsController(
   }
 
   [HttpPatch("{slug}")]
+  [ProducesResponseType(typeof(Documentation), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> UpdateDocumentation(
       string projectSlug,
       string slug,
@@ -65,6 +80,8 @@ public class ProjectDocumentationsController(
   }
 
   [HttpDelete("{slug}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> DeleteDocumentation(
       string projectSlug,
       string slug,
