@@ -2,16 +2,9 @@ using System.Net;
 
 namespace ProyectoAtlas.Application.Errors;
 
-public abstract class KnownException : Exception
+public abstract class KnownException(string message, string code, HttpStatusCode statusCode) : Exception(message)
 {
-  protected KnownException(string message, string code, HttpStatusCode statusCode)
-      : base(message)
-  {
-    Code = code;
-    StatusCode = statusCode;
-  }
+  public string Code { get; } = code;
 
-  public string Code { get; }
-
-  public HttpStatusCode StatusCode { get; }
+  public HttpStatusCode StatusCode { get; } = statusCode;
 }
