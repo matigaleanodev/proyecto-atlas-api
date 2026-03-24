@@ -55,11 +55,11 @@ public class UpdateProjectUseCaseTests
   }
 
   [Fact]
-  public async Task Execute_ShouldThrowKeyNotFoundException_WhenProjectDoesNotExist()
+  public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
     UpdateProjectUseCase useCase = new UpdateProjectUseCase(new FakeProjectRepository());
     UpdateProjectInput input = new UpdateProjectInput("Atlas Platform", null, null, null);
 
-    await Assert.ThrowsAsync<KeyNotFoundException>(() => useCase.Execute("missing-project", input));
+    await Assert.ThrowsAsync<ProjectNotFoundException>(() => useCase.Execute("missing-project", input));
   }
 }

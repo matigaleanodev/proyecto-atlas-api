@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Application;
 using ProyectoAtlas.Application.Documentations;
+using ProyectoAtlas.Application.Errors;
 using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Infrastructure.Documentations;
 using ProyectoAtlas.Infrastructure.Persistence;
@@ -11,6 +14,18 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+  options.InvalidModelStateResponseFactory = _ =>
+  {
+    ApiErrorResponse error = new(
+        StatusCode: StatusCodes.Status400BadRequest,
+        Message: "The request payload is invalid.",
+        Code: AtlasErrorCodes.ValidationError);
+
+    return new BadRequestObjectResult(error);
+  };
+});
 
 builder.Services.AddScoped<HealthCheckUseCase>();
 builder.Services.AddScoped<CreateProjectUseCase>();
@@ -51,6 +66,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 app.UseAuthorization();
 

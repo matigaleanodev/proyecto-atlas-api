@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ProyectoAtlas.Application.Documentations;
+using ProyectoAtlas.Application.Errors;
 using ProyectoAtlas.Application.Projects;
 
 namespace ProyectoAtlas.Api.Tests;
@@ -96,6 +97,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
 
     Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.ProjectSlugConflict, "Project slug");
   }
 
   [Fact]
@@ -137,6 +139,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/missing-project/documentations", input);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.ProjectNotFound, "Project with slug");
   }
 
   [Fact]
@@ -151,6 +154,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
 
     Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.DocumentationSlugConflict, "Documentation slug");
   }
 
   [Fact]
@@ -214,6 +218,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.GetAsync("/projects/missing-project/documentations");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.ProjectNotFound, "Project with slug");
   }
 
   [Fact]
@@ -242,6 +247,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.GetAsync("/projects/missing-project/documentations/getting-started");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.ProjectNotFound, "Project with slug");
   }
 
   [Fact]
@@ -252,6 +258,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations/missing-doc");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.DocumentationNotFound, "Documentation with slug");
   }
 
   [Fact]
@@ -292,6 +299,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/missing-doc", input);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.DocumentationNotFound, "Documentation with slug");
   }
 
   [Fact]
@@ -307,6 +315,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/architecture", input);
 
     Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.DocumentationSlugConflict, "Documentation slug");
   }
 
   [Fact]
@@ -334,6 +343,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         await client.DeleteAsync("/projects/proyecto-atlas/documentations/missing-doc");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.DocumentationNotFound, "Documentation with slug");
   }
 
   [Fact]
@@ -410,6 +420,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.GetAsync("/projects/missing-project");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.ProjectNotFound, "Project with slug");
   }
 
   [Fact]
@@ -451,6 +462,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/missing-project", input);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.ProjectNotFound, "Project with slug");
   }
 
   [Fact]
@@ -466,6 +478,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/atlas-docs", input);
 
     Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.ProjectSlugConflict, "Project slug");
   }
 
   [Fact]
@@ -486,5 +499,54 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.DeleteAsync("/projects/missing-project");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.NotFound, AtlasErrorCodes.ProjectNotFound, "Project with slug");
+  }
+
+  [Fact]
+  public async Task PostProjects_ShouldReturnValidationError_WhenPayloadIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    object input = new
+    {
+      title = (string?)null,
+      description = "Backend for project documentation based on markdown",
+      repositoryUrl = "https://github.com/example/proyecto-atlas",
+      color = "#111827"
+    };
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.BadRequest, AtlasErrorCodes.ValidationError, "invalid");
+  }
+
+  [Fact]
+  public async Task GetUnknownError_ShouldReturnInternalServerErrorContract()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/unexpected-project");
+
+    Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.InternalServerError, AtlasErrorCodes.InternalServerError, "unexpected error");
+  }
+
+  private static async Task AssertErrorResponse(
+      HttpResponseMessage response,
+      HttpStatusCode expectedStatusCode,
+      string expectedCode,
+      string expectedMessageFragment)
+  {
+    Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal((int)expectedStatusCode, root.GetProperty("statusCode").GetInt32());
+    Assert.Equal(expectedCode, root.GetProperty("code").GetString());
+
+    string message = root.GetProperty("message").GetString() ?? string.Empty;
+    Assert.Contains(expectedMessageFragment, message, StringComparison.OrdinalIgnoreCase);
   }
 }

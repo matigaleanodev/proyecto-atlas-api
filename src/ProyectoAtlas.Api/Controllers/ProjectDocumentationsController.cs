@@ -21,21 +21,11 @@ public class ProjectDocumentationsController(
       [FromBody] CreateProjectDocumentationInput input,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Documentation documentation = await createDocumentationUseCase.Execute(projectSlug, input, cancellationToken);
-      return Created(
-              $"/projects/{projectSlug}/documentations/{documentation.Slug}",
-              documentation);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-    catch (DuplicateDocumentationSlugException)
-    {
-      return Conflict();
-    }
+    Documentation documentation = await createDocumentationUseCase.Execute(projectSlug, input, cancellationToken);
+
+    return Created(
+            $"/projects/{projectSlug}/documentations/{documentation.Slug}",
+            documentation);
   }
 
   [HttpGet]
@@ -46,18 +36,11 @@ public class ProjectDocumentationsController(
       [FromQuery] string? query = null,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      ListProjectDocumentationsInput input = new(page, pageSize, query);
-      ListProjectDocumentationsOutput output =
-          await listProjectDocumentationsUseCase.Execute(projectSlug, input, cancellationToken);
+    ListProjectDocumentationsInput input = new(page, pageSize, query);
+    ListProjectDocumentationsOutput output =
+        await listProjectDocumentationsUseCase.Execute(projectSlug, input, cancellationToken);
 
-      return Ok(output);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    return Ok(output);
   }
 
   [HttpGet("{slug}")]
@@ -66,15 +49,8 @@ public class ProjectDocumentationsController(
       string slug,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Documentation documentation = await getProjectDocumentationBySlugUseCase.Execute(projectSlug, slug, cancellationToken);
-      return Ok(documentation);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    Documentation documentation = await getProjectDocumentationBySlugUseCase.Execute(projectSlug, slug, cancellationToken);
+    return Ok(documentation);
   }
 
   [HttpPatch("{slug}")]
@@ -84,19 +60,8 @@ public class ProjectDocumentationsController(
       [FromBody] UpdateProjectDocumentationInput input,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Documentation documentation = await updateProjectDocumentationUseCase.Execute(projectSlug, slug, input, cancellationToken);
-      return Ok(documentation);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-    catch (DuplicateDocumentationSlugException)
-    {
-      return Conflict();
-    }
+    Documentation documentation = await updateProjectDocumentationUseCase.Execute(projectSlug, slug, input, cancellationToken);
+    return Ok(documentation);
   }
 
   [HttpDelete("{slug}")]
@@ -105,15 +70,7 @@ public class ProjectDocumentationsController(
       string slug,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      await deleteProjectDocumentationUseCase.Execute(projectSlug, slug, cancellationToken);
-      return NoContent();
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-
+    await deleteProjectDocumentationUseCase.Execute(projectSlug, slug, cancellationToken);
+    return NoContent();
   }
 }

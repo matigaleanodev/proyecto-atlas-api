@@ -20,16 +20,9 @@ public class ProjectsController(
       [FromBody] CreateProjectInput input,
       CancellationToken cancellationToken)
   {
-    try
-    {
-      Project project = await createProjectUseCase.Execute(input, cancellationToken);
+    Project project = await createProjectUseCase.Execute(input, cancellationToken);
 
-      return Created($"/projects/{project.Id}", project);
-    }
-    catch (DuplicateProjectSlugException)
-    {
-      return Conflict();
-    }
+    return Created($"/projects/{project.Id}", project);
   }
 
   [HttpGet]
@@ -51,15 +44,8 @@ public class ProjectsController(
       string slug,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Project project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
-      return Ok(project);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    Project project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+    return Ok(project);
   }
 
   [HttpPatch("{slug}")]
@@ -68,19 +54,8 @@ public class ProjectsController(
       [FromBody] UpdateProjectInput input,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Project project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
-      return Ok(project);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-    catch (DuplicateProjectSlugException)
-    {
-      return Conflict();
-    }
+    Project project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
+    return Ok(project);
   }
 
   [HttpDelete("{slug}")]
@@ -88,14 +63,7 @@ public class ProjectsController(
       string slug,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      await deleteProjectUseCase.Execute(slug, cancellationToken);
-      return NoContent();
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    await deleteProjectUseCase.Execute(slug, cancellationToken);
+    return NoContent();
   }
 }

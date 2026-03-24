@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 using ProyectoAtlas.Infrastructure.Persistence;
+using ProyectoAtlas.Infrastructure.Projects;
 
 namespace ProyectoAtlas.Api.Tests;
 
@@ -21,9 +23,16 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
     builder.ConfigureServices(services =>
     {
       services.RemoveAll<DbContextOptions<ProyectoAtlasDbContext>>();
+      services.RemoveAll<IProjectRepository>();
 
       services.AddDbContext<ProyectoAtlasDbContext>(options =>
               options.UseNpgsql(TestConnectionString));
+
+      services.AddScoped<IProjectRepository>(serviceProvider =>
+      {
+        ProjectRepository innerRepository = ActivatorUtilities.CreateInstance<ProjectRepository>(serviceProvider);
+        return new ThrowingProjectRepository(innerRepository);
+      });
     });
   }
 
