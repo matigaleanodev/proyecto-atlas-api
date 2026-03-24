@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 using ProyectoAtlas.Infrastructure.Persistence;
 
@@ -60,6 +61,16 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
         };
 
     await dbContext.Projects.AddRangeAsync(projects);
+    await dbContext.SaveChangesAsync();
+
+    Documentation[] documentations = new[]
+    {
+      new Documentation(projects[0].Id, "Getting Started", "# Proyecto Atlas", 1),
+      new Documentation(projects[0].Id, "Architecture", "## Layers", 2),
+      new Documentation(projects[1].Id, "Overview", "# Atlas Docs", 1),
+    };
+
+    await dbContext.Documentations.AddRangeAsync(documentations);
     await dbContext.SaveChangesAsync();
   }
 }

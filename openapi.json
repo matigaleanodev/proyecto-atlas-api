@@ -112,6 +112,36 @@
         }
       }
     },
+    "/projects/{projectSlug}/documentations/{slug}": {
+      "get": {
+        "tags": [
+          "ProjectDocumentations"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/projects": {
       "get": {
         "tags": [

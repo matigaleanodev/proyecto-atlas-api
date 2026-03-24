@@ -18,8 +18,11 @@ builder.Services.AddScoped<ListProjectsUseCase>();
 builder.Services.AddScoped<GetProjectBySlugUseCase>();
 builder.Services.AddScoped<UpdateProjectUseCase>();
 builder.Services.AddScoped<DeleteProjectUseCase>();
-builder.Services.AddScoped<CreateDocumentationUseCase>();
+builder.Services.AddScoped<CreateProjectDocumentationUseCase>();
 builder.Services.AddScoped<ListProjectDocumentationsUseCase>();
+builder.Services.AddScoped<GetProjectDocumentationBySlugUseCase>();
+builder.Services.AddScoped<UpdateProjectDocumentationUseCase>();
+builder.Services.AddScoped<DeleteProjectDocumentationUseCase>();
 
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

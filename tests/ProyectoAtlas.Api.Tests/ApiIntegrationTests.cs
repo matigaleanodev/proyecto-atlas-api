@@ -87,8 +87,9 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PostProjectDocumentations_ShouldReturnCreatedDocumentation()
   {
     HttpClient client = _factory.CreateClient();
-    CreateDocumentationInput input = new CreateDocumentationInput(
-        "Getting Started",
+    string suffix = Guid.NewGuid().ToString("N")[..8];
+    CreateProjectDocumentationInput input = new CreateProjectDocumentationInput(
+        $"Getting Started {suffix}",
         "# Proyecto Atlas",
         1);
 
@@ -105,7 +106,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.Title, root.GetProperty("title").GetString());
     Assert.Equal(input.ContentMarkdown, root.GetProperty("contentMarkdown").GetString());
     Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
-    Assert.Equal("getting-started", root.GetProperty("slug").GetString());
+    Assert.Equal($"getting-started-{suffix.ToLowerInvariant()}", root.GetProperty("slug").GetString());
     Assert.NotEqual(Guid.Empty, root.GetProperty("id").GetGuid());
   }
 
@@ -113,7 +114,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PostProjectDocumentations_ShouldReturnNotFound_WhenProjectDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();
-    CreateDocumentationInput input = new CreateDocumentationInput(
+    CreateProjectDocumentationInput input = new CreateProjectDocumentationInput(
         "Getting Started",
         "# Proyecto Atlas",
         1);
@@ -127,13 +128,6 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task GetProjectDocumentations_ShouldReturnPagedDocumentations()
   {
     HttpClient client = _factory.CreateClient();
-
-    await client.PostAsJsonAsync(
-        "/projects/proyecto-atlas/documentations",
-        new CreateDocumentationInput("Getting Started", "# Proyecto Atlas", 1));
-    await client.PostAsJsonAsync(
-        "/projects/proyecto-atlas/documentations",
-        new CreateDocumentationInput("Architecture", "## Layers", 2));
 
     HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations?page=1&pageSize=1");
 
@@ -156,13 +150,6 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
 
-    await client.PostAsJsonAsync(
-        "/projects/proyecto-atlas/documentations",
-        new CreateDocumentationInput("Getting Started", "# Proyecto Atlas", 1));
-    await client.PostAsJsonAsync(
-        "/projects/proyecto-atlas/documentations",
-        new CreateDocumentationInput("Architecture", "## Layers", 2));
-
     HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations?query=arch");
 
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -182,6 +169,44 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpClient client = _factory.CreateClient();
 
     HttpResponseMessage response = await client.GetAsync("/projects/missing-project/documentations");
+
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentationBySlug_ShouldReturnDocumentation_WhenDocumentationExists()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations/getting-started");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal("getting-started", root.GetProperty("slug").GetString());
+    Assert.Equal("Getting Started", root.GetProperty("title").GetString());
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentationBySlug_ShouldReturnNotFound_WhenProjectDoesNotExist()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/missing-project/documentations/getting-started");
+
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentationBySlug_ShouldReturnNotFound_WhenDocumentationDoesNotExist()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations/missing-doc");
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
   }

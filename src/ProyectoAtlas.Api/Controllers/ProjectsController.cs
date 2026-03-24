@@ -15,6 +15,16 @@ public class ProjectsController(
   ) : ControllerBase
 {
 
+  [HttpPost]
+  public async Task<IActionResult> CreateProject(
+      [FromBody] CreateProjectInput input,
+      CancellationToken cancellationToken)
+  {
+    Project project = await createProjectUseCase.Execute(input, cancellationToken);
+
+    return Created($"/projects/{project.Id}", project);
+  }
+
   [HttpGet]
   public async Task<IActionResult> GetProjects(
       [FromQuery] int page = 1,
@@ -69,22 +79,12 @@ public class ProjectsController(
   {
     try
     {
-      Project project = await deleteProjectUseCase.Execute(slug, cancellationToken);
+      await deleteProjectUseCase.Execute(slug, cancellationToken);
       return NoContent();
     }
     catch (KeyNotFoundException)
     {
       return NotFound();
     }
-  }
-
-  [HttpPost]
-  public async Task<IActionResult> CreateProject(
-      [FromBody] CreateProjectInput input,
-      CancellationToken cancellationToken)
-  {
-    Project project = await createProjectUseCase.Execute(input, cancellationToken);
-
-    return Created($"/projects/{project.Id}", project);
   }
 }

@@ -4,13 +4,13 @@ using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Application.Documentations;
 
-public class CreateDocumentationUseCase(
+public class CreateProjectDocumentationUseCase(
     IDocumentationRepository documentationRepository,
     IProjectRepository projectRepository)
 {
   public async Task<Documentation> Execute(
       string projectSlug,
-      CreateDocumentationInput input,
+      CreateProjectDocumentationInput input,
       CancellationToken cancellationToken = default)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(projectSlug);

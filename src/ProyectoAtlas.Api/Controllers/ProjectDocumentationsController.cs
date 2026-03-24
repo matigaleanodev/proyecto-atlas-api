@@ -7,10 +7,32 @@ namespace ProyectoAtlas.Api.Controllers;
 [ApiController]
 [Route("projects/{projectSlug}/documentations")]
 public class ProjectDocumentationsController(
-  CreateDocumentationUseCase createDocumentationUseCase,
-  ListProjectDocumentationsUseCase listProjectDocumentationsUseCase
+  CreateProjectDocumentationUseCase createDocumentationUseCase,
+  ListProjectDocumentationsUseCase listProjectDocumentationsUseCase,
+  GetProjectDocumentationBySlugUseCase getProjectDocumentationBySlugUseCase,
+  UpdateProjectDocumentationUseCase updateProjectDocumentationUseCase,
+  DeleteProjectDocumentationUseCase deleteProjectDocumentationUseCase
   ) : ControllerBase
 {
+
+  [HttpPost]
+  public async Task<IActionResult> CreateDocumentation(
+      string projectSlug,
+      [FromBody] CreateProjectDocumentationInput input,
+      CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      Documentation documentation = await createDocumentationUseCase.Execute(projectSlug, input, cancellationToken);
+      return Created(
+              $"/projects/{projectSlug}/documentations/{documentation.Slug}",
+              documentation);
+    }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
+  }
 
   [HttpGet]
   public async Task<IActionResult> GetDocumentations(
@@ -34,19 +56,16 @@ public class ProjectDocumentationsController(
     }
   }
 
-
-  [HttpPost]
-  public async Task<IActionResult> CreateDocumentation(
+  [HttpGet("{slug}")]
+  public async Task<IActionResult> GetDocumentation(
       string projectSlug,
-      [FromBody] CreateDocumentationInput input,
+      string slug,
       CancellationToken cancellationToken = default)
   {
     try
     {
-      Documentation documentation = await createDocumentationUseCase.Execute(projectSlug, input, cancellationToken);
-      return Created(
-              $"/projects/{projectSlug}/documentations/{documentation.Slug}",
-              documentation);
+      Documentation documentation = await getProjectDocumentationBySlugUseCase.Execute(projectSlug, slug, cancellationToken);
+      return Ok(documentation);
     }
     catch (KeyNotFoundException)
     {
@@ -54,4 +73,39 @@ public class ProjectDocumentationsController(
     }
   }
 
+  [HttpPatch("{slug}")]
+  public async Task<IActionResult> UpdateDocumentation(
+      string projectSlug,
+      string slug,
+      [FromBody] UpdateProjectDocumentationInput input,
+      CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      Documentation documentation = await updateProjectDocumentationUseCase.Execute(projectSlug, slug, input, cancellationToken);
+      return Ok(documentation);
+    }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
+  }
+
+  [HttpDelete("{slug}")]
+  public async Task<IActionResult> DeleteDocumentation(
+      string projectSlug,
+      string slug,
+      CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      await deleteProjectDocumentationUseCase.Execute(projectSlug, slug, cancellationToken);
+      return NoContent();
+    }
+    catch (KeyNotFoundException)
+    {
+      return NotFound();
+    }
+
+  }
 }
