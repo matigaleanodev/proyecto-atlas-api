@@ -32,6 +32,10 @@ public class ProjectDocumentationsController(
     {
       return NotFound();
     }
+    catch (DuplicateDocumentationSlugException)
+    {
+      return Conflict();
+    }
   }
 
   [HttpGet]
@@ -88,6 +92,10 @@ public class ProjectDocumentationsController(
     catch (KeyNotFoundException)
     {
       return NotFound();
+    }
+    catch (DuplicateDocumentationSlugException)
+    {
+      return Conflict();
     }
   }
 

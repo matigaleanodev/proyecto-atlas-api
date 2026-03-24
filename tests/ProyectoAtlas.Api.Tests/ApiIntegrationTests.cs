@@ -84,6 +84,21 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjects_ShouldReturnConflict_WhenSlugAlreadyExists()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectInput input = new(
+        "Proyecto Atlas",
+        "Duplicate backend for project documentation based on markdown",
+        "https://github.com/example/proyecto-atlas",
+        "#111827");
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+  }
+
+  [Fact]
   public async Task PostProjectDocumentations_ShouldReturnCreatedDocumentation()
   {
     HttpClient client = _factory.CreateClient();
@@ -122,6 +137,34 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/missing-project/documentations", input);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnConflict_WhenSlugAlreadyExistsWithinProject()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationInput input = new(
+        "Getting Started",
+        "# Duplicate",
+        3);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnCreated_WhenSlugExistsInAnotherProject()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationInput input = new(
+        "Getting Started",
+        "# Atlas Docs",
+        2);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/atlas-docs/documentations", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
   }
 
   [Fact]
@@ -249,6 +292,21 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/missing-doc", input);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnConflict_WhenSlugAlreadyExistsWithinProject()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationInput input = new(
+        "Getting Started",
+        null,
+        null);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/architecture", input);
+
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
   }
 
   [Fact]
@@ -393,6 +451,21 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/missing-project", input);
 
     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task PatchProject_ShouldReturnConflict_WhenSlugAlreadyExists()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectInput input = new(
+        "Proyecto Atlas",
+        null,
+        null,
+        null);
+
+    HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/atlas-docs", input);
+
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
   }
 
   [Fact]

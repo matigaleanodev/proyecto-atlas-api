@@ -20,9 +20,16 @@ public class ProjectsController(
       [FromBody] CreateProjectInput input,
       CancellationToken cancellationToken)
   {
-    Project project = await createProjectUseCase.Execute(input, cancellationToken);
+    try
+    {
+      Project project = await createProjectUseCase.Execute(input, cancellationToken);
 
-    return Created($"/projects/{project.Id}", project);
+      return Created($"/projects/{project.Id}", project);
+    }
+    catch (DuplicateProjectSlugException)
+    {
+      return Conflict();
+    }
   }
 
   [HttpGet]
@@ -69,6 +76,10 @@ public class ProjectsController(
     catch (KeyNotFoundException)
     {
       return NotFound();
+    }
+    catch (DuplicateProjectSlugException)
+    {
+      return Conflict();
     }
   }
 
