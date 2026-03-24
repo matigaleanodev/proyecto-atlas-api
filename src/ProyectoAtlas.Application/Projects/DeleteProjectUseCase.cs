@@ -4,7 +4,7 @@ namespace ProyectoAtlas.Application.Projects;
 
 public class DeleteProjectUseCase(IProjectRepository projectRepository)
 {
-  public async Task<Project> Execute(string slug, CancellationToken cancellationToken = default)
+  public async Task Execute(string slug, CancellationToken cancellationToken = default)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
 
@@ -12,6 +12,5 @@ public class DeleteProjectUseCase(IProjectRepository projectRepository)
 
     await projectRepository.Delete(project, cancellationToken);
 
-    return project;
   }
 }
