@@ -14,7 +14,8 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
   }
   public async Task<(IEnumerable<Documentation> Documentations, int TotalCount)> GetPagedList(Guid projectId, int page, int pageSize, string? query = null, CancellationToken cancellationToken = default)
   {
-    IQueryable<Documentation> documentationsQuery = dbContext.Documentations;
+    IQueryable<Documentation> documentationsQuery = dbContext.Documentations
+        .Where(documentation => documentation.ProjectId == projectId);
 
     if (!string.IsNullOrWhiteSpace(query))
     {
@@ -26,27 +27,31 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     int totalCount = await documentationsQuery.CountAsync(cancellationToken);
 
     List<Documentation> documentations = await documentationsQuery
-    .OrderByDescending(documentation => documentation.CreatedAtUtc)
+        .OrderBy(documentation => documentation.SortOrder)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync(cancellationToken);
 
     return (documentations, totalCount);
   }
-
-  public Task Delete(Documentation documentation, CancellationToken cancellationToken = default)
+  public async Task<Documentation?> GetBySlug(Guid projectId, string slug, CancellationToken cancellationToken = default)
   {
-    throw new NotImplementedException();
+    return await dbContext.Documentations
+        .FirstOrDefaultAsync(documentation => documentation.ProjectId == projectId && documentation.Slug == slug, cancellationToken);
   }
 
-  public Task<Documentation?> GetBySlug(Guid projectId, string slug, CancellationToken cancellationToken = default)
+  public async Task Update(Documentation documentation, CancellationToken cancellationToken = default)
   {
-    throw new NotImplementedException();
+    dbContext.Documentations.Update(documentation);
+    await dbContext.SaveChangesAsync(cancellationToken);
   }
 
-
-  public Task Update(Documentation documentation, CancellationToken cancellationToken = default)
+  public async Task Delete(Documentation documentation, CancellationToken cancellationToken = default)
   {
-    throw new NotImplementedException();
+    dbContext.Documentations.Remove(documentation);
+    await dbContext.SaveChangesAsync(cancellationToken);
   }
+
 }
+
+
