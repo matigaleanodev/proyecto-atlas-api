@@ -84,6 +84,43 @@ public class UpdateProjectDocumentationCommandHandlerTests
         useCase.Execute("proyecto-atlas", "missing-doc", input));
   }
 
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationTitleConventionException_WhenDecisionTitleIsInvalid()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        project.Id,
+        "ADR-001 Architecture",
+        "# Atlas",
+        1,
+        DocumentationKind.Decision,
+        DocumentationStatus.Draft);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Architecture without ADR prefix",
+        "## Updated",
+        3,
+        DocumentationStatus.Published);
+
+    InvalidDocumentationTitleConventionException exception =
+        await Assert.ThrowsAsync<InvalidDocumentationTitleConventionException>(() =>
+            useCase.Execute("proyecto-atlas", "adr-001-architecture", input));
+
+    Assert.Contains("ADR-XXX", exception.Message, StringComparison.Ordinal);
+  }
+
   [Theory]
   [InlineData(null, "getting-started")]
   [InlineData("", "getting-started")]

@@ -86,6 +86,27 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjects_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectCommand input = new(
+        "Átlas API: Guía / Inicial",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal("atlas-api-guia-inicial", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
   public async Task PostProjects_ShouldReturnConflict_WhenSlugAlreadyExists()
   {
     HttpClient client = _factory.CreateClient();
@@ -130,6 +151,28 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.Status.ToString(), root.GetProperty("status").GetString());
     Assert.Equal($"getting-started-{suffix.ToLowerInvariant()}", root.GetProperty("slug").GetString());
     Assert.NotEqual(Guid.Empty, root.GetProperty("id").GetGuid());
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Guía API: sección / inicial",
+        "# Proyecto Atlas",
+        1,
+        DocumentationKind.Page,
+        DocumentationStatus.Draft);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal("guia-api-seccion-inicial", root.GetProperty("slug").GetString());
   }
 
   [Fact]
@@ -217,6 +260,27 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     await AssertErrorResponse(response, HttpStatusCode.BadRequest, AtlasErrorCodes.ValidationError, "invalid");
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenDecisionTitleConventionIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Architecture decision without ADR prefix",
+        "# Proyecto Atlas",
+        1,
+        DocumentationKind.Decision,
+        DocumentationStatus.Draft);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTitleConventionInvalid,
+        "ADR-XXX");
   }
 
   [Fact]
@@ -415,6 +479,27 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal("Page", root.GetProperty("kind").GetString());
     Assert.Equal(input.Status.ToString(), root.GetProperty("status").GetString());
     Assert.Equal("quick-start", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnBadRequest_WhenDecisionTitleConventionIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationCommand input = new(
+        "Architecture without ADR prefix",
+        "## Updated",
+        3,
+        DocumentationStatus.Published);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/adr-001-architecture", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTitleConventionInvalid,
+        "ADR-XXX");
   }
 
   [Fact]

@@ -40,6 +40,59 @@ public class CreateDocumentationUseCaseTests
   }
 
   [Fact]
+  public async Task Execute_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    FakeDocumentationRepository documentationRepository = new();
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        "Guía API: sección / inicial",
+        "# Atlas",
+        1,
+        DocumentationKind.Page,
+        DocumentationStatus.Draft);
+
+    Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
+
+    Assert.Equal("guia-api-seccion-inicial", result.Slug);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationTitleConventionException_WhenDecisionTitleIsInvalid()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
+        new FakeDocumentationRepository(),
+        projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        "Decision without ADR prefix",
+        "# Atlas",
+        1,
+        DocumentationKind.Decision,
+        DocumentationStatus.Draft);
+
+    InvalidDocumentationTitleConventionException exception =
+        await Assert.ThrowsAsync<InvalidDocumentationTitleConventionException>(() =>
+            createDocumentationUseCase.Execute("proyecto-atlas", input));
+
+    Assert.Contains("ADR-XXX", exception.Message, StringComparison.Ordinal);
+  }
+
+  [Fact]
   public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(

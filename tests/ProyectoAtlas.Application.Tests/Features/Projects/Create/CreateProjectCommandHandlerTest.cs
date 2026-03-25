@@ -26,6 +26,22 @@ public class CreateProjectCommandHandlerTests
     Assert.Same(result, projectRepository.AddedProject);
   }
 
+  [Fact]
+  public async Task Execute_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
+  {
+    FakeProjectRepository projectRepository = new FakeProjectRepository();
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository);
+    CreateProjectCommand input = new CreateProjectCommand(
+        "Átlas API: Guía / Inicial",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+
+    Project result = await createProjectUseCase.Execute(input);
+
+    Assert.Equal("atlas-api-guia-inicial", result.Slug);
+  }
+
   [Theory]
   [InlineData(null, "description", "https://github.com/example/atlas", "#1E293B")]
   [InlineData("", "description", "https://github.com/example/atlas", "#1E293B")]
