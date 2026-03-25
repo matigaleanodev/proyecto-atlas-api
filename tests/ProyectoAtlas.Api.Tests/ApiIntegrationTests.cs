@@ -17,9 +17,9 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     await _factory.SeedProjectsAsync();
   }
 
-  public async Task DisposeAsync()
+  public Task DisposeAsync()
   {
-    await _factory.ResetDatabaseAsync();
+    return Task.CompletedTask;
   }
 
   [Fact]
