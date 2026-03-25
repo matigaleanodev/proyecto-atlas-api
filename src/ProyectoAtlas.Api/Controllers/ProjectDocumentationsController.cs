@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Domain.Documentations;
 
-namespace ProyectoAtlas.Api.Features.Documentations;
+namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("projects/{projectSlug}/documentations")]

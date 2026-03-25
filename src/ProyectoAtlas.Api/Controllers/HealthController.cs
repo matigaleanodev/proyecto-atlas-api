@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-namespace ProyectoAtlas.Api.Features.Health;
+
+namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("health")]
