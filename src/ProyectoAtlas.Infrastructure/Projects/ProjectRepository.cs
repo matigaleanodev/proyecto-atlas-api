@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Projects;
 using ProyectoAtlas.Infrastructure.Persistence;
@@ -10,7 +11,7 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
   public async Task Add(Project project, CancellationToken cancellationToken = default)
   {
     await dbContext.Projects.AddAsync(project, cancellationToken);
-    await dbContext.SaveChangesAsync(cancellationToken);
+    await SaveChanges(project.Slug, cancellationToken);
   }
 
   public async Task<(IEnumerable<Project> Projects, int TotalCount)> GetPagedList(
@@ -49,7 +50,7 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
   public async Task Update(Project project, CancellationToken cancellationToken = default)
   {
     dbContext.Projects.Update(project);
-    await dbContext.SaveChangesAsync(cancellationToken);
+    await SaveChanges(project.Slug, cancellationToken);
   }
 
   public async Task Delete(Project project, CancellationToken cancellationToken = default)
@@ -58,4 +59,18 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
     await dbContext.SaveChangesAsync(cancellationToken);
   }
 
+  private async Task SaveChanges(string slug, CancellationToken cancellationToken)
+  {
+    try
+    {
+      await dbContext.SaveChangesAsync(cancellationToken);
+    }
+    catch (DbUpdateException exception) when (
+        exception.InnerException is PostgresException postgresException &&
+        postgresException.SqlState == PostgresErrorCodes.UniqueViolation &&
+        postgresException.ConstraintName == "IX_projects_slug")
+    {
+      throw new DuplicateProjectSlugException(slug);
+    }
+  }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Infrastructure.Persistence;
@@ -10,7 +11,7 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
   public async Task Add(Documentation documentation, CancellationToken cancellationToken = default)
   {
     await dbContext.Documentations.AddAsync(documentation, cancellationToken);
-    await dbContext.SaveChangesAsync(cancellationToken);
+    await SaveChanges(documentation.Slug, cancellationToken);
   }
   public async Task<(IEnumerable<Documentation> Documentations, int TotalCount)> GetPagedList(Guid projectId, int page, int pageSize, string? query = null, CancellationToken cancellationToken = default)
   {
@@ -43,7 +44,7 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
   public async Task Update(Documentation documentation, CancellationToken cancellationToken = default)
   {
     dbContext.Documentations.Update(documentation);
-    await dbContext.SaveChangesAsync(cancellationToken);
+    await SaveChanges(documentation.Slug, cancellationToken);
   }
 
   public async Task Delete(Documentation documentation, CancellationToken cancellationToken = default)
@@ -52,6 +53,20 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     await dbContext.SaveChangesAsync(cancellationToken);
   }
 
+  private async Task SaveChanges(string slug, CancellationToken cancellationToken)
+  {
+    try
+    {
+      await dbContext.SaveChangesAsync(cancellationToken);
+    }
+    catch (DbUpdateException exception) when (
+        exception.InnerException is PostgresException postgresException &&
+        postgresException.SqlState == PostgresErrorCodes.UniqueViolation &&
+        postgresException.ConstraintName == "IX_documentations_project_id_slug")
+    {
+      throw new DuplicateDocumentationSlugException(slug);
+    }
+  }
 }
 
 

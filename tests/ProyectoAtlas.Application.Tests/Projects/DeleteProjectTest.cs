@@ -25,11 +25,11 @@ public class DeleteProjectUseCaseTests
   }
 
   [Fact]
-  public async Task Execute_ShouldThrowKeyNotFoundException_WhenProjectDoesNotExist()
+  public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
     DeleteProjectUseCase useCase = new DeleteProjectUseCase(new FakeProjectRepository());
 
-    await Assert.ThrowsAsync<KeyNotFoundException>(() => useCase.Execute("missing-project"));
+    await Assert.ThrowsAsync<ProjectNotFoundException>(() => useCase.Execute("missing-project"));
   }
 
   [Theory]

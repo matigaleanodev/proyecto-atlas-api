@@ -1,4 +1,5 @@
 using ProyectoAtlas.Application.Documentations;
+using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 
@@ -35,7 +36,7 @@ public class CreateDocumentationUseCaseTests
   }
 
   [Fact]
-  public async Task Execute_ShouldThrowKeyNotFoundException_WhenProjectDoesNotExist()
+  public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
     CreateProjectDocumentationUseCase createDocumentationUseCase = new CreateProjectDocumentationUseCase(
         new FakeDocumentationRepository(),
@@ -45,7 +46,7 @@ public class CreateDocumentationUseCaseTests
         "# Atlas",
         1);
 
-    await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+    await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
         createDocumentationUseCase.Execute("missing-project", input));
   }
 

@@ -8,9 +8,9 @@ public class DeleteProjectUseCase(IProjectRepository projectRepository)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
 
-    Project project = await projectRepository.GetBySlug(slug, cancellationToken) ?? throw new KeyNotFoundException($"Project with slug '{slug}' not found.");
+    Project project = await projectRepository.GetBySlug(slug, cancellationToken)
+        ?? throw new ProjectNotFoundException(slug);
 
     await projectRepository.Delete(project, cancellationToken);
-
   }
 }

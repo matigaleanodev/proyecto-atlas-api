@@ -9,8 +9,9 @@ public class ListProjectDocumentationsUseCase(IDocumentationRepository documenta
   public async Task<ListProjectDocumentationsOutput> Execute(string projectSlug, ListProjectDocumentationsInput input, CancellationToken cancellationToken = default)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(projectSlug);
+
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
-    ?? throw new KeyNotFoundException($"Project with slug '{projectSlug}' not found.");
+        ?? throw new ProjectNotFoundException(projectSlug);
 
     (int page, int pageSize, string? query) = input;
 

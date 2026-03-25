@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Domain.Documentations;
 
@@ -6,6 +7,8 @@ namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("projects/{projectSlug}/documentations")]
+[Produces("application/json")]
+[ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
 public class ProjectDocumentationsController(
   CreateProjectDocumentationUseCase createDocumentationUseCase,
   ListProjectDocumentationsUseCase listProjectDocumentationsUseCase,
@@ -16,25 +19,25 @@ public class ProjectDocumentationsController(
 {
 
   [HttpPost]
+  [ProducesResponseType(typeof(Documentation), StatusCodes.Status201Created)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> CreateDocumentation(
       string projectSlug,
       [FromBody] CreateProjectDocumentationInput input,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Documentation documentation = await createDocumentationUseCase.Execute(projectSlug, input, cancellationToken);
-      return Created(
-              $"/projects/{projectSlug}/documentations/{documentation.Slug}",
-              documentation);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    Documentation documentation = await createDocumentationUseCase.Execute(projectSlug, input, cancellationToken);
+
+    return Created(
+            $"/projects/{projectSlug}/documentations/{documentation.Slug}",
+            documentation);
   }
 
   [HttpGet]
+  [ProducesResponseType(typeof(ListProjectDocumentationsOutput), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> GetDocumentations(
       string projectSlug,
       [FromQuery] int page = 1,
@@ -42,70 +45,49 @@ public class ProjectDocumentationsController(
       [FromQuery] string? query = null,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      ListProjectDocumentationsInput input = new(page, pageSize, query);
-      ListProjectDocumentationsOutput output =
-          await listProjectDocumentationsUseCase.Execute(projectSlug, input, cancellationToken);
+    ListProjectDocumentationsInput input = new(page, pageSize, query);
+    ListProjectDocumentationsOutput output =
+        await listProjectDocumentationsUseCase.Execute(projectSlug, input, cancellationToken);
 
-      return Ok(output);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    return Ok(output);
   }
 
   [HttpGet("{slug}")]
+  [ProducesResponseType(typeof(Documentation), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> GetDocumentation(
       string projectSlug,
       string slug,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Documentation documentation = await getProjectDocumentationBySlugUseCase.Execute(projectSlug, slug, cancellationToken);
-      return Ok(documentation);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    Documentation documentation = await getProjectDocumentationBySlugUseCase.Execute(projectSlug, slug, cancellationToken);
+    return Ok(documentation);
   }
 
   [HttpPatch("{slug}")]
+  [ProducesResponseType(typeof(Documentation), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> UpdateDocumentation(
       string projectSlug,
       string slug,
       [FromBody] UpdateProjectDocumentationInput input,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      Documentation documentation = await updateProjectDocumentationUseCase.Execute(projectSlug, slug, input, cancellationToken);
-      return Ok(documentation);
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
+    Documentation documentation = await updateProjectDocumentationUseCase.Execute(projectSlug, slug, input, cancellationToken);
+    return Ok(documentation);
   }
 
   [HttpDelete("{slug}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> DeleteDocumentation(
       string projectSlug,
       string slug,
       CancellationToken cancellationToken = default)
   {
-    try
-    {
-      await deleteProjectDocumentationUseCase.Execute(projectSlug, slug, cancellationToken);
-      return NoContent();
-    }
-    catch (KeyNotFoundException)
-    {
-      return NotFound();
-    }
-
+    await deleteProjectDocumentationUseCase.Execute(projectSlug, slug, cancellationToken);
+    return NoContent();
   }
 }

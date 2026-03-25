@@ -12,12 +12,11 @@ public class DeleteProjectDocumentationUseCase(IDocumentationRepository document
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
 
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
-    ?? throw new KeyNotFoundException($"Project with slug '{projectSlug}' not found.");
+        ?? throw new ProjectNotFoundException(projectSlug);
 
     Documentation documentation = await documentationRepository.GetBySlug(project.Id, slug, cancellationToken)
-    ?? throw new KeyNotFoundException($"Documentation with slug '{slug}' not found for project '{projectSlug}'.");
+        ?? throw new DocumentationNotFoundException(projectSlug, slug);
 
     await documentationRepository.Delete(documentation, cancellationToken);
-
   }
 }

@@ -7,14 +7,12 @@ public class UpdateProjectUseCase(IProjectRepository projectRepository)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
 
-
-    Project project = await projectRepository.GetBySlug(slug, cancellationToken) ?? throw new KeyNotFoundException($"Project with slug '{slug}' not found."); ;
-
+    Project project = await projectRepository.GetBySlug(slug, cancellationToken)
+        ?? throw new ProjectNotFoundException(slug);
 
     project.Update(input.Title, input.Description, input.RepositoryUrl, input.Color);
 
     await projectRepository.Update(project, cancellationToken);
-
 
     return project;
   }
