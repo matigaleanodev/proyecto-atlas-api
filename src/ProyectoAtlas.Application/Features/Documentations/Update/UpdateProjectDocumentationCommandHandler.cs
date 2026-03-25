@@ -17,12 +17,19 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
     Documentation documentation = await documentationRepository.GetBySlug(project.Id, slug, cancellationToken)
         ?? throw new DocumentationNotFoundException(projectSlug, slug);
 
-    documentation.Update(
-      title: input.Title,
-      contentMarkdown: input.ContentMarkdown,
-      sortOrder: input.SortOrder,
-      status: input.Status
-    );
+    try
+    {
+      documentation.Update(
+        title: input.Title,
+        contentMarkdown: input.ContentMarkdown,
+        sortOrder: input.SortOrder,
+        status: input.Status
+      );
+    }
+    catch (InvalidDocumentationTitleException exception)
+    {
+      throw new InvalidDocumentationTitleConventionException(exception.Message);
+    }
 
     await documentationRepository.Update(documentation, cancellationToken);
 

@@ -20,13 +20,22 @@ public class CreateProjectDocumentationCommandHandler(
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
         ?? throw new ProjectNotFoundException(projectSlug);
 
-    Documentation documentation = new(
-        project.Id,
-        input.Title,
-        input.ContentMarkdown,
-        input.SortOrder,
-        input.Kind,
-        input.Status);
+    Documentation documentation;
+
+    try
+    {
+      documentation = new(
+          project.Id,
+          input.Title,
+          input.ContentMarkdown,
+          input.SortOrder,
+          input.Kind,
+          input.Status);
+    }
+    catch (InvalidDocumentationTitleException exception)
+    {
+      throw new InvalidDocumentationTitleConventionException(exception.Message);
+    }
 
     await documentationRepository.Add(documentation, cancellationToken);
 

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using ProyectoAtlas.Domain.Common;
 
 namespace ProyectoAtlas.Domain.Documentations;
 
@@ -15,7 +16,8 @@ public partial class Documentation
   {
     if (kind == DocumentationKind.Decision && !ValidateAdrTitle(title))
     {
-      throw new ArgumentException("ADR documentation title must follow the format 'ADR-XXX Title'", nameof(title));
+      throw new InvalidDocumentationTitleException(
+          "ADR documentation title must follow the format 'ADR-XXX Title'.");
     }
 
     DateTime now = DateTime.UtcNow;
@@ -23,7 +25,7 @@ public partial class Documentation
     Id = Guid.NewGuid();
     ProjectId = projectId;
     Title = title;
-    Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
+    Slug = SlugGenerator.Generate(title);
     ContentMarkdown = contentMarkdown;
     SortOrder = sortOrder;
     Kind = kind;
@@ -49,13 +51,12 @@ public partial class Documentation
     {
       if (Kind == DocumentationKind.Decision && !ValidateAdrTitle(title))
       {
-        throw new ArgumentException(
-            "ADR documentation title must follow the format 'ADR-XXX Title'",
-            nameof(title));
+        throw new InvalidDocumentationTitleException(
+            "ADR documentation title must follow the format 'ADR-XXX Title'.");
       }
 
       Title = title;
-      Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
+      Slug = SlugGenerator.Generate(title);
     }
 
 
