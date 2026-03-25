@@ -15,7 +15,7 @@ public class UpdateProjectDocumentationUseCaseTests
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
-    Documentation documentation = new(project.Id, "Getting Started", "# Atlas", 1);
+    Documentation documentation = new(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project,
@@ -28,7 +28,8 @@ public class UpdateProjectDocumentationUseCaseTests
     UpdateProjectDocumentationInput input = new(
         "Quick Start",
         "## Updated",
-        3);
+        3,
+        DocumentationKind.Decision);
 
     Documentation result = await useCase.Execute("proyecto-atlas", "getting-started", input);
 
@@ -36,6 +37,7 @@ public class UpdateProjectDocumentationUseCaseTests
     Assert.Equal("quick-start", result.Slug);
     Assert.Equal(input.ContentMarkdown, result.ContentMarkdown);
     Assert.Equal(input.SortOrder, result.SortOrder);
+    Assert.Equal(input.Kind, result.Kind);
     Assert.Same(documentation, result);
     Assert.Same(documentation, documentationRepository.UpdatedDocumentation);
   }
@@ -49,7 +51,8 @@ public class UpdateProjectDocumentationUseCaseTests
     UpdateProjectDocumentationInput input = new(
         "Quick Start",
         "## Updated",
-        3);
+        3,
+        DocumentationKind.Note);
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
         useCase.Execute("missing-project", "getting-started", input));
@@ -73,7 +76,8 @@ public class UpdateProjectDocumentationUseCaseTests
     UpdateProjectDocumentationInput input = new(
         "Quick Start",
         "## Updated",
-        3);
+        3,
+        DocumentationKind.Note);
 
     await Assert.ThrowsAsync<DocumentationNotFoundException>(() =>
         useCase.Execute("proyecto-atlas", "missing-doc", input));
@@ -96,7 +100,8 @@ public class UpdateProjectDocumentationUseCaseTests
     UpdateProjectDocumentationInput input = new(
         "Quick Start",
         "## Updated",
-        3);
+        3,
+        DocumentationKind.Note);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() =>
         useCase.Execute(projectSlug!, slug!, input));

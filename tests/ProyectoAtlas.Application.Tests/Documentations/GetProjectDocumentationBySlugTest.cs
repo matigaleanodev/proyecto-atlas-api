@@ -21,13 +21,14 @@ public class GetProjectDocumentationBySlugUseCaseTests
     };
     FakeDocumentationRepository documentationRepository = new()
     {
-      DocumentationBySlug = new Documentation(project.Id, "Getting Started", "# Atlas", 1),
+      DocumentationBySlug = new Documentation(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note),
     };
     GetProjectDocumentationBySlugUseCase useCase = new(documentationRepository, projectRepository);
 
     Documentation result = await useCase.Execute("proyecto-atlas", "getting-started");
 
     Assert.Equal("Getting Started", result.Title);
+    Assert.Equal(DocumentationKind.Note, result.Kind);
     Assert.Equal(project.Id, documentationRepository.ReceivedProjectId);
   }
 

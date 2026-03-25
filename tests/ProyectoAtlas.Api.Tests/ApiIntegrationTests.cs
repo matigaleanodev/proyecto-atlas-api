@@ -4,6 +4,7 @@ using System.Text.Json;
 using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Application.Errors;
 using ProyectoAtlas.Application.Projects;
+using ProyectoAtlas.Domain.Documentations;
 
 namespace ProyectoAtlas.Api.Tests;
 
@@ -61,7 +62,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     string suffix = Guid.NewGuid().ToString("N")[..8];
-    CreateProjectInput input = new CreateProjectInput(
+    CreateProjectInput input = new(
         $"Proyecto Atlas {suffix}",
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
@@ -105,10 +106,11 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     string suffix = Guid.NewGuid().ToString("N")[..8];
-    CreateProjectDocumentationInput input = new CreateProjectDocumentationInput(
+    CreateProjectDocumentationInput input = new(
         $"Getting Started {suffix}",
         "# Proyecto Atlas",
-        1);
+        1,
+        DocumentationKind.Note);
 
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
 
@@ -123,6 +125,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.Title, root.GetProperty("title").GetString());
     Assert.Equal(input.ContentMarkdown, root.GetProperty("contentMarkdown").GetString());
     Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
+    Assert.Equal(input.Kind.ToString(), root.GetProperty("kind").GetString());
     Assert.Equal($"getting-started-{suffix.ToLowerInvariant()}", root.GetProperty("slug").GetString());
     Assert.NotEqual(Guid.Empty, root.GetProperty("id").GetGuid());
   }
@@ -131,10 +134,11 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PostProjectDocumentations_ShouldReturnNotFound_WhenProjectDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();
-    CreateProjectDocumentationInput input = new CreateProjectDocumentationInput(
+    CreateProjectDocumentationInput input = new(
         "Getting Started",
         "# Proyecto Atlas",
-        1);
+        1,
+        DocumentationKind.Note);
 
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/missing-project/documentations", input);
 
@@ -149,7 +153,8 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     CreateProjectDocumentationInput input = new(
         "Getting Started",
         "# Duplicate",
-        3);
+        3,
+        DocumentationKind.Note);
 
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
 
@@ -164,11 +169,30 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     CreateProjectDocumentationInput input = new(
         "Getting Started",
         "# Atlas Docs",
-        2);
+        2,
+        DocumentationKind.Note);
 
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/atlas-docs/documentations", input);
 
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnValidationError_WhenKindIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    object input = new
+    {
+      title = "Getting Started",
+      contentMarkdown = "# Proyecto Atlas",
+      sortOrder = 1,
+      kind = "InvalidKind"
+    };
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.BadRequest, AtlasErrorCodes.ValidationError, "invalid");
   }
 
   [Fact]
@@ -189,7 +213,8 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(1, root.GetProperty("pageSize").GetInt32());
     Assert.Equal(2, root.GetProperty("totalItems").GetInt32());
     Assert.Equal(2, root.GetProperty("totalPages").GetInt32());
-    Assert.Single(root.GetProperty("items").EnumerateArray());
+    JsonElement item = Assert.Single(root.GetProperty("items").EnumerateArray());
+    Assert.Equal("Page", item.GetProperty("kind").GetString());
   }
 
   [Fact]
@@ -208,6 +233,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
     Assert.Equal(1, items.GetArrayLength());
     Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal("Decision", items[0].GetProperty("kind").GetString());
   }
 
   [Fact]
@@ -237,6 +263,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
     Assert.Equal("getting-started", root.GetProperty("slug").GetString());
     Assert.Equal("Getting Started", root.GetProperty("title").GetString());
+    Assert.Equal("Page", root.GetProperty("kind").GetString());
   }
 
   [Fact]
@@ -268,7 +295,8 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     UpdateProjectDocumentationInput input = new(
         "Quick Start",
         "## Updated",
-        3);
+        3,
+        DocumentationKind.ReleaseNotes);
 
     HttpResponseMessage response =
         await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started", input);
@@ -283,6 +311,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.Title, root.GetProperty("title").GetString());
     Assert.Equal(input.ContentMarkdown, root.GetProperty("contentMarkdown").GetString());
     Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
+    Assert.Equal(input.Kind.ToString(), root.GetProperty("kind").GetString());
     Assert.Equal("quick-start", root.GetProperty("slug").GetString());
   }
 
@@ -293,7 +322,8 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     UpdateProjectDocumentationInput input = new(
         "Quick Start",
         "## Updated",
-        3);
+        3,
+        DocumentationKind.Note);
 
     HttpResponseMessage response =
         await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/missing-doc", input);
@@ -308,6 +338,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     HttpClient client = _factory.CreateClient();
     UpdateProjectDocumentationInput input = new(
         "Getting Started",
+        null,
         null,
         null);
 
@@ -453,7 +484,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PatchProject_ShouldReturnNotFound_WhenSlugDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectInput input = new UpdateProjectInput(
+    UpdateProjectInput input = new(
         "Atlas Platform",
         null,
         null,

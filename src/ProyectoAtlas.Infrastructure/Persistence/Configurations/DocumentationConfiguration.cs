@@ -48,6 +48,12 @@ public class DocumentationConfiguration : IEntityTypeConfiguration<Documentation
         .HasColumnName("sort_order")
         .IsRequired();
 
+    builder.Property(documentation => documentation.Kind)
+        .HasColumnName("kind")
+        .HasConversion<string>()
+        .HasMaxLength(50)
+        .IsRequired();
+
     builder.Property(documentation => documentation.CreatedAtUtc)
         .HasColumnName("created_at_utc")
         .IsRequired();

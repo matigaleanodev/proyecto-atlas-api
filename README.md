@@ -23,6 +23,7 @@ Reglas vigentes:
 
 - `Project.slug` es único globalmente
 - `Documentation.slug` es único dentro de cada proyecto
+- `Documentation.kind` clasifica el contenido documental y hoy admite `Page`, `Decision`, `Note`, `FAQ` y `ReleaseNotes`
 
 ## Endpoints
 
@@ -127,7 +128,8 @@ Todos los campos son opcionales.
 {
   "title": "Getting Started",
   "contentMarkdown": "# Proyecto Atlas",
-  "sortOrder": 1
+  "sortOrder": 1,
+  "kind": "Page"
 }
 ```
 
@@ -139,7 +141,8 @@ Todos los campos son opcionales.
 {
   "title": "Quick Start",
   "contentMarkdown": "## Updated",
-  "sortOrder": 2
+  "sortOrder": 2,
+  "kind": "Decision"
 }
 ```
 
@@ -180,6 +183,7 @@ Hasta este punto, Atlas ya tiene:
 - health check operativo
 - CRUD base de proyectos
 - CRUD base de documentación anidada
+- clasificacion inicial de `Documentation` mediante `kind`
 - OpenAPI y Swagger en desarrollo
 - CI base
 - contrato uniforme de errores para toda la API

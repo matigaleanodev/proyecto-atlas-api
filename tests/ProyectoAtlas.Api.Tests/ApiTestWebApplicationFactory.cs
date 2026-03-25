@@ -65,8 +65,8 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     using IServiceScope scope = Services.CreateScope();
     ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
 
-    Project[] projects = new[]
-    {
+    Project[] projects =
+    [
             new Project(
                 "Proyecto Atlas",
                 "Backend for project documentation based on markdown",
@@ -82,17 +82,17 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
                 "Project planning backend for teams",
                 "https://github.com/example/task-forge",
                 "#0EA5E9")
-        };
+        ];
 
     await dbContext.Projects.AddRangeAsync(projects);
     await dbContext.SaveChangesAsync();
 
-    Documentation[] documentations = new[]
-    {
-      new Documentation(projects[0].Id, "Getting Started", "# Proyecto Atlas", 1),
-      new Documentation(projects[0].Id, "Architecture", "## Layers", 2),
-      new Documentation(projects[1].Id, "Overview", "# Atlas Docs", 1),
-    };
+    Documentation[] documentations =
+    [
+      new Documentation(projects[0].Id, "Getting Started", "# Proyecto Atlas", 1, DocumentationKind.Page),
+      new Documentation(projects[0].Id, "Architecture", "## Layers", 2, DocumentationKind.Decision),
+      new Documentation(projects[1].Id, "Overview", "# Atlas Docs", 1, DocumentationKind.Note),
+    ];
 
     await dbContext.Documentations.AddRangeAsync(documentations);
     await dbContext.SaveChangesAsync();

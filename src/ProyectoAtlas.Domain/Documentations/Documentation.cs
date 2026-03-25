@@ -6,7 +6,7 @@ public class Documentation
   {
   }
 
-  public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder)
+  public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder, DocumentationKind kind)
   {
     DateTime now = DateTime.UtcNow;
 
@@ -16,6 +16,7 @@ public class Documentation
     Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
     ContentMarkdown = contentMarkdown;
     SortOrder = sortOrder;
+    Kind = kind;
     CreatedAtUtc = now;
     UpdatedAtUtc = now;
   }
@@ -26,10 +27,11 @@ public class Documentation
   public string Slug { get; private set; } = null!;
   public string ContentMarkdown { get; private set; } = null!;
   public int SortOrder { get; private set; }
+  public DocumentationKind Kind { get; private set; }
   public DateTime CreatedAtUtc { get; private set; }
   public DateTime UpdatedAtUtc { get; private set; }
 
-  public void Update(string? title, string? contentMarkdown, int? sortOrder)
+  public void Update(string? title, string? contentMarkdown, int? sortOrder, DocumentationKind? kind)
   {
     if (!string.IsNullOrWhiteSpace(title))
     {
@@ -45,6 +47,11 @@ public class Documentation
     if (sortOrder.HasValue)
     {
       SortOrder = sortOrder.Value;
+    }
+
+    if (kind.HasValue)
+    {
+      Kind = kind.Value;
     }
 
     UpdatedAtUtc = DateTime.UtcNow;

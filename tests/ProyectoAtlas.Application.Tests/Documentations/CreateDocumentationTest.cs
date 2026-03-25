@@ -10,7 +10,7 @@ public class CreateDocumentationUseCaseTests
   [Fact]
   public async Task Execute_ShouldReturnDocumentation()
   {
-    FakeProjectRepository projectRepository = new FakeProjectRepository
+    FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = new Project(
           "Proyecto Atlas",
@@ -18,18 +18,20 @@ public class CreateDocumentationUseCaseTests
           "https://github.com/matigaleanodev/proyecto-atlas-api",
           "#1E293B"),
     };
-    FakeDocumentationRepository documentationRepository = new FakeDocumentationRepository();
-    CreateProjectDocumentationUseCase createDocumentationUseCase = new CreateProjectDocumentationUseCase(documentationRepository, projectRepository);
+    FakeDocumentationRepository documentationRepository = new();
+    CreateProjectDocumentationUseCase createDocumentationUseCase = new(documentationRepository, projectRepository);
     CreateProjectDocumentationInput input = new(
         "Getting Started",
         "# Atlas",
-        1);
+        1,
+        DocumentationKind.Note);
 
     Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
 
     Assert.Equal(input.Title, result.Title);
     Assert.Equal(input.ContentMarkdown, result.ContentMarkdown);
     Assert.Equal(input.SortOrder, result.SortOrder);
+    Assert.Equal(input.Kind, result.Kind);
     Assert.Equal(projectRepository.ProjectBySlug!.Id, result.ProjectId);
     Assert.NotEqual(Guid.Empty, result.Id);
     Assert.Same(result, documentationRepository.AddedDocumentation);
@@ -38,13 +40,14 @@ public class CreateDocumentationUseCaseTests
   [Fact]
   public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
-    CreateProjectDocumentationUseCase createDocumentationUseCase = new CreateProjectDocumentationUseCase(
+    CreateProjectDocumentationUseCase createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
         new FakeProjectRepository());
     CreateProjectDocumentationInput input = new(
         "Getting Started",
         "# Atlas",
-        1);
+        1,
+        DocumentationKind.Note);
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
         createDocumentationUseCase.Execute("missing-project", input));
@@ -65,7 +68,7 @@ public class CreateDocumentationUseCaseTests
       string? title,
       string? contentMarkdown)
   {
-    FakeProjectRepository projectRepository = new FakeProjectRepository
+    FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = new Project(
           "Proyecto Atlas",
@@ -73,10 +76,10 @@ public class CreateDocumentationUseCaseTests
           "https://github.com/matigaleanodev/proyecto-atlas-api",
           "#1E293B"),
     };
-    CreateProjectDocumentationUseCase createDocumentationUseCase = new CreateProjectDocumentationUseCase(
+    CreateProjectDocumentationUseCase createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
         projectRepository);
-    CreateProjectDocumentationInput input = new CreateProjectDocumentationInput(title!, contentMarkdown!, 1);
+    CreateProjectDocumentationInput input = new(title!, contentMarkdown!, 1, DocumentationKind.Note);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() =>
         createDocumentationUseCase.Execute(projectSlug!, input));

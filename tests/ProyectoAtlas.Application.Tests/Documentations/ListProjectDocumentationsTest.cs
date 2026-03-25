@@ -23,8 +23,8 @@ public class ListProjectDocumentationsUseCaseTests
     {
       PagedDocumentations =
       [
-        new Documentation(project.Id, "Getting Started", "# Atlas", 1),
-        new Documentation(project.Id, "Architecture", "## Layers", 2),
+        new Documentation(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note),
+        new Documentation(project.Id, "Architecture", "## Layers", 2, DocumentationKind.Note),
       ],
       PagedTotalCount = 2,
     };
@@ -38,6 +38,7 @@ public class ListProjectDocumentationsUseCaseTests
     Assert.Equal(2, result.TotalItems);
     Assert.Equal(1, result.TotalPages);
     Assert.Equal(2, result.Items.Count);
+    Assert.Equal(DocumentationKind.Note, result.Items.First().Kind);
   }
 
   [Fact]
