@@ -11,7 +11,7 @@ using ProyectoAtlas.Infrastructure.Projects;
 
 namespace ProyectoAtlas.Api.Tests;
 
-public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
+public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
   private const string TestConnectionString =
       "Host=localhost;Port=5432;Database=atlas_test;Username=atlas;Password=atlas_dev_password";
@@ -36,13 +36,28 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>
     });
   }
 
+  public async Task InitializeAsync()
+  {
+    using IServiceScope scope = Services.CreateScope();
+    ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
+
+    await dbContext.Database.MigrateAsync();
+  }
+
+  Task IAsyncLifetime.DisposeAsync()
+  {
+    return Task.CompletedTask;
+  }
+
   public async Task ResetDatabaseAsync()
   {
     using IServiceScope scope = Services.CreateScope();
     ProyectoAtlasDbContext dbContext = scope.ServiceProvider.GetRequiredService<ProyectoAtlasDbContext>();
 
-    await dbContext.Database.EnsureDeletedAsync();
-    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.ExecuteSqlRawAsync(
+        """
+        TRUNCATE TABLE documentations, projects RESTART IDENTITY CASCADE;
+        """);
   }
 
   public async Task SeedProjectsAsync()
