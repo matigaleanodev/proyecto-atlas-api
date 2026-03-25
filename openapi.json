@@ -36,17 +36,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectDocumentationInput"
+                "$ref": "#/components/schemas/CreateProjectDocumentationCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectDocumentationInput"
+                "$ref": "#/components/schemas/CreateProjectDocumentationCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectDocumentationInput"
+                "$ref": "#/components/schemas/CreateProjectDocumentationCommand"
               }
             }
           },
@@ -182,7 +182,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListProjectDocumentationsOutput"
+                  "$ref": "#/components/schemas/ListProjectDocumentationsResponse"
                 }
               }
             }
@@ -282,17 +282,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectDocumentationInput"
+                "$ref": "#/components/schemas/UpdateProjectDocumentationCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectDocumentationInput"
+                "$ref": "#/components/schemas/UpdateProjectDocumentationCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectDocumentationInput"
+                "$ref": "#/components/schemas/UpdateProjectDocumentationCommand"
               }
             }
           },
@@ -412,17 +412,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectInput"
+                "$ref": "#/components/schemas/CreateProjectCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectInput"
+                "$ref": "#/components/schemas/CreateProjectCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProjectInput"
+                "$ref": "#/components/schemas/CreateProjectCommand"
               }
             }
           },
@@ -526,7 +526,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListProjectsOutput"
+                  "$ref": "#/components/schemas/ListProjectsResponse"
                 }
               }
             }
@@ -600,17 +600,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectInput"
+                "$ref": "#/components/schemas/UpdateProjectCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectInput"
+                "$ref": "#/components/schemas/UpdateProjectCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProjectInput"
+                "$ref": "#/components/schemas/UpdateProjectCommand"
               }
             }
           },
@@ -748,7 +748,36 @@
           "code": "PROJECT_SLUG_CONFLICT"
         }
       },
-      "CreateProjectDocumentationInput": {
+      "CreateProjectCommand": {
+        "required": [
+          "title",
+          "description",
+          "repositoryUrl",
+          "color"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "repositoryUrl": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "title": "Proyecto Atlas",
+          "description": "Backend for project documentation based on markdown",
+          "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "color": "#1E293B"
+        }
+      },
+      "CreateProjectDocumentationCommand": {
         "required": [
           "title",
           "contentMarkdown",
@@ -782,36 +811,9 @@
         "example": {
           "title": "Getting Started",
           "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
-          "sortOrder": 1
-        }
-      },
-      "CreateProjectInput": {
-        "required": [
-          "title",
-          "description",
-          "repositoryUrl",
-          "color"
-        ],
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "repositoryUrl": {
-            "type": "string"
-          },
-          "color": {
-            "type": "string"
-          }
-        },
-        "example": {
-          "title": "Proyecto Atlas",
-          "description": "Backend for project documentation based on markdown",
-          "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
-          "color": "#1E293B"
+          "sortOrder": 1,
+          "kind": "Page",
+          "status": "Draft"
         }
       },
       "Documentation": {
@@ -872,6 +874,8 @@
           "slug": "getting-started",
           "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
           "sortOrder": 1,
+          "kind": "Page",
+          "status": "Draft",
           "createdAtUtc": "2026-03-24T18:35:00Z",
           "updatedAtUtc": "2026-03-24T18:35:00Z"
         }
@@ -882,7 +886,7 @@
       "DocumentationStatus": {
         "type": "integer"
       },
-      "ListProjectDocumentationsOutput": {
+      "ListProjectDocumentationsResponse": {
         "required": [
           "items",
           "page",
@@ -940,6 +944,8 @@
               "slug": "getting-started",
               "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
               "sortOrder": 1,
+              "kind": "Page",
+              "status": "Draft",
               "createdAtUtc": "2026-03-24T18:35:00Z",
               "updatedAtUtc": "2026-03-24T18:35:00Z"
             }
@@ -950,7 +956,7 @@
           "totalItems": 1
         }
       },
-      "ListProjectsOutput": {
+      "ListProjectsResponse": {
         "required": [
           "items",
           "page",
@@ -1066,65 +1072,7 @@
           "updatedAtUtc": "2026-03-24T18:30:00Z"
         }
       },
-      "UpdateProjectDocumentationInput": {
-        "required": [
-          "title",
-          "contentMarkdown",
-          "sortOrder",
-          "kind",
-          "status"
-        ],
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "contentMarkdown": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "sortOrder": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "kind": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/DocumentationKind"
-              }
-            ]
-          },
-          "status": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/DocumentationStatus"
-              }
-            ]
-          }
-        },
-        "example": {
-          "title": "Quick Start",
-          "contentMarkdown": "## Updated\n\nPasos minimos para correr el proyecto.",
-          "sortOrder": 2
-        }
-      },
-      "UpdateProjectInput": {
+      "UpdateProjectCommand": {
         "required": [
           "title",
           "description",
@@ -1163,6 +1111,54 @@
           "description": "Updated backend for project documentation",
           "repositoryUrl": "https://github.com/matigaleanodev/atlas-platform",
           "color": "#0F172A"
+        }
+      },
+      "UpdateProjectDocumentationCommand": {
+        "required": [
+          "title",
+          "contentMarkdown",
+          "sortOrder",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contentMarkdown": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "status": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentationStatus"
+              }
+            ]
+          }
+        },
+        "example": {
+          "title": "Quick Start",
+          "contentMarkdown": "## Updated\n\nPasos minimos para correr el proyecto.",
+          "sortOrder": 2,
+          "status": "Published"
         }
       }
     }

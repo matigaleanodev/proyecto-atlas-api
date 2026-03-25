@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Application.Errors;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 
 namespace ProyectoAtlas.Api.Tests;
@@ -62,7 +60,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     string suffix = Guid.NewGuid().ToString("N")[..8];
-    CreateProjectInput input = new(
+    CreateProjectCommand input = new(
         $"Proyecto Atlas {suffix}",
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
@@ -86,10 +84,31 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjects_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectCommand input = new(
+        "Átlas API: Guía / Inicial",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal("atlas-api-guia-inicial", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
   public async Task PostProjects_ShouldReturnConflict_WhenSlugAlreadyExists()
   {
     HttpClient client = _factory.CreateClient();
-    CreateProjectInput input = new(
+    CreateProjectCommand input = new(
         "Proyecto Atlas",
         "Duplicate backend for project documentation based on markdown",
         "https://github.com/example/proyecto-atlas",
@@ -106,7 +125,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     string suffix = Guid.NewGuid().ToString("N")[..8];
-    CreateProjectDocumentationInput input = new(
+    CreateProjectDocumentationCommand input = new(
         $"Getting Started {suffix}",
         "# Proyecto Atlas",
         1,
@@ -133,10 +152,32 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjectDocumentations_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Guía API: sección / inicial",
+        "# Proyecto Atlas",
+        1,
+        DocumentationKind.Page,
+        DocumentationStatus.Draft);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    Assert.Equal("guia-api-seccion-inicial", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
   public async Task PostProjectDocumentations_ShouldReturnNotFound_WhenProjectDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();
-    CreateProjectDocumentationInput input = new(
+    CreateProjectDocumentationCommand input = new(
         "Getting Started",
         "# Proyecto Atlas",
         1,
@@ -153,7 +194,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PostProjectDocumentations_ShouldReturnConflict_WhenSlugAlreadyExistsWithinProject()
   {
     HttpClient client = _factory.CreateClient();
-    CreateProjectDocumentationInput input = new(
+    CreateProjectDocumentationCommand input = new(
         "Getting Started",
         "# Duplicate",
         3,
@@ -170,7 +211,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PostProjectDocumentations_ShouldReturnCreated_WhenSlugExistsInAnotherProject()
   {
     HttpClient client = _factory.CreateClient();
-    CreateProjectDocumentationInput input = new(
+    CreateProjectDocumentationCommand input = new(
         "Getting Started",
         "# Atlas Docs",
         2,
@@ -220,6 +261,27 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenDecisionTitleConventionIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Architecture decision without ADR prefix",
+        "# Proyecto Atlas",
+        1,
+        DocumentationKind.Decision,
+        DocumentationStatus.Draft);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTitleConventionInvalid,
+        "ADR-XXX");
+  }
+
+  [Fact]
   public async Task GetProjectDocumentations_ShouldReturnPagedDocumentations()
   {
     HttpClient client = _factory.CreateClient();
@@ -257,7 +319,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     JsonElement items = root.GetProperty("items");
 
     Assert.Equal(1, items.GetArrayLength());
-    Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal("ADR-001 Architecture", items[0].GetProperty("title").GetString());
     Assert.Equal("Decision", items[0].GetProperty("kind").GetString());
     Assert.Equal("Published", items[0].GetProperty("status").GetString());
   }
@@ -277,7 +339,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     JsonElement items = root.GetProperty("items");
 
     Assert.Equal(1, items.GetArrayLength());
-    Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal("ADR-001 Architecture", items[0].GetProperty("title").GetString());
     Assert.Equal("Decision", items[0].GetProperty("kind").GetString());
     Assert.Equal("Published", items[0].GetProperty("status").GetString());
   }
@@ -318,7 +380,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     JsonElement items = root.GetProperty("items");
 
     Assert.Equal(1, items.GetArrayLength());
-    Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal("ADR-001 Architecture", items[0].GetProperty("title").GetString());
     Assert.Equal("Decision", items[0].GetProperty("kind").GetString());
     Assert.Equal("Published", items[0].GetProperty("status").GetString());
   }
@@ -393,11 +455,10 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PatchProjectDocumentation_ShouldUpdateDocumentation_WhenDocumentationExists()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectDocumentationInput input = new(
+    UpdateProjectDocumentationCommand input = new(
         "Quick Start",
         "## Updated",
         3,
-        DocumentationKind.ReleaseNotes,
         DocumentationStatus.Published);
 
     HttpResponseMessage response =
@@ -413,20 +474,40 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.Title, root.GetProperty("title").GetString());
     Assert.Equal(input.ContentMarkdown, root.GetProperty("contentMarkdown").GetString());
     Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
-    Assert.Equal(input.Kind.ToString(), root.GetProperty("kind").GetString());
+    Assert.Equal("Page", root.GetProperty("kind").GetString());
     Assert.Equal(input.Status.ToString(), root.GetProperty("status").GetString());
     Assert.Equal("quick-start", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnBadRequest_WhenDecisionTitleConventionIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationCommand input = new(
+        "Architecture without ADR prefix",
+        "## Updated",
+        3,
+        DocumentationStatus.Published);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/adr-001-architecture", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTitleConventionInvalid,
+        "ADR-XXX");
   }
 
   [Fact]
   public async Task PatchProjectDocumentation_ShouldReturnNotFound_WhenDocumentationDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectDocumentationInput input = new(
+    UpdateProjectDocumentationCommand input = new(
         "Quick Start",
         "## Updated",
         3,
-        DocumentationKind.Note,
         DocumentationStatus.Draft);
 
     HttpResponseMessage response =
@@ -440,15 +521,25 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PatchProjectDocumentation_ShouldReturnConflict_WhenSlugAlreadyExistsWithinProject()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectDocumentationInput input = new(
+    CreateProjectDocumentationCommand createCommand = new(
+        "Release Checklist",
+        "# Checklist",
+        3,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft);
+    UpdateProjectDocumentationCommand input = new(
         "Getting Started",
-        null,
         null,
         null,
         null);
 
+    HttpResponseMessage createResponse =
+        await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", createCommand);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
     HttpResponseMessage response =
-        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/architecture", input);
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/release-checklist", input);
 
     Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.DocumentationSlugConflict, "Documentation slug");
@@ -563,7 +654,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PatchProject_ShouldUpdateProject_WhenSlugExists()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectInput input = new(
+    UpdateProjectCommand input = new(
         "Atlas Platform",
         "Updated backend for project documentation",
         "https://github.com/matigaleanodev/proyecto-atlas-platform",
@@ -589,7 +680,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PatchProject_ShouldReturnNotFound_WhenSlugDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectInput input = new(
+    UpdateProjectCommand input = new(
         "Atlas Platform",
         null,
         null,
@@ -605,7 +696,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   public async Task PatchProject_ShouldReturnConflict_WhenSlugAlreadyExists()
   {
     HttpClient client = _factory.CreateClient();
-    UpdateProjectInput input = new(
+    UpdateProjectCommand input = new(
         "Proyecto Atlas",
         null,
         null,

@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using ProyectoAtlas.Application;
+
 namespace ProyectoAtlas.Api.Controllers;
 
 [ApiController]
 [Route("health")]
-public class HealthController(HealthCheckUseCase healthCheckUseCase) : ControllerBase
+public class HealthController(HealthCheckQueryHandler healthCheckQueryHandler) : ControllerBase
 {
   [HttpGet]
   public IActionResult Get()
   {
-    string status = healthCheckUseCase.Execute();
+    string status = healthCheckQueryHandler.Execute();
 
     return Ok(new { status });
   }

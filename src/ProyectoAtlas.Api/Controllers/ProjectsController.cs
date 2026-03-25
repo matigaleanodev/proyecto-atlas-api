@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoAtlas.Api.Errors;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.Controllers;
@@ -10,11 +9,11 @@ namespace ProyectoAtlas.Api.Controllers;
 [Produces("application/json")]
 [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status500InternalServerError)]
 public class ProjectsController(
-    CreateProjectUseCase createProjectUseCase,
-    ListProjectsUseCase listProjectsUseCase,
-    GetProjectBySlugUseCase getProjectBySlugUseCase,
-    UpdateProjectUseCase updateProjectUseCase,
-    DeleteProjectUseCase deleteProjectUseCase
+    CreateProjectCommandHandler createProjectCommandHandler,
+    ListProjectsQueryHandler listProjectsQueryHandler,
+    GetProjectBySlugQueryHandler getProjectBySlugQueryHandler,
+    UpdateProjectCommandHandler updateProjectCommandHandler,
+    DeleteProjectCommandHandler deleteProjectCommandHandler
   ) : ControllerBase
 {
 
@@ -23,27 +22,27 @@ public class ProjectsController(
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> CreateProject(
-      [FromBody] CreateProjectInput input,
+      [FromBody] CreateProjectCommand command,
       CancellationToken cancellationToken)
   {
-    Project project = await createProjectUseCase.Execute(input, cancellationToken);
+    Project project = await createProjectCommandHandler.Execute(command, cancellationToken);
 
     return Created($"/projects/{project.Id}", project);
   }
 
   [HttpGet]
-  [ProducesResponseType(typeof(ListProjectsOutput), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ListProjectsResponse), StatusCodes.Status200OK)]
   public async Task<IActionResult> GetProjects(
       [FromQuery] int page = 1,
       [FromQuery] int pageSize = 10,
       [FromQuery] string? query = null,
       CancellationToken cancellationToken = default)
   {
-    ListProjectsInput input = new(page, pageSize, query);
+    ListProjectsQuery queryModel = new(page, pageSize, query);
 
-    ListProjectsOutput output = await listProjectsUseCase.Execute(input, cancellationToken);
+    ListProjectsResponse response = await listProjectsQueryHandler.Execute(queryModel, cancellationToken);
 
-    return Ok(output);
+    return Ok(response);
   }
 
   [HttpGet("{slug}")]
@@ -53,7 +52,7 @@ public class ProjectsController(
       string slug,
       CancellationToken cancellationToken = default)
   {
-    Project project = await getProjectBySlugUseCase.Execute(slug, cancellationToken);
+    Project project = await getProjectBySlugQueryHandler.Execute(slug, cancellationToken);
     return Ok(project);
   }
 
@@ -64,10 +63,10 @@ public class ProjectsController(
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> UpdateProject(
       string slug,
-      [FromBody] UpdateProjectInput input,
+      [FromBody] UpdateProjectCommand command,
       CancellationToken cancellationToken = default)
   {
-    Project project = await updateProjectUseCase.Execute(slug, input, cancellationToken);
+    Project project = await updateProjectCommandHandler.Execute(slug, command, cancellationToken);
     return Ok(project);
   }
 
@@ -78,7 +77,7 @@ public class ProjectsController(
       string slug,
       CancellationToken cancellationToken = default)
   {
-    await deleteProjectUseCase.Execute(slug, cancellationToken);
+    await deleteProjectCommandHandler.Execute(slug, cancellationToken);
     return NoContent();
   }
 }

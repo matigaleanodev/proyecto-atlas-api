@@ -1,3 +1,5 @@
+using ProyectoAtlas.Domain.Common;
+
 namespace ProyectoAtlas.Domain.Projects;
 
 public class Project
@@ -15,7 +17,7 @@ public class Project
     Description = description;
     RepositoryUrl = repositoryUrl;
     Color = color;
-    Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
+    Slug = SlugGenerator.Generate(title);
     CreatedAtUtc = now;
     UpdatedAtUtc = now;
   }
@@ -35,7 +37,7 @@ public class Project
     if (!string.IsNullOrWhiteSpace(title))
     {
       Title = title;
-      Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
+      Slug = SlugGenerator.Generate(title);
     }
 
     if (!string.IsNullOrWhiteSpace(description))

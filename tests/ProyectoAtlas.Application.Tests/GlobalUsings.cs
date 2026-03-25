@@ -1,0 +1,15 @@
+global using ProyectoAtlas.Application.Features.Documentations.Common;
+global using ProyectoAtlas.Application.Features.Documentations.Create;
+global using ProyectoAtlas.Application.Features.Documentations.Delete;
+global using ProyectoAtlas.Application.Features.Documentations.GetBySlug;
+global using ProyectoAtlas.Application.Features.Documentations.List;
+global using ProyectoAtlas.Application.Features.Documentations.Update;
+global using ProyectoAtlas.Application.Features.Health.Check;
+global using ProyectoAtlas.Application.Features.Projects.Common;
+global using ProyectoAtlas.Application.Features.Projects.Create;
+global using ProyectoAtlas.Application.Features.Projects.Delete;
+global using ProyectoAtlas.Application.Features.Projects.GetBySlug;
+global using ProyectoAtlas.Application.Features.Projects.List;
+global using ProyectoAtlas.Application.Features.Projects.Update;
+global using ProyectoAtlas.Application.Tests.Features.Documentations.Common;
+global using ProyectoAtlas.Application.Tests.Features.Projects.Common;

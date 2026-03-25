@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Api.OpenApi;
-using ProyectoAtlas.Application;
-using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Application.Errors;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Infrastructure.Documentations;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.Projects;
@@ -35,17 +32,17 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 
-builder.Services.AddScoped<HealthCheckUseCase>();
-builder.Services.AddScoped<CreateProjectUseCase>();
-builder.Services.AddScoped<ListProjectsUseCase>();
-builder.Services.AddScoped<GetProjectBySlugUseCase>();
-builder.Services.AddScoped<UpdateProjectUseCase>();
-builder.Services.AddScoped<DeleteProjectUseCase>();
-builder.Services.AddScoped<CreateProjectDocumentationUseCase>();
-builder.Services.AddScoped<ListProjectDocumentationsUseCase>();
-builder.Services.AddScoped<GetProjectDocumentationBySlugUseCase>();
-builder.Services.AddScoped<UpdateProjectDocumentationUseCase>();
-builder.Services.AddScoped<DeleteProjectDocumentationUseCase>();
+builder.Services.AddScoped<HealthCheckQueryHandler>();
+builder.Services.AddScoped<CreateProjectCommandHandler>();
+builder.Services.AddScoped<ListProjectsQueryHandler>();
+builder.Services.AddScoped<GetProjectBySlugQueryHandler>();
+builder.Services.AddScoped<UpdateProjectCommandHandler>();
+builder.Services.AddScoped<DeleteProjectCommandHandler>();
+builder.Services.AddScoped<CreateProjectDocumentationCommandHandler>();
+builder.Services.AddScoped<ListProjectDocumentationsQueryHandler>();
+builder.Services.AddScoped<GetProjectDocumentationBySlugQueryHandler>();
+builder.Services.AddScoped<UpdateProjectDocumentationCommandHandler>();
+builder.Services.AddScoped<DeleteProjectDocumentationCommandHandler>();
 
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();

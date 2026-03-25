@@ -1,8 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.OpenApi;
 using ProyectoAtlas.Api.Errors;
-using ProyectoAtlas.Application.Documentations;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 
@@ -27,7 +25,7 @@ public static class OpenApiExampleTransformers
             "code": "PROJECT_SLUG_CONFLICT"
           }
           """),
-      Type currentType when currentType == typeof(CreateProjectInput) => ParseJson(
+      Type currentType when currentType == typeof(CreateProjectCommand) => ParseJson(
           """
           {
             "title": "Proyecto Atlas",
@@ -36,7 +34,7 @@ public static class OpenApiExampleTransformers
             "color": "#1E293B"
           }
           """),
-      Type currentType when currentType == typeof(UpdateProjectInput) => ParseJson(
+      Type currentType when currentType == typeof(UpdateProjectCommand) => ParseJson(
           """
           {
             "title": "Atlas Platform",
@@ -58,7 +56,7 @@ public static class OpenApiExampleTransformers
             "updatedAtUtc": "2026-03-24T18:30:00Z"
           }
           """),
-      Type currentType when currentType == typeof(ListProjectsOutput) => ParseJson(
+      Type currentType when currentType == typeof(ListProjectsResponse) => ParseJson(
           """
           {
             "items": [
@@ -79,20 +77,23 @@ public static class OpenApiExampleTransformers
             "totalItems": 1
           }
           """),
-      Type currentType when currentType == typeof(CreateProjectDocumentationInput) => ParseJson(
+      Type currentType when currentType == typeof(CreateProjectDocumentationCommand) => ParseJson(
           """
           {
             "title": "Getting Started",
             "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
-            "sortOrder": 1
+            "sortOrder": 1,
+            "kind": "Page",
+            "status": "Draft"
           }
           """),
-      Type currentType when currentType == typeof(UpdateProjectDocumentationInput) => ParseJson(
+      Type currentType when currentType == typeof(UpdateProjectDocumentationCommand) => ParseJson(
           """
           {
             "title": "Quick Start",
             "contentMarkdown": "## Updated\n\nPasos minimos para correr el proyecto.",
-            "sortOrder": 2
+            "sortOrder": 2,
+            "status": "Published"
           }
           """),
       Type currentType when currentType == typeof(Documentation) => ParseJson(
@@ -104,11 +105,13 @@ public static class OpenApiExampleTransformers
             "slug": "getting-started",
             "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
             "sortOrder": 1,
+            "kind": "Page",
+            "status": "Draft",
             "createdAtUtc": "2026-03-24T18:35:00Z",
             "updatedAtUtc": "2026-03-24T18:35:00Z"
           }
           """),
-      Type currentType when currentType == typeof(ListProjectDocumentationsOutput) => ParseJson(
+      Type currentType when currentType == typeof(ListProjectDocumentationsResponse) => ParseJson(
           """
           {
             "items": [
@@ -119,6 +122,8 @@ public static class OpenApiExampleTransformers
                 "slug": "getting-started",
                 "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
                 "sortOrder": 1,
+                "kind": "Page",
+                "status": "Draft",
                 "createdAtUtc": "2026-03-24T18:35:00Z",
                 "updatedAtUtc": "2026-03-24T18:35:00Z"
               }
