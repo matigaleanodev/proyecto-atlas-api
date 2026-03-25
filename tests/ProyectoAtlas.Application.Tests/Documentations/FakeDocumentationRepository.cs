@@ -12,7 +12,7 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
   public int ReceivedPage { get; private set; }
   public int ReceivedPageSize { get; private set; }
   public string? ReceivedQuery { get; private set; }
-  public IEnumerable<Documentation> PagedDocumentations { get; set; } = Enumerable.Empty<Documentation>();
+  public IEnumerable<Documentation> PagedDocumentations { get; set; } = [];
   public int PagedTotalCount { get; set; }
   public Documentation? DocumentationBySlug { get; set; }
 
