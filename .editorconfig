@@ -38,9 +38,6 @@ dotnet_style_qualification_for_event = false:suggestion
 [tests/**/*.cs]
 dotnet_diagnostic.CA1707.severity = none
 
-[src/ProyectoAtlas.Application/HealthCheckUseCase.cs]
-dotnet_diagnostic.CA1822.severity = none
-
 [*.{csproj,props,targets,json,yml,yaml,md}]
 charset = utf-8
 end_of_line = lf

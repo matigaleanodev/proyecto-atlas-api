@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Application.Errors;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 
 namespace ProyectoAtlas.Api.Tests;

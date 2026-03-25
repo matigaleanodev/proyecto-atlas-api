@@ -1,7 +1,6 @@
-using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Domain.Documentations;
 
-namespace ProyectoAtlas.Application.Tests;
+namespace ProyectoAtlas.Application.Tests.Features.Documentations.Common;
 
 internal sealed class FakeDocumentationRepository : IDocumentationRepository
 {

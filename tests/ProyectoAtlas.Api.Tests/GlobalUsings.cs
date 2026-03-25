@@ -1,0 +1,5 @@
+global using ProyectoAtlas.Application.Features.Documentations.Create;
+global using ProyectoAtlas.Application.Features.Documentations.Update;
+global using ProyectoAtlas.Application.Features.Projects.Common;
+global using ProyectoAtlas.Application.Features.Projects.Create;
+global using ProyectoAtlas.Application.Features.Projects.Update;

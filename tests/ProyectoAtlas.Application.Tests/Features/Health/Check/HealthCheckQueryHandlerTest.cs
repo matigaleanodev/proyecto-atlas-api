@@ -1,4 +1,4 @@
-namespace ProyectoAtlas.Application.Tests;
+namespace ProyectoAtlas.Application.Tests.Features.Health.Check;
 
 public class HealthCheckQueryHandlerTests
 {

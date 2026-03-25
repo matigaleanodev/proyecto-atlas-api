@@ -1,5 +1,5 @@
 using ProyectoAtlas.Domain.Projects;
-namespace ProyectoAtlas.Application.Projects;
+namespace ProyectoAtlas.Application.Features.Projects.Update;
 
 public class UpdateProjectCommandHandler(IProjectRepository projectRepository)
 {

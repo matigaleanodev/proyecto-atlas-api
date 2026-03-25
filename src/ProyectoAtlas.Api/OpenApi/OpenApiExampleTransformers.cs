@@ -1,8 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.OpenApi;
 using ProyectoAtlas.Api.Errors;
-using ProyectoAtlas.Application.Documentations;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 

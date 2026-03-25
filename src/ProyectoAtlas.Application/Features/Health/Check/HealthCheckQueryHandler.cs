@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace ProyectoAtlas.Application;
+namespace ProyectoAtlas.Application.Features.Health.Check;
 
 public class HealthCheckQueryHandler
 {

@@ -1,6 +1,6 @@
 using ProyectoAtlas.Domain.Projects;
 
-namespace ProyectoAtlas.Application.Projects;
+namespace ProyectoAtlas.Application.Features.Projects.List;
 
 public class ListProjectsQueryHandler(IProjectRepository projectRepository)
 {

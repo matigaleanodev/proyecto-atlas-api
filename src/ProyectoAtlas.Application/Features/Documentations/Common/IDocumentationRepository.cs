@@ -1,6 +1,6 @@
 using ProyectoAtlas.Domain.Documentations;
 
-namespace ProyectoAtlas.Application.Documentations;
+namespace ProyectoAtlas.Application.Features.Documentations.Common;
 
 public interface IDocumentationRepository
 {

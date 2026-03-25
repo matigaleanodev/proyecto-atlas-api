@@ -1,9 +1,7 @@
-using ProyectoAtlas.Application.Documentations;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 
-namespace ProyectoAtlas.Application.Tests;
+namespace ProyectoAtlas.Application.Tests.Features.Documentations.Create;
 
 public class CreateDocumentationUseCaseTests
 {

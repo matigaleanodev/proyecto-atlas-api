@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using ProyectoAtlas.Application;
 namespace ProyectoAtlas.Api.Features.Health;
 
 [ApiController]

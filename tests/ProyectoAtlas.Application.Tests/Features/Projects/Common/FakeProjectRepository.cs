@@ -1,7 +1,6 @@
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Projects;
 
-namespace ProyectoAtlas.Application.Tests;
+namespace ProyectoAtlas.Application.Tests.Features.Projects.Common;
 
 internal sealed class FakeProjectRepository : IProjectRepository
 {

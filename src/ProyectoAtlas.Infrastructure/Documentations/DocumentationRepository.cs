@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using ProyectoAtlas.Application.Documentations;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Infrastructure.Persistence;
 

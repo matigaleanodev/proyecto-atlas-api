@@ -1,7 +1,7 @@
 using System.Net;
 using ProyectoAtlas.Application.Errors;
 
-namespace ProyectoAtlas.Application.Documentations;
+namespace ProyectoAtlas.Application.Features.Documentations.Common;
 
 public sealed class DocumentationNotFoundException(string projectSlug, string slug)
     : KnownException(

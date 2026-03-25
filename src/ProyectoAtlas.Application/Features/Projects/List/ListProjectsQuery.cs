@@ -1,4 +1,4 @@
-namespace ProyectoAtlas.Application.Projects;
+namespace ProyectoAtlas.Application.Features.Projects.List;
 
 public record ListProjectsQuery(
     int Page = 1,

@@ -1,8 +1,7 @@
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
 
-namespace ProyectoAtlas.Application.Documentations;
+namespace ProyectoAtlas.Application.Features.Documentations.List;
 
 public class ListProjectDocumentationsQueryHandler(IDocumentationRepository documentationRepository, IProjectRepository projectRepository)
 {

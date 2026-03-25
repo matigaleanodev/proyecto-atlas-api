@@ -1,5 +1,6 @@
 using ProyectoAtlas.Domain.Projects;
-namespace ProyectoAtlas.Application.Projects;
+
+namespace ProyectoAtlas.Application.Features.Projects.GetBySlug;
 
 public class GetProjectBySlugQueryHandler(IProjectRepository projectRepository)
 {

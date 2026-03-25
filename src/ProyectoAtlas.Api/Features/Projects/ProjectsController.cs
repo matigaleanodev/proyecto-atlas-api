@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoAtlas.Api.Errors;
-using ProyectoAtlas.Application.Projects;
 using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.Features.Projects;

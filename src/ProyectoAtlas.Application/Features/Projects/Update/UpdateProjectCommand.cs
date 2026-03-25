@@ -1,4 +1,4 @@
-namespace ProyectoAtlas.Application.Projects;
+namespace ProyectoAtlas.Application.Features.Projects.Update;
 
 public record UpdateProjectCommand(
       string? Title,

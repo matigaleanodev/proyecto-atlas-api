@@ -1,7 +1,7 @@
 using System.Net;
 using ProyectoAtlas.Application.Errors;
 
-namespace ProyectoAtlas.Application.Projects;
+namespace ProyectoAtlas.Application.Features.Projects.Common;
 
 public sealed class ProjectNotFoundException(string slug)
     : KnownException(
