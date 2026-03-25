@@ -43,9 +43,11 @@ public class ProjectDocumentationsController(
       [FromQuery] int page = 1,
       [FromQuery] int pageSize = 10,
       [FromQuery] string? query = null,
+      [FromQuery] DocumentationKind? kind = null,
+      [FromQuery] DocumentationStatus? status = null,
       CancellationToken cancellationToken = default)
   {
-    ListProjectDocumentationsInput input = new(page, pageSize, query);
+    ListProjectDocumentationsInput input = new(page, pageSize, query, kind, status);
     ListProjectDocumentationsOutput output =
         await listProjectDocumentationsUseCase.Execute(projectSlug, input, cancellationToken);
 

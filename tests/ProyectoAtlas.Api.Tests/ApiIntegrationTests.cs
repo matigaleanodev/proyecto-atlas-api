@@ -263,6 +263,80 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task GetProjectDocumentations_ShouldFilterByKind()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations?kind=Decision");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement items = root.GetProperty("items");
+
+    Assert.Equal(1, items.GetArrayLength());
+    Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal("Decision", items[0].GetProperty("kind").GetString());
+    Assert.Equal("Published", items[0].GetProperty("status").GetString());
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentations_ShouldFilterByStatus()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/documentations?status=Draft");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement items = root.GetProperty("items");
+
+    Assert.Equal(1, items.GetArrayLength());
+    Assert.Equal("Getting Started", items[0].GetProperty("title").GetString());
+    Assert.Equal("Page", items[0].GetProperty("kind").GetString());
+    Assert.Equal("Draft", items[0].GetProperty("status").GetString());
+  }
+
+  [Fact]
+  public async Task GetProjectDocumentations_ShouldFilterByKindAndStatus()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/documentations?kind=Decision&status=Published");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement items = root.GetProperty("items");
+
+    Assert.Equal(1, items.GetArrayLength());
+    Assert.Equal("Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal("Decision", items[0].GetProperty("kind").GetString());
+    Assert.Equal("Published", items[0].GetProperty("status").GetString());
+  }
+
+  [Theory]
+  [InlineData("/projects/proyecto-atlas/documentations?kind=InvalidKind")]
+  [InlineData("/projects/proyecto-atlas/documentations?status=InvalidStatus")]
+  public async Task GetProjectDocumentations_ShouldReturnValidationError_WhenFilterIsInvalid(string path)
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync(path);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.BadRequest, AtlasErrorCodes.ValidationError, "invalid");
+  }
+
+  [Fact]
   public async Task GetProjectDocumentations_ShouldReturnNotFound_WhenProjectDoesNotExist()
   {
     HttpClient client = _factory.CreateClient();

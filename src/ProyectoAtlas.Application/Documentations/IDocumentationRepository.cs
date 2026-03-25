@@ -11,6 +11,8 @@ public interface IDocumentationRepository
       int page,
       int pageSize,
       string? query = null,
+      DocumentationKind? kind = null,
+      DocumentationStatus? status = null,
       CancellationToken cancellationToken = default
     );
 

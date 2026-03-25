@@ -56,7 +56,12 @@ public class ListProjectDocumentationsUseCaseTests
     };
     FakeDocumentationRepository documentationRepository = new();
     ListProjectDocumentationsUseCase useCase = new(documentationRepository, projectRepository);
-    ListProjectDocumentationsInput input = new(2, 5, "docs");
+    ListProjectDocumentationsInput input = new(
+        2,
+        5,
+        "docs",
+        DocumentationKind.Decision,
+        DocumentationStatus.Published);
 
     await useCase.Execute("proyecto-atlas", input);
 
@@ -64,6 +69,8 @@ public class ListProjectDocumentationsUseCaseTests
     Assert.Equal(2, documentationRepository.ReceivedPage);
     Assert.Equal(5, documentationRepository.ReceivedPageSize);
     Assert.Equal("docs", documentationRepository.ReceivedQuery);
+    Assert.Equal(DocumentationKind.Decision, documentationRepository.ReceivedKind);
+    Assert.Equal(DocumentationStatus.Published, documentationRepository.ReceivedStatus);
   }
 
   [Fact]
