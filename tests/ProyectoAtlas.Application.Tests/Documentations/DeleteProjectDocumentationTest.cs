@@ -15,7 +15,7 @@ public class DeleteProjectDocumentationUseCaseTests
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
-    Documentation documentation = new(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note);
+    Documentation documentation = new(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note, DocumentationStatus.Draft);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project,

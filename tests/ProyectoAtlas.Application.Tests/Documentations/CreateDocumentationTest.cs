@@ -24,7 +24,8 @@ public class CreateDocumentationUseCaseTests
         "Getting Started",
         "# Atlas",
         1,
-        DocumentationKind.Note);
+        DocumentationKind.Note,
+        DocumentationStatus.Draft);
 
     Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
 
@@ -32,6 +33,7 @@ public class CreateDocumentationUseCaseTests
     Assert.Equal(input.ContentMarkdown, result.ContentMarkdown);
     Assert.Equal(input.SortOrder, result.SortOrder);
     Assert.Equal(input.Kind, result.Kind);
+    Assert.Equal(input.Status, result.Status);
     Assert.Equal(projectRepository.ProjectBySlug!.Id, result.ProjectId);
     Assert.NotEqual(Guid.Empty, result.Id);
     Assert.Same(result, documentationRepository.AddedDocumentation);
@@ -47,7 +49,8 @@ public class CreateDocumentationUseCaseTests
         "Getting Started",
         "# Atlas",
         1,
-        DocumentationKind.Note);
+        DocumentationKind.Note,
+        DocumentationStatus.Draft);
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
         createDocumentationUseCase.Execute("missing-project", input));
@@ -79,7 +82,7 @@ public class CreateDocumentationUseCaseTests
     CreateProjectDocumentationUseCase createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
         projectRepository);
-    CreateProjectDocumentationInput input = new(title!, contentMarkdown!, 1, DocumentationKind.Note);
+    CreateProjectDocumentationInput input = new(title!, contentMarkdown!, 1, DocumentationKind.Note, DocumentationStatus.Draft);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() =>
         createDocumentationUseCase.Execute(projectSlug!, input));

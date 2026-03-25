@@ -739,7 +739,8 @@
           "title",
           "contentMarkdown",
           "sortOrder",
-          "kind"
+          "kind",
+          "status"
         ],
         "type": "object",
         "properties": {
@@ -759,6 +760,9 @@
           },
           "kind": {
             "$ref": "#/components/schemas/DocumentationKind"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocumentationStatus"
           }
         },
         "example": {
@@ -802,7 +806,8 @@
           "title",
           "contentMarkdown",
           "sortOrder",
-          "kind"
+          "kind",
+          "status"
         ],
         "type": "object",
         "properties": {
@@ -834,6 +839,9 @@
           "kind": {
             "$ref": "#/components/schemas/DocumentationKind"
           },
+          "status": {
+            "$ref": "#/components/schemas/DocumentationStatus"
+          },
           "createdAtUtc": {
             "type": "string",
             "format": "date-time"
@@ -855,6 +863,9 @@
         }
       },
       "DocumentationKind": {
+        "type": "integer"
+      },
+      "DocumentationStatus": {
         "type": "integer"
       },
       "ListProjectDocumentationsOutput": {
@@ -1046,7 +1057,8 @@
           "title",
           "contentMarkdown",
           "sortOrder",
-          "kind"
+          "kind",
+          "status"
         ],
         "type": "object",
         "properties": {
@@ -1078,6 +1090,16 @@
               },
               {
                 "$ref": "#/components/schemas/DocumentationKind"
+              }
+            ]
+          },
+          "status": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentationStatus"
               }
             ]
           }
