@@ -84,7 +84,9 @@ public static class OpenApiExampleTransformers
           {
             "title": "Getting Started",
             "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
-            "sortOrder": 1
+            "sortOrder": 1,
+            "kind": "Page",
+            "status": "Draft"
           }
           """),
       Type currentType when currentType == typeof(UpdateProjectDocumentationCommand) => ParseJson(
@@ -92,7 +94,8 @@ public static class OpenApiExampleTransformers
           {
             "title": "Quick Start",
             "contentMarkdown": "## Updated\n\nPasos minimos para correr el proyecto.",
-            "sortOrder": 2
+            "sortOrder": 2,
+            "status": "Published"
           }
           """),
       Type currentType when currentType == typeof(Documentation) => ParseJson(
@@ -104,6 +107,8 @@ public static class OpenApiExampleTransformers
             "slug": "getting-started",
             "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
             "sortOrder": 1,
+            "kind": "Page",
+            "status": "Draft",
             "createdAtUtc": "2026-03-24T18:35:00Z",
             "updatedAtUtc": "2026-03-24T18:35:00Z"
           }
@@ -119,6 +124,8 @@ public static class OpenApiExampleTransformers
                 "slug": "getting-started",
                 "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial para levantar el backend localmente.",
                 "sortOrder": 1,
+                "kind": "Page",
+                "status": "Draft",
                 "createdAtUtc": "2026-03-24T18:35:00Z",
                 "updatedAtUtc": "2026-03-24T18:35:00Z"
               }

@@ -24,6 +24,9 @@ Reglas vigentes:
 - `Project.slug` es único globalmente
 - `Documentation.slug` es único dentro de cada proyecto
 - `Documentation.kind` clasifica el contenido documental y hoy admite `Page`, `Decision`, `Note`, `FAQ` y `ReleaseNotes`
+- `Documentation.kind` se define al crear y no se edita después
+- `Documentation.status` hoy admite `Draft`, `Published` y `Archived`
+- si `Documentation.kind == Decision`, el título debe seguir la convención `ADR-001 Title`
 
 ## Endpoints
 
@@ -46,6 +49,8 @@ Reglas vigentes:
 - `GET /projects/{projectSlug}/documentations/{slug}`
 - `PATCH /projects/{projectSlug}/documentations/{slug}`
 - `DELETE /projects/{projectSlug}/documentations/{slug}`
+
+El listado soporta filtros opcionales por `query`, `kind` y `status`.
 
 ## OpenAPI y Swagger
 
@@ -81,6 +86,7 @@ Semántica:
 - `PROJECT_SLUG_CONFLICT`
 - `DOCUMENTATION_NOT_FOUND`
 - `DOCUMENTATION_SLUG_CONFLICT`
+- `DOCUMENTATION_TITLE_CONVENTION_INVALID`
 - `VALIDATION_ERROR`
 - `INTERNAL_SERVER_ERROR`
 
@@ -129,7 +135,8 @@ Todos los campos son opcionales.
   "title": "Getting Started",
   "contentMarkdown": "# Proyecto Atlas",
   "sortOrder": 1,
-  "kind": "Page"
+  "kind": "Page",
+  "status": "Draft"
 }
 ```
 
@@ -142,7 +149,7 @@ Todos los campos son opcionales.
   "title": "Quick Start",
   "contentMarkdown": "## Updated",
   "sortOrder": 2,
-  "kind": "Decision"
+  "status": "Published"
 }
 ```
 
