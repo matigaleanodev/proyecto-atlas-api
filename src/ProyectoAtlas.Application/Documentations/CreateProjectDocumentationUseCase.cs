@@ -25,7 +25,8 @@ public class CreateProjectDocumentationUseCase(
         input.Title,
         input.ContentMarkdown,
         input.SortOrder,
-        input.Kind);
+        input.Kind,
+        input.Status);
 
     await documentationRepository.Add(documentation, cancellationToken);
 

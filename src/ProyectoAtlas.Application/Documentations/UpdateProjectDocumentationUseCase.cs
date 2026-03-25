@@ -21,7 +21,8 @@ public class UpdateProjectDocumentationUseCase(IDocumentationRepository document
       title: input.Title,
       contentMarkdown: input.ContentMarkdown,
       sortOrder: input.SortOrder,
-      kind: input.Kind
+      kind: input.Kind,
+      status: input.Status
     );
 
     await documentationRepository.Update(documentation, cancellationToken);

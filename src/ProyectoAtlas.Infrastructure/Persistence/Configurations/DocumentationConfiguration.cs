@@ -54,6 +54,12 @@ public class DocumentationConfiguration : IEntityTypeConfiguration<Documentation
         .HasMaxLength(50)
         .IsRequired();
 
+    builder.Property(documentation => documentation.Status)
+        .HasColumnName("status")
+        .HasConversion<string>()
+        .HasMaxLength(50)
+        .IsRequired();
+
     builder.Property(documentation => documentation.CreatedAtUtc)
         .HasColumnName("created_at_utc")
         .IsRequired();

@@ -6,4 +6,5 @@ public record UpdateProjectDocumentationInput(
     string? Title,
     string? ContentMarkdown,
     int? SortOrder,
-    DocumentationKind? Kind);
+    DocumentationKind? Kind,
+    DocumentationStatus? Status);

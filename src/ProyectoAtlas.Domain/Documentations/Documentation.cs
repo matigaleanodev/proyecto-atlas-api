@@ -6,7 +6,7 @@ public class Documentation
   {
   }
 
-  public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder, DocumentationKind kind)
+  public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder, DocumentationKind kind, DocumentationStatus status)
   {
     DateTime now = DateTime.UtcNow;
 
@@ -17,6 +17,7 @@ public class Documentation
     ContentMarkdown = contentMarkdown;
     SortOrder = sortOrder;
     Kind = kind;
+    Status = status;
     CreatedAtUtc = now;
     UpdatedAtUtc = now;
   }
@@ -28,10 +29,11 @@ public class Documentation
   public string ContentMarkdown { get; private set; } = null!;
   public int SortOrder { get; private set; }
   public DocumentationKind Kind { get; private set; }
+  public DocumentationStatus Status { get; private set; }
   public DateTime CreatedAtUtc { get; private set; }
   public DateTime UpdatedAtUtc { get; private set; }
 
-  public void Update(string? title, string? contentMarkdown, int? sortOrder, DocumentationKind? kind)
+  public void Update(string? title, string? contentMarkdown, int? sortOrder, DocumentationKind? kind, DocumentationStatus? status)
   {
     if (!string.IsNullOrWhiteSpace(title))
     {
@@ -52,6 +54,11 @@ public class Documentation
     if (kind.HasValue)
     {
       Kind = kind.Value;
+    }
+
+    if (status.HasValue)
+    {
+      Status = status.Value;
     }
 
     UpdatedAtUtc = DateTime.UtcNow;
