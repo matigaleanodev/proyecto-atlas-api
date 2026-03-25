@@ -27,7 +27,7 @@ public static class OpenApiExampleTransformers
             "code": "PROJECT_SLUG_CONFLICT"
           }
           """),
-      Type currentType when currentType == typeof(CreateProjectInput) => ParseJson(
+      Type currentType when currentType == typeof(CreateProjectCommand) => ParseJson(
           """
           {
             "title": "Proyecto Atlas",
@@ -36,7 +36,7 @@ public static class OpenApiExampleTransformers
             "color": "#1E293B"
           }
           """),
-      Type currentType when currentType == typeof(UpdateProjectInput) => ParseJson(
+      Type currentType when currentType == typeof(UpdateProjectCommand) => ParseJson(
           """
           {
             "title": "Atlas Platform",
@@ -58,7 +58,7 @@ public static class OpenApiExampleTransformers
             "updatedAtUtc": "2026-03-24T18:30:00Z"
           }
           """),
-      Type currentType when currentType == typeof(ListProjectsOutput) => ParseJson(
+      Type currentType when currentType == typeof(ListProjectsResponse) => ParseJson(
           """
           {
             "items": [
@@ -79,7 +79,7 @@ public static class OpenApiExampleTransformers
             "totalItems": 1
           }
           """),
-      Type currentType when currentType == typeof(CreateProjectDocumentationInput) => ParseJson(
+      Type currentType when currentType == typeof(CreateProjectDocumentationCommand) => ParseJson(
           """
           {
             "title": "Getting Started",
@@ -87,7 +87,7 @@ public static class OpenApiExampleTransformers
             "sortOrder": 1
           }
           """),
-      Type currentType when currentType == typeof(UpdateProjectDocumentationInput) => ParseJson(
+      Type currentType when currentType == typeof(UpdateProjectDocumentationCommand) => ParseJson(
           """
           {
             "title": "Quick Start",
@@ -108,7 +108,7 @@ public static class OpenApiExampleTransformers
             "updatedAtUtc": "2026-03-24T18:35:00Z"
           }
           """),
-      Type currentType when currentType == typeof(ListProjectDocumentationsOutput) => ParseJson(
+      Type currentType when currentType == typeof(ListProjectDocumentationsResponse) => ParseJson(
           """
           {
             "items": [

@@ -1,13 +1,23 @@
+using System.Text.RegularExpressions;
+
 namespace ProyectoAtlas.Domain.Documentations;
 
-public class Documentation
+public partial class Documentation
 {
+  [GeneratedRegex(@"^ADR-\d{3,}\s.+$")]
+  private static partial Regex AdrTitleRegex();
+
   private Documentation()
   {
   }
 
   public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder, DocumentationKind kind, DocumentationStatus status)
   {
+    if (kind == DocumentationKind.Decision && !ValidateAdrTitle(title))
+    {
+      throw new ArgumentException("ADR documentation title must follow the format 'ADR-XXX Title'", nameof(title));
+    }
+
     DateTime now = DateTime.UtcNow;
 
     Id = Guid.NewGuid();
@@ -33,13 +43,21 @@ public class Documentation
   public DateTime CreatedAtUtc { get; private set; }
   public DateTime UpdatedAtUtc { get; private set; }
 
-  public void Update(string? title, string? contentMarkdown, int? sortOrder, DocumentationKind? kind, DocumentationStatus? status)
+  public void Update(string? title, string? contentMarkdown, int? sortOrder, DocumentationStatus? status)
   {
     if (!string.IsNullOrWhiteSpace(title))
     {
+      if (Kind == DocumentationKind.Decision && !ValidateAdrTitle(title))
+      {
+        throw new ArgumentException(
+            "ADR documentation title must follow the format 'ADR-XXX Title'",
+            nameof(title));
+      }
+
       Title = title;
       Slug = title.Trim().ToLowerInvariant().Replace(' ', '-');
     }
+
 
     if (!string.IsNullOrWhiteSpace(contentMarkdown))
     {
@@ -51,17 +69,23 @@ public class Documentation
       SortOrder = sortOrder.Value;
     }
 
-    if (kind.HasValue)
-    {
-      Kind = kind.Value;
-    }
-
     if (status.HasValue)
     {
       Status = status.Value;
     }
 
     UpdatedAtUtc = DateTime.UtcNow;
+  }
+
+
+  private static bool ValidateAdrTitle(string title)
+  {
+    if (string.IsNullOrWhiteSpace(title))
+    {
+      return false;
+    }
+
+    return AdrTitleRegex().IsMatch(title);
   }
 
 }

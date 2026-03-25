@@ -90,7 +90,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     Documentation[] documentations =
     [
       new Documentation(projects[0].Id, "Getting Started", "# Proyecto Atlas", 1, DocumentationKind.Page, DocumentationStatus.Draft),
-      new Documentation(projects[0].Id, "Architecture", "## Layers", 2, DocumentationKind.Decision, DocumentationStatus.Published),
+      new Documentation(projects[0].Id, "ADR-001 Architecture", "## Layers", 2, DocumentationKind.Decision, DocumentationStatus.Published),
       new Documentation(projects[1].Id, "Overview", "# Atlas Docs", 1, DocumentationKind.Note, DocumentationStatus.Archived),
     ];
 
