@@ -13,9 +13,9 @@ public class ListProjectDocumentationsUseCase(IDocumentationRepository documenta
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
         ?? throw new ProjectNotFoundException(projectSlug);
 
-    (int page, int pageSize, string? query) = input;
+    (int page, int pageSize, string? query, DocumentationKind? kind, DocumentationStatus? status) = input;
 
-    (IEnumerable<Documentation>? documentations, int totalCount) = await documentationRepository.GetPagedList(project.Id, page, pageSize, query, cancellationToken);
+    (IEnumerable<Documentation>? documentations, int totalCount) = await documentationRepository.GetPagedList(project.Id, page, pageSize, query, kind, status, cancellationToken);
     List<Documentation> items = [.. documentations];
     int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
