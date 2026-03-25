@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoAtlas.Api.Errors;
@@ -14,7 +15,12 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+      options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
   options.InvalidModelStateResponseFactory = _ =>
@@ -27,6 +33,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     return new BadRequestObjectResult(error);
   };
 });
+
 
 builder.Services.AddScoped<HealthCheckUseCase>();
 builder.Services.AddScoped<CreateProjectUseCase>();
