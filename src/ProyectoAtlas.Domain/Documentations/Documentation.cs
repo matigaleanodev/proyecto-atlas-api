@@ -5,14 +5,19 @@ namespace ProyectoAtlas.Domain.Documentations;
 
 public partial class Documentation
 {
-  [GeneratedRegex(@"^ADR-\d{3,}\s.+$")]
-  private static partial Regex AdrTitleRegex();
 
   private Documentation()
   {
   }
 
-  public Documentation(Guid projectId, string title, string contentMarkdown, int sortOrder, DocumentationKind kind, DocumentationStatus status)
+  public Documentation(
+    Guid projectId,
+    string title,
+    string contentMarkdown,
+    int sortOrder,
+    DocumentationKind kind,
+    DocumentationStatus status,
+    DocumentationArea area)
   {
     if (kind == DocumentationKind.Decision && !ValidateAdrTitle(title))
     {
@@ -30,6 +35,7 @@ public partial class Documentation
     SortOrder = sortOrder;
     Kind = kind;
     Status = status;
+    Area = area;
     CreatedAtUtc = now;
     UpdatedAtUtc = now;
   }
@@ -42,6 +48,7 @@ public partial class Documentation
   public int SortOrder { get; private set; }
   public DocumentationKind Kind { get; private set; }
   public DocumentationStatus Status { get; private set; }
+  public DocumentationArea Area { get; private set; }
   public DateTime CreatedAtUtc { get; private set; }
   public DateTime UpdatedAtUtc { get; private set; }
 
@@ -77,6 +84,9 @@ public partial class Documentation
 
     UpdatedAtUtc = DateTime.UtcNow;
   }
+
+  [GeneratedRegex(@"^ADR-\d{3,}\s.+$")]
+  private static partial Regex AdrTitleRegex();
 
 
   private static bool ValidateAdrTitle(string title)

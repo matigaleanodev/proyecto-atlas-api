@@ -12,7 +12,15 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     await dbContext.Documentations.AddAsync(documentation, cancellationToken);
     await SaveChanges(documentation.Slug, cancellationToken);
   }
-  public async Task<(IEnumerable<Documentation> Documentations, int TotalCount)> GetPagedList(Guid projectId, int page, int pageSize, string? query = null, DocumentationKind? kind = null, DocumentationStatus? status = null, CancellationToken cancellationToken = default)
+  public async Task<(IEnumerable<Documentation> Documentations, int TotalCount)> GetPagedList(
+    Guid projectId,
+    int page,
+    int pageSize,
+    string? query = null,
+    DocumentationKind? kind = null,
+    DocumentationStatus? status = null,
+    DocumentationArea? area = null,
+    CancellationToken cancellationToken = default)
   {
     IQueryable<Documentation> documentationsQuery = dbContext.Documentations
         .Where(documentation => documentation.ProjectId == projectId);
@@ -25,6 +33,11 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
           EF.Functions.ILike(documentation.Title, normalizedQuery));
     }
 
+    if (area.HasValue)
+    {
+      documentationsQuery = documentationsQuery.Where(documentation => documentation.Area == area.Value);
+    }
+
     if (kind.HasValue)
     {
       documentationsQuery = documentationsQuery.Where(documentation => documentation.Kind == kind.Value);
@@ -34,7 +47,6 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     {
       documentationsQuery = documentationsQuery.Where(documentation => documentation.Status == status.Value);
     }
-
 
     int totalCount = await documentationsQuery.CountAsync(cancellationToken);
 

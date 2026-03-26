@@ -7,4 +7,6 @@ public record ListProjectDocumentationsQuery(
     int PageSize = 10,
     string? Query = null,
     DocumentationKind? Kind = null,
-    DocumentationStatus? Status = null);
+    DocumentationStatus? Status = null,
+    DocumentationArea? Area = null
+    );

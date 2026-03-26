@@ -23,7 +23,8 @@ public class CreateDocumentationUseCaseTests
         "# Atlas",
         1,
         DocumentationKind.Note,
-        DocumentationStatus.Draft);
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
 
     Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
 
@@ -32,6 +33,7 @@ public class CreateDocumentationUseCaseTests
     Assert.Equal(input.SortOrder, result.SortOrder);
     Assert.Equal(input.Kind, result.Kind);
     Assert.Equal(input.Status, result.Status);
+    Assert.Equal(input.Area, result.Area);
     Assert.Equal(projectRepository.ProjectBySlug!.Id, result.ProjectId);
     Assert.NotEqual(Guid.Empty, result.Id);
     Assert.Same(result, documentationRepository.AddedDocumentation);
@@ -55,7 +57,8 @@ public class CreateDocumentationUseCaseTests
         "# Atlas",
         1,
         DocumentationKind.Page,
-        DocumentationStatus.Draft);
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
 
     Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
 
@@ -81,7 +84,8 @@ public class CreateDocumentationUseCaseTests
         "# Atlas",
         1,
         DocumentationKind.Decision,
-        DocumentationStatus.Draft);
+        DocumentationStatus.Draft,
+        DocumentationArea.Architecture);
 
     InvalidDocumentationTitleConventionException exception =
         await Assert.ThrowsAsync<InvalidDocumentationTitleConventionException>(() =>
@@ -101,7 +105,8 @@ public class CreateDocumentationUseCaseTests
         "# Atlas",
         1,
         DocumentationKind.Note,
-        DocumentationStatus.Draft);
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
         createDocumentationUseCase.Execute("missing-project", input));
@@ -133,7 +138,13 @@ public class CreateDocumentationUseCaseTests
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
         projectRepository);
-    CreateProjectDocumentationCommand input = new(title!, contentMarkdown!, 1, DocumentationKind.Note, DocumentationStatus.Draft);
+    CreateProjectDocumentationCommand input = new(
+        title!,
+        contentMarkdown!,
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() =>
         createDocumentationUseCase.Execute(projectSlug!, input));

@@ -7,4 +7,5 @@ public record CreateProjectDocumentationCommand(
     string ContentMarkdown,
     int SortOrder,
     DocumentationKind Kind,
-    DocumentationStatus Status);
+    DocumentationStatus Status,
+    DocumentationArea Area);

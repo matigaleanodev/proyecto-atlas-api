@@ -164,6 +164,13 @@
             "schema": {
               "$ref": "#/components/schemas/DocumentationStatus"
             }
+          },
+          {
+            "name": "area",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DocumentationArea"
+            }
           }
         ],
         "responses": {
@@ -783,7 +790,8 @@
           "contentMarkdown",
           "sortOrder",
           "kind",
-          "status"
+          "status",
+          "area"
         ],
         "type": "object",
         "properties": {
@@ -806,6 +814,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/DocumentationStatus"
+          },
+          "area": {
+            "$ref": "#/components/schemas/DocumentationArea"
           }
         },
         "example": {
@@ -823,7 +834,8 @@
           "contentMarkdown",
           "sortOrder",
           "kind",
-          "status"
+          "status",
+          "area"
         ],
         "type": "object",
         "properties": {
@@ -858,6 +870,9 @@
           "status": {
             "$ref": "#/components/schemas/DocumentationStatus"
           },
+          "area": {
+            "$ref": "#/components/schemas/DocumentationArea"
+          },
           "createdAtUtc": {
             "type": "string",
             "format": "date-time"
@@ -879,6 +894,9 @@
           "createdAtUtc": "2026-03-24T18:35:00Z",
           "updatedAtUtc": "2026-03-24T18:35:00Z"
         }
+      },
+      "DocumentationArea": {
+        "type": "integer"
       },
       "DocumentationKind": {
         "type": "integer"
