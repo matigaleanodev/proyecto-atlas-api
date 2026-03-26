@@ -13,6 +13,7 @@ public interface IDocumentationRepository
       string? query = null,
       DocumentationKind? kind = null,
       DocumentationStatus? status = null,
+      DocumentationArea? area = null,
       CancellationToken cancellationToken = default
     );
 

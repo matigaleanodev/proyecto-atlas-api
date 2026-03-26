@@ -60,6 +60,12 @@ public class DocumentationConfiguration : IEntityTypeConfiguration<Documentation
         .HasMaxLength(50)
         .IsRequired();
 
+    builder.Property(documentation => documentation.Area)
+        .HasColumnName("area")
+        .HasConversion<string>()
+        .HasMaxLength(50)
+        .IsRequired();
+
     builder.Property(documentation => documentation.CreatedAtUtc)
         .HasColumnName("created_at_utc")
         .IsRequired();

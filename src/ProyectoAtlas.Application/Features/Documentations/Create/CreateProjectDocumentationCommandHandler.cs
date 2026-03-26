@@ -29,7 +29,8 @@ public class CreateProjectDocumentationCommandHandler(
           input.ContentMarkdown,
           input.SortOrder,
           input.Kind,
-          input.Status);
+          input.Status,
+          input.Area);
     }
     catch (InvalidDocumentationTitleException exception)
     {

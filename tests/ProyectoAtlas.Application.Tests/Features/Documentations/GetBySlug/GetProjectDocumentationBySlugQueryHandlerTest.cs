@@ -19,7 +19,14 @@ public class GetProjectDocumentationBySlugQueryHandlerTests
     };
     FakeDocumentationRepository documentationRepository = new()
     {
-      DocumentationBySlug = new Documentation(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note, DocumentationStatus.Draft),
+      DocumentationBySlug = new Documentation(
+          project.Id,
+          "Getting Started",
+          "# Atlas",
+          1,
+          DocumentationKind.Note,
+          DocumentationStatus.Draft,
+          DocumentationArea.Backend),
     };
     GetProjectDocumentationBySlugQueryHandler useCase = new(documentationRepository, projectRepository);
 
@@ -28,6 +35,7 @@ public class GetProjectDocumentationBySlugQueryHandlerTests
     Assert.Equal("Getting Started", result.Title);
     Assert.Equal(DocumentationKind.Note, result.Kind);
     Assert.Equal(DocumentationStatus.Draft, result.Status);
+    Assert.Equal(DocumentationArea.Backend, result.Area);
     Assert.Equal(project.Id, documentationRepository.ReceivedProjectId);
   }
 

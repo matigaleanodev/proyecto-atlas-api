@@ -13,7 +13,14 @@ public class UpdateProjectDocumentationCommandHandlerTests
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
-    Documentation documentation = new(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note, DocumentationStatus.Draft);
+    Documentation documentation = new(
+        project.Id,
+        "Getting Started",
+        "# Atlas",
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project,
@@ -37,6 +44,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     Assert.Equal(input.SortOrder, result.SortOrder);
     Assert.Equal(DocumentationKind.Note, result.Kind);
     Assert.Equal(input.Status, result.Status);
+    Assert.Equal(DocumentationArea.Backend, result.Area);
     Assert.Same(documentation, result);
     Assert.Same(documentation, documentationRepository.UpdatedDocumentation);
   }
@@ -96,7 +104,8 @@ public class UpdateProjectDocumentationCommandHandlerTests
         "# Atlas",
         1,
         DocumentationKind.Decision,
-        DocumentationStatus.Draft);
+        DocumentationStatus.Draft,
+        DocumentationArea.Architecture);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project,

@@ -26,6 +26,8 @@ Reglas vigentes:
 - `Documentation.kind` clasifica el contenido documental y hoy admite `Page`, `Decision`, `Note`, `FAQ` y `ReleaseNotes`
 - `Documentation.kind` se define al crear y no se edita después
 - `Documentation.status` hoy admite `Draft`, `Published` y `Archived`
+- `Documentation.area` clasifica el contexto de trabajo y hoy admite `Product`, `Architecture`, `Backend`, `Frontend`, `Operations`, `DevOps`, `Security` y `UX`
+- `Documentation.area` se define al crear y no se edita después
 - si `Documentation.kind == Decision`, el título debe seguir la convención `ADR-001 Title`
 
 ## Endpoints
@@ -50,7 +52,7 @@ Reglas vigentes:
 - `PATCH /projects/{projectSlug}/documentations/{slug}`
 - `DELETE /projects/{projectSlug}/documentations/{slug}`
 
-El listado soporta filtros opcionales por `query`, `kind` y `status`.
+El listado soporta filtros opcionales por `query`, `kind`, `status` y `area`.
 
 ## OpenAPI y Swagger
 
@@ -136,7 +138,8 @@ Todos los campos son opcionales.
   "contentMarkdown": "# Proyecto Atlas",
   "sortOrder": 1,
   "kind": "Page",
-  "status": "Draft"
+  "status": "Draft",
+  "area": "Backend"
 }
 ```
 
@@ -191,6 +194,7 @@ Hasta este punto, Atlas ya tiene:
 - CRUD base de proyectos
 - CRUD base de documentación anidada
 - clasificacion inicial de `Documentation` mediante `kind`
+- organizacion inicial de `Documentation` mediante `area`
 - OpenAPI y Swagger en desarrollo
 - CI base
 - contrato uniforme de errores para toda la API
