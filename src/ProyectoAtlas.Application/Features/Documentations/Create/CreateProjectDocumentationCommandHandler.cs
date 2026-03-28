@@ -33,6 +33,11 @@ public class CreateProjectDocumentationCommandHandler(
       {
         throw new InvalidDocumentationFaqItemsException("FAQ items must have a non-empty answer.");
       }
+
+      if (input.FaqItems.Any(item => item.SortOrder < 1))
+      {
+        throw new InvalidDocumentationFaqItemsException("FAQ items must have a sort order greater than 0.");
+      }
     }
 
     if (input.Kind != DocumentationKind.FAQ && input.FaqItems is not null && input.FaqItems.Count > 0)

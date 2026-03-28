@@ -211,6 +211,37 @@ public class CreateDocumentationUseCaseTests
   }
 
   [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationFaqItemsException_WhenFaqItemSortOrderIsInvalid()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
+        new FakeDocumentationRepository(),
+        projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        Title: "Common Questions",
+        ContentMarkdown: "## Intro",
+        SortOrder: 1,
+        Kind: DocumentationKind.FAQ,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Product,
+        Tags: null,
+        FaqItems:
+        [
+          new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 0)
+        ]);
+
+    await Assert.ThrowsAsync<InvalidDocumentationFaqItemsException>(() =>
+        createDocumentationUseCase.Execute("proyecto-atlas", input));
+  }
+
+  [Fact]
   public async Task Execute_ShouldThrowInvalidDocumentationTagsException_WhenTagNameIsEmpty()
   {
     FakeProjectRepository projectRepository = new()

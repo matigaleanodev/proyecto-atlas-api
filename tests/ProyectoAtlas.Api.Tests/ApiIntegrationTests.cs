@@ -391,6 +391,33 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenFaqItemSortOrderIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        Title: "Common Questions",
+        ContentMarkdown: "## Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.FAQ,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Product,
+        Tags: null,
+        FaqItems:
+        [
+          new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 0)
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationFaqItemsInvalid,
+        "sort order");
+  }
+
+  [Fact]
   public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenNonFaqIncludesFaqItems()
   {
     HttpClient client = _factory.CreateClient();
@@ -859,6 +886,30 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         HttpStatusCode.BadRequest,
         AtlasErrorCodes.DocumentationTagsInvalid,
         "duplicate");
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnBadRequest_WhenFaqItemSortOrderIsInvalid()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published,
+        [
+          new UpdateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 0)
+        ]);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationFaqItemsInvalid,
+        "sort order");
   }
 
   [Fact]
