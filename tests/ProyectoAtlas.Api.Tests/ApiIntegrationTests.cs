@@ -733,6 +733,108 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PatchProjectDocumentation_ShouldReplaceTags_WhenTagsAreProvided()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand createInput = new(
+        Title: "Getting Started With Tags",
+        ContentMarkdown: "# Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.Note,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags:
+        [
+          new CreateProjectDocumentationTag("backend"),
+          new CreateProjectDocumentationTag("api")
+        ]);
+
+    HttpResponseMessage createResponse =
+        await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", createInput);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    UpdateProjectDocumentationCommand updateInput = new(
+        "Getting Started With Tags",
+        "## Updated",
+        2,
+        DocumentationStatus.Published,
+        null,
+        [
+          new UpdateProjectDocumentationTag("dotnet"),
+          new UpdateProjectDocumentationTag("architecture")
+        ]);
+
+    HttpResponseMessage patchResponse =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started-with-tags", updateInput);
+
+    Assert.Equal(HttpStatusCode.OK, patchResponse.StatusCode);
+
+    string patchContent = await patchResponse.Content.ReadAsStringAsync();
+    using JsonDocument patchDocument = JsonDocument.Parse(patchContent);
+    JsonElement patchRoot = patchDocument.RootElement;
+
+    string[] tagNames = patchRoot.GetProperty("tags")
+        .EnumerateArray()
+        .Select(item => item.GetProperty("name").GetString() ?? string.Empty)
+        .OrderBy(name => name, StringComparer.Ordinal)
+        .ToArray();
+
+    Assert.Equal(["architecture", "dotnet"], tagNames);
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnBadRequest_WhenTagNameIsEmpty()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published,
+        null,
+        [
+          new UpdateProjectDocumentationTag(" ")
+        ]);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTagsInvalid,
+        "non-empty");
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReturnBadRequest_WhenTagsAreDuplicated()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published,
+        null,
+        [
+          new UpdateProjectDocumentationTag("Node"),
+          new UpdateProjectDocumentationTag(" node ")
+        ]);
+
+    HttpResponseMessage response =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTagsInvalid,
+        "duplicate");
+  }
+
+  [Fact]
   public async Task PatchProjectDocumentation_ShouldReturnBadRequest_WhenDecisionTitleConventionIsInvalid()
   {
     HttpClient client = _factory.CreateClient();

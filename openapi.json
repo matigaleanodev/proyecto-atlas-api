@@ -1309,6 +1309,15 @@
             "items": {
               "$ref": "#/components/schemas/UpdateProjectDocumentationFaqItem"
             }
+          },
+          "tags": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UpdateProjectDocumentationTag"
+            }
           }
         },
         "example": {
@@ -1339,6 +1348,17 @@
               "string"
             ],
             "format": "int32"
+          }
+        }
+      },
+      "UpdateProjectDocumentationTag": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
           }
         }
       }
