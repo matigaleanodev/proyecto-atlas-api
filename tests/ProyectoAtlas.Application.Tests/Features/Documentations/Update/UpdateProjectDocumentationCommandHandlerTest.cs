@@ -13,7 +13,14 @@ public class UpdateProjectDocumentationCommandHandlerTests
         "Backend for project documentation based on markdown",
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
-    Documentation documentation = new(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note, DocumentationStatus.Draft);
+    Documentation documentation = new(
+        project.Id,
+        "Getting Started",
+        "# Atlas",
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project,
@@ -37,8 +44,54 @@ public class UpdateProjectDocumentationCommandHandlerTests
     Assert.Equal(input.SortOrder, result.SortOrder);
     Assert.Equal(DocumentationKind.Note, result.Kind);
     Assert.Equal(input.Status, result.Status);
+    Assert.Equal(DocumentationArea.Backend, result.Area);
     Assert.Same(documentation, result);
     Assert.Same(documentation, documentationRepository.UpdatedDocumentation);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldReplaceFaqItems_WhenDocumentationIsFaq()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        project.Id,
+        "Common Questions",
+        "## Intro",
+        1,
+        DocumentationKind.FAQ,
+        DocumentationStatus.Draft,
+        DocumentationArea.Product,
+        [
+          new DocumentationFaqItemData("Old question", "Old answer", 1)
+        ]);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Common Questions",
+        "## Updated",
+        2,
+        DocumentationStatus.Published,
+        [
+          new UpdateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1),
+          new UpdateProjectDocumentationFaqItem("Who uses it?", "Engineering teams.", 2)
+        ]);
+
+    Documentation result = await useCase.Execute("proyecto-atlas", "common-questions", input);
+
+    Assert.Equal(2, result.FaqItems.Count);
+    Assert.Equal("What is Atlas?", result.FaqItems.First().Question);
+    Assert.Equal("Engineering teams.", result.FaqItems.Last().Answer);
   }
 
   [Fact]
@@ -96,7 +149,8 @@ public class UpdateProjectDocumentationCommandHandlerTests
         "# Atlas",
         1,
         DocumentationKind.Decision,
-        DocumentationStatus.Draft);
+        DocumentationStatus.Draft,
+        DocumentationArea.Architecture);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project,

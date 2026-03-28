@@ -7,6 +7,7 @@ public class ProyectoAtlasDbContext(DbContextOptions<ProyectoAtlasDbContext> opt
 {
   public DbSet<Project> Projects => Set<Project>();
   public DbSet<Documentation> Documentations => Set<Documentation>();
+  public DbSet<DocumentationFaqItem> DocumentationFaqItems => Set<DocumentationFaqItem>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

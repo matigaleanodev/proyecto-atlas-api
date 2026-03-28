@@ -164,6 +164,13 @@
             "schema": {
               "$ref": "#/components/schemas/DocumentationStatus"
             }
+          },
+          {
+            "name": "area",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DocumentationArea"
+            }
           }
         ],
         "responses": {
@@ -783,7 +790,8 @@
           "contentMarkdown",
           "sortOrder",
           "kind",
-          "status"
+          "status",
+          "area"
         ],
         "type": "object",
         "properties": {
@@ -806,6 +814,18 @@
           },
           "status": {
             "$ref": "#/components/schemas/DocumentationStatus"
+          },
+          "area": {
+            "$ref": "#/components/schemas/DocumentationArea"
+          },
+          "faqItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CreateProjectDocumentationFaqItem"
+            }
           }
         },
         "example": {
@@ -816,6 +836,30 @@
           "status": "Draft"
         }
       },
+      "CreateProjectDocumentationFaqItem": {
+        "required": [
+          "question",
+          "answer",
+          "sortOrder"
+        ],
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "Documentation": {
         "required": [
           "projectId",
@@ -823,7 +867,8 @@
           "contentMarkdown",
           "sortOrder",
           "kind",
-          "status"
+          "status",
+          "area"
         ],
         "type": "object",
         "properties": {
@@ -858,6 +903,18 @@
           "status": {
             "$ref": "#/components/schemas/DocumentationStatus"
           },
+          "area": {
+            "$ref": "#/components/schemas/DocumentationArea"
+          },
+          "faqItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DocumentationFaqItem"
+            }
+          },
           "createdAtUtc": {
             "type": "string",
             "format": "date-time"
@@ -878,6 +935,42 @@
           "status": "Draft",
           "createdAtUtc": "2026-03-24T18:35:00Z",
           "updatedAtUtc": "2026-03-24T18:35:00Z"
+        }
+      },
+      "DocumentationArea": {
+        "type": "integer"
+      },
+      "DocumentationFaqItem": {
+        "required": [
+          "documentationId",
+          "question",
+          "answer",
+          "sortOrder"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "question": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
         }
       },
       "DocumentationKind": {
@@ -1152,6 +1245,15 @@
                 "$ref": "#/components/schemas/DocumentationStatus"
               }
             ]
+          },
+          "faqItems": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UpdateProjectDocumentationFaqItem"
+            }
           }
         },
         "example": {
@@ -1159,6 +1261,30 @@
           "contentMarkdown": "## Updated\n\nPasos minimos para correr el proyecto.",
           "sortOrder": 2,
           "status": "Published"
+        }
+      },
+      "UpdateProjectDocumentationFaqItem": {
+        "required": [
+          "question",
+          "answer",
+          "sortOrder"
+        ],
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
         }
       }
     }

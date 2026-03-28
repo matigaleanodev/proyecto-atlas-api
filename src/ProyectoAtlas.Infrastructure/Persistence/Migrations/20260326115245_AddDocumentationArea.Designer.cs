@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProyectoAtlas.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using ProyectoAtlas.Infrastructure.Persistence;
 namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ProyectoAtlasDbContext))]
-    partial class ProyectoAtlasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260326115245_AddDocumentationArea")]
+    partial class AddDocumentationArea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,38 +90,6 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                     b.ToTable("documentations", (string)null);
                 });
 
-            modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.DocumentationFaqItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("answer");
-
-                    b.Property<Guid>("DocumentationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("documentation_id");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("question");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("integer")
-                        .HasColumnName("sort_order");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentationId", "SortOrder")
-                        .IsUnique();
-
-                    b.ToTable("documentation_faq_items", (string)null);
-                });
-
             modelBuilder.Entity("ProyectoAtlas.Domain.Projects.Project", b =>
                 {
                     b.Property<Guid>("Id")
@@ -176,20 +147,6 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.DocumentationFaqItem", b =>
-                {
-                    b.HasOne("ProyectoAtlas.Domain.Documentations.Documentation", null)
-                        .WithMany("FaqItems")
-                        .HasForeignKey("DocumentationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.Documentation", b =>
-                {
-                    b.Navigation("FaqItems");
                 });
 #pragma warning restore 612, 618
         }

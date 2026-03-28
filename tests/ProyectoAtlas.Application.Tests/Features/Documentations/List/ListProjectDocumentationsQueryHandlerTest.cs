@@ -21,8 +21,8 @@ public class ListProjectDocumentationsQueryHandlerTests
     {
       PagedDocumentations =
       [
-        new Documentation(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note, DocumentationStatus.Draft),
-        new Documentation(project.Id, "ADR-001 Architecture", "## Layers", 2, DocumentationKind.Note, DocumentationStatus.Published),
+        new Documentation(project.Id, "Getting Started", "# Atlas", 1, DocumentationKind.Note, DocumentationStatus.Draft, DocumentationArea.Backend),
+        new Documentation(project.Id, "ADR-001 Architecture", "## Layers", 2, DocumentationKind.Note, DocumentationStatus.Published, DocumentationArea.Architecture),
       ],
       PagedTotalCount = 2,
     };
@@ -38,6 +38,7 @@ public class ListProjectDocumentationsQueryHandlerTests
     Assert.Equal(2, result.Items.Count);
     Assert.Equal(DocumentationKind.Note, result.Items.First().Kind);
     Assert.Equal(DocumentationStatus.Draft, result.Items.First().Status);
+    Assert.Equal(DocumentationArea.Backend, result.Items.First().Area);
   }
 
   [Fact]
@@ -59,7 +60,8 @@ public class ListProjectDocumentationsQueryHandlerTests
         5,
         "docs",
         DocumentationKind.Decision,
-        DocumentationStatus.Published);
+        DocumentationStatus.Published,
+        DocumentationArea.Architecture);
 
     await useCase.Execute("proyecto-atlas", input);
 
@@ -69,6 +71,7 @@ public class ListProjectDocumentationsQueryHandlerTests
     Assert.Equal("docs", documentationRepository.ReceivedQuery);
     Assert.Equal(DocumentationKind.Decision, documentationRepository.ReceivedKind);
     Assert.Equal(DocumentationStatus.Published, documentationRepository.ReceivedStatus);
+    Assert.Equal(DocumentationArea.Architecture, documentationRepository.ReceivedArea);
   }
 
   [Fact]
