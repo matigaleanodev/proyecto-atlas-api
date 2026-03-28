@@ -23,6 +23,7 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     CancellationToken cancellationToken = default)
   {
     IQueryable<Documentation> documentationsQuery = dbContext.Documentations
+        .Include(documentation => documentation.FaqItems)
         .Where(documentation => documentation.ProjectId == projectId);
 
     if (!string.IsNullOrWhiteSpace(query))
@@ -61,6 +62,7 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
   public async Task<Documentation?> GetBySlug(Guid projectId, string slug, CancellationToken cancellationToken = default)
   {
     return await dbContext.Documentations
+        .Include(documentation => documentation.FaqItems)
         .FirstOrDefaultAsync(documentation => documentation.ProjectId == projectId && documentation.Slug == slug, cancellationToken);
   }
 

@@ -28,6 +28,7 @@ Reglas vigentes:
 - `Documentation.status` hoy admite `Draft`, `Published` y `Archived`
 - `Documentation.area` clasifica el contexto de trabajo y hoy admite `Product`, `Architecture`, `Backend`, `Frontend`, `Operations`, `DevOps`, `Security` y `UX`
 - `Documentation.area` se define al crear y no se edita después
+- si `Documentation.kind == FAQ`, `faqItems` es obligatorio en create y, en update, si se envia reemplaza la coleccion completa
 - si `Documentation.kind == Decision`, el título debe seguir la convención `ADR-001 Title`
 
 ## Endpoints
@@ -88,6 +89,7 @@ Semántica:
 - `PROJECT_SLUG_CONFLICT`
 - `DOCUMENTATION_NOT_FOUND`
 - `DOCUMENTATION_SLUG_CONFLICT`
+- `DOCUMENTATION_FAQ_ITEMS_INVALID`
 - `DOCUMENTATION_TITLE_CONVENTION_INVALID`
 - `VALIDATION_ERROR`
 - `INTERNAL_SERVER_ERROR`
@@ -143,6 +145,26 @@ Todos los campos son opcionales.
 }
 ```
 
+Ejemplo FAQ:
+
+```json
+{
+  "title": "Common Questions",
+  "contentMarkdown": "## Intro",
+  "sortOrder": 2,
+  "kind": "FAQ",
+  "status": "Draft",
+  "area": "Product",
+  "faqItems": [
+    {
+      "question": "What is Atlas?",
+      "answer": "Atlas is the documentation backend.",
+      "sortOrder": 1
+    }
+  ]
+}
+```
+
 ### Actualizar documentación
 
 `PATCH /projects/{projectSlug}/documentations/{slug}`
@@ -195,6 +217,7 @@ Hasta este punto, Atlas ya tiene:
 - CRUD base de documentación anidada
 - clasificacion inicial de `Documentation` mediante `kind`
 - organizacion inicial de `Documentation` mediante `area`
+- FAQ estructurada con `faqItems` y reemplazo completo de coleccion en update
 - OpenAPI y Swagger en desarrollo
 - CI base
 - contrato uniforme de errores para toda la API

@@ -40,6 +40,38 @@ public class CreateDocumentationUseCaseTests
   }
 
   [Fact]
+  public async Task Execute_ShouldReturnFaqDocumentation_WhenKindIsFaq()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    FakeDocumentationRepository documentationRepository = new();
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        "Common Questions",
+        "## Intro",
+        1,
+        DocumentationKind.FAQ,
+        DocumentationStatus.Draft,
+        DocumentationArea.Product,
+        [
+          new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1),
+          new CreateProjectDocumentationFaqItem("Who uses it?", "Engineering teams.", 2)
+        ]);
+
+    Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
+
+    Assert.Equal(DocumentationKind.FAQ, result.Kind);
+    Assert.Equal(2, result.FaqItems.Count);
+    Assert.Equal("What is Atlas?", result.FaqItems.First().Question);
+  }
+
+  [Fact]
   public async Task Execute_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
   {
     FakeProjectRepository projectRepository = new()
@@ -110,6 +142,33 @@ public class CreateDocumentationUseCaseTests
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
         createDocumentationUseCase.Execute("missing-project", input));
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationFaqItemsException_WhenFaqHasNoItems()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
+        new FakeDocumentationRepository(),
+        projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        "Common Questions",
+        "## Intro",
+        1,
+        DocumentationKind.FAQ,
+        DocumentationStatus.Draft,
+        DocumentationArea.Product,
+        []);
+
+    await Assert.ThrowsAsync<InvalidDocumentationFaqItemsException>(() =>
+        createDocumentationUseCase.Execute("proyecto-atlas", input));
   }
 
   [Theory]

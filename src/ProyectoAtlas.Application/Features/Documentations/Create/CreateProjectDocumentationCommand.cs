@@ -8,4 +8,5 @@ public record CreateProjectDocumentationCommand(
     int SortOrder,
     DocumentationKind Kind,
     DocumentationStatus Status,
-    DocumentationArea Area);
+    DocumentationArea Area,
+    IReadOnlyCollection<CreateProjectDocumentationFaqItem>? FaqItems = null);

@@ -9,4 +9,5 @@ public static class AtlasErrorCodes
   public const string ProjectNotFound = "PROJECT_NOT_FOUND";
   public const string ProjectSlugConflict = "PROJECT_SLUG_CONFLICT";
   public const string ValidationError = "VALIDATION_ERROR";
+  public const string DocumentationFaqItemsInvalid = "DOCUMENTATION_FAQ_ITEMS_INVALID";
 }

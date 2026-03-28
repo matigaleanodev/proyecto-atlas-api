@@ -21,6 +21,14 @@ public class DocumentationConfiguration : IEntityTypeConfiguration<Documentation
         .HasForeignKey(documentation => documentation.ProjectId)
         .OnDelete(DeleteBehavior.Cascade);
 
+    builder.HasMany(documentation => documentation.FaqItems)
+        .WithOne()
+        .HasForeignKey(faqItem => faqItem.DocumentationId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    builder.Navigation(documentation => documentation.FaqItems)
+        .UsePropertyAccessMode(PropertyAccessMode.Field);
+
     builder.Property(documentation => documentation.Id)
         .HasColumnName("id")
         .ValueGeneratedNever();

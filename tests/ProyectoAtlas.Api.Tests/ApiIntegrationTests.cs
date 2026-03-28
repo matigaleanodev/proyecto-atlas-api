@@ -154,6 +154,46 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnCreatedFaqDocumentation()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Common Questions",
+        "## Intro",
+        2,
+        DocumentationKind.FAQ,
+        DocumentationStatus.Draft,
+        DocumentationArea.Product,
+        [
+          new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1),
+          new CreateProjectDocumentationFaqItem("Who uses it?", "Engineering teams.", 2)
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+    string postContent = await response.Content.ReadAsStringAsync();
+    using JsonDocument postDocument = JsonDocument.Parse(postContent);
+    JsonElement postRoot = postDocument.RootElement;
+
+    Assert.Equal("FAQ", postRoot.GetProperty("kind").GetString());
+    Assert.Equal(2, postRoot.GetProperty("faqItems").GetArrayLength());
+
+    HttpResponseMessage getResponse =
+        await client.GetAsync("/projects/proyecto-atlas/documentations/common-questions");
+
+    Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+
+    string getContent = await getResponse.Content.ReadAsStringAsync();
+    using JsonDocument getDocument = JsonDocument.Parse(getContent);
+    JsonElement getRoot = getDocument.RootElement;
+
+    Assert.Equal(2, getRoot.GetProperty("faqItems").GetArrayLength());
+    Assert.Equal("What is Atlas?", getRoot.GetProperty("faqItems")[0].GetProperty("question").GetString());
+  }
+
+  [Fact]
   public async Task PostProjectDocumentations_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
   {
     HttpClient client = _factory.CreateClient();
@@ -309,6 +349,54 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         HttpStatusCode.BadRequest,
         AtlasErrorCodes.DocumentationTitleConventionInvalid,
         "ADR-XXX");
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenFaqHasNoItems()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Common Questions",
+        "## Intro",
+        2,
+        DocumentationKind.FAQ,
+        DocumentationStatus.Draft,
+        DocumentationArea.Product,
+        []);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationFaqItemsInvalid,
+        "FAQ");
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenNonFaqIncludesFaqItems()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Getting Started Extended",
+        "# Intro",
+        2,
+        DocumentationKind.Page,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend,
+        [
+          new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1)
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationFaqItemsInvalid,
+        "Only FAQ");
   }
 
   [Fact]
@@ -530,6 +618,50 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal("Page", root.GetProperty("kind").GetString());
     Assert.Equal(input.Status.ToString(), root.GetProperty("status").GetString());
     Assert.Equal("quick-start", root.GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task PatchProjectDocumentation_ShouldReplaceFaqItems_WhenDocumentationIsFaq()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand createInput = new(
+        "Common Questions",
+        "## Intro",
+        2,
+        DocumentationKind.FAQ,
+        DocumentationStatus.Draft,
+        DocumentationArea.Product,
+        [
+          new CreateProjectDocumentationFaqItem("Old question", "Old answer", 1)
+        ]);
+
+    HttpResponseMessage createResponse =
+        await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", createInput);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    UpdateProjectDocumentationCommand updateInput = new(
+        "Common Questions",
+        "## Updated",
+        2,
+        DocumentationStatus.Published,
+        [
+          new UpdateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1),
+          new UpdateProjectDocumentationFaqItem("Who uses it?", "Engineering teams.", 2)
+        ]);
+
+    HttpResponseMessage patchResponse =
+        await client.PatchAsJsonAsync("/projects/proyecto-atlas/documentations/common-questions", updateInput);
+
+    Assert.Equal(HttpStatusCode.OK, patchResponse.StatusCode);
+
+    string patchContent = await patchResponse.Content.ReadAsStringAsync();
+    using JsonDocument patchDocument = JsonDocument.Parse(patchContent);
+    JsonElement patchRoot = patchDocument.RootElement;
+
+    Assert.Equal(2, patchRoot.GetProperty("faqItems").GetArrayLength());
+    Assert.Equal("What is Atlas?", patchRoot.GetProperty("faqItems")[0].GetProperty("question").GetString());
+    Assert.Equal("Engineering teams.", patchRoot.GetProperty("faqItems")[1].GetProperty("answer").GetString());
   }
 
   [Fact]
