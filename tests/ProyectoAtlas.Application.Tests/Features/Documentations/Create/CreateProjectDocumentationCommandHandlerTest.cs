@@ -74,6 +74,42 @@ public class CreateDocumentationUseCaseTests
   }
 
   [Fact]
+  public async Task Execute_ShouldReturnDocumentationWithTags_WhenTagsAreProvided()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    FakeDocumentationRepository documentationRepository = new();
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        Title: "Getting Started",
+        ContentMarkdown: "# Atlas",
+        SortOrder: 1,
+        Kind: DocumentationKind.Note,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags:
+        [
+          new CreateProjectDocumentationTag("backend"),
+          new CreateProjectDocumentationTag("dotnet")
+        ]);
+
+    Documentation result = await createDocumentationUseCase.Execute("proyecto-atlas", input);
+
+    string[] tagNames = result.Tags
+        .Select(tag => tag.Name)
+        .OrderBy(name => name, StringComparer.Ordinal)
+        .ToArray();
+
+    Assert.Equal(["backend", "dotnet"], tagNames);
+  }
+
+  [Fact]
   public async Task Execute_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
   {
     FakeProjectRepository projectRepository = new()

@@ -131,7 +131,11 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         1,
         DocumentationKind.Note,
         DocumentationStatus.Draft,
-        DocumentationArea.Backend);
+        DocumentationArea.Backend,
+        [
+          new CreateProjectDocumentationTag("backend"),
+          new CreateProjectDocumentationTag("dotnet")
+        ]);
 
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
 
@@ -149,6 +153,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.Kind.ToString(), root.GetProperty("kind").GetString());
     Assert.Equal(input.Status.ToString(), root.GetProperty("status").GetString());
     Assert.Equal(input.Area.ToString(), root.GetProperty("area").GetString());
+    Assert.Equal(2, root.GetProperty("tags").GetArrayLength());
     Assert.Equal($"getting-started-{suffix.ToLowerInvariant()}", root.GetProperty("slug").GetString());
     Assert.NotEqual(Guid.Empty, root.GetProperty("id").GetGuid());
   }
@@ -654,6 +659,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal("Page", root.GetProperty("kind").GetString());
     Assert.Equal("Draft", root.GetProperty("status").GetString());
     Assert.Equal("Backend", root.GetProperty("area").GetString());
+    Assert.Equal(2, root.GetProperty("tags").GetArrayLength());
   }
 
   [Fact]
@@ -703,6 +709,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
     Assert.Equal("Page", root.GetProperty("kind").GetString());
     Assert.Equal(input.Status.ToString(), root.GetProperty("status").GetString());
+    Assert.Equal(2, root.GetProperty("tags").GetArrayLength());
     Assert.Equal("quick-start", root.GetProperty("slug").GetString());
   }
 
