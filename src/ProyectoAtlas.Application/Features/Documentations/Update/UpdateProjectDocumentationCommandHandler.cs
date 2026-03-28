@@ -16,6 +16,24 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
     Documentation documentation = await documentationRepository.GetBySlug(project.Id, slug, cancellationToken)
         ?? throw new DocumentationNotFoundException(projectSlug, slug);
 
+    if (input.Tags is not null)
+    {
+      if (input.Tags.Any(tag => string.IsNullOrWhiteSpace(tag.Name)))
+      {
+        throw new InvalidDocumentationTagsException("Documentation tags must have a non-empty name.");
+      }
+
+      int distinctTagsCount = input.Tags
+          .Select(tag => tag.Name.Trim().ToLowerInvariant())
+          .Distinct()
+          .Count();
+
+      if (distinctTagsCount != input.Tags.Count)
+      {
+        throw new InvalidDocumentationTagsException("Documentation cannot have duplicate tags.");
+      }
+    }
+
     try
     {
       documentation.Update(
@@ -36,6 +54,15 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
 
         documentation.ReplaceFaqItems(faqItems);
       }
+
+      if (input.Tags is not null)
+      {
+        IReadOnlyCollection<DocumentationTagData> tags = input.Tags
+            .Select(tag => new DocumentationTagData(tag.Name))
+            .ToList();
+
+        documentation.ReplaceTags(tags);
+      }
     }
     catch (InvalidDocumentationTitleException exception)
     {
@@ -44,6 +71,10 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
     catch (InvalidDocumentationFaqListException exception)
     {
       throw new InvalidDocumentationFaqItemsException(exception.Message);
+    }
+    catch (InvalidDocumentationTagListException exception)
+    {
+      throw new InvalidDocumentationTagsException(exception.Message);
     }
 
     await documentationRepository.Update(documentation, cancellationToken);

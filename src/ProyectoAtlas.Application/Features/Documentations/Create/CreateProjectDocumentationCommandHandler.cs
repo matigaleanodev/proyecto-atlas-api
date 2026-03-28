@@ -40,6 +40,24 @@ public class CreateProjectDocumentationCommandHandler(
       throw new InvalidDocumentationFaqItemsException("Only FAQ documentation can have FAQ items.");
     }
 
+    if (input.Tags is not null)
+    {
+      if (input.Tags.Any(tag => string.IsNullOrWhiteSpace(tag.Name)))
+      {
+        throw new InvalidDocumentationTagsException("Documentation tags must have a non-empty name.");
+      }
+
+      int distinctTagsCount = input.Tags
+          .Select(tag => tag.Name.Trim().ToLowerInvariant())
+          .Distinct()
+          .Count();
+
+      if (distinctTagsCount != input.Tags.Count)
+      {
+        throw new InvalidDocumentationTagsException("Documentation cannot have duplicate tags.");
+      }
+    }
+
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
         ?? throw new ProjectNotFoundException(projectSlug);
 
@@ -55,15 +73,20 @@ public class CreateProjectDocumentationCommandHandler(
             item.SortOrder))
         .ToList();
 
+      List<DocumentationTagData>? tags = input.Tags?
+        .Select(tag => new DocumentationTagData(tag.Name))
+        .ToList();
+
       documentation = new(
-        project.Id,
-        input.Title,
-        input.ContentMarkdown,
-        input.SortOrder,
-        input.Kind,
-        input.Status,
-        input.Area,
-        faqItems);
+        projectId: project.Id,
+        title: input.Title,
+        contentMarkdown: input.ContentMarkdown,
+        sortOrder: input.SortOrder,
+        kind: input.Kind,
+        status: input.Status,
+        area: input.Area,
+        tags: tags,
+        faqItems: faqItems);
 
     }
     catch (InvalidDocumentationTitleException exception)
@@ -73,6 +96,10 @@ public class CreateProjectDocumentationCommandHandler(
     catch (InvalidDocumentationFaqListException exception)
     {
       throw new InvalidDocumentationFaqItemsException(exception.Message);
+    }
+    catch (InvalidDocumentationTagListException exception)
+    {
+      throw new InvalidDocumentationTagsException(exception.Message);
     }
 
     await documentationRepository.Add(documentation, cancellationToken);

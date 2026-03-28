@@ -28,6 +28,8 @@ Reglas vigentes:
 - `Documentation.status` hoy admite `Draft`, `Published` y `Archived`
 - `Documentation.area` clasifica el contexto de trabajo y hoy admite `Product`, `Architecture`, `Backend`, `Frontend`, `Operations`, `DevOps`, `Security` y `UX`
 - `Documentation.area` se define al crear y no se edita después
+- `Documentation.tags` permite clasificacion transversal multiple dentro del documento
+- `Documentation.tags` se normaliza internamente y no admite duplicados por nombre normalizado
 - si `Documentation.kind == FAQ`, `faqItems` es obligatorio en create y, en update, si se envia reemplaza la coleccion completa
 - si `Documentation.kind == Decision`, el título debe seguir la convención `ADR-001 Title`
 
@@ -53,7 +55,7 @@ Reglas vigentes:
 - `PATCH /projects/{projectSlug}/documentations/{slug}`
 - `DELETE /projects/{projectSlug}/documentations/{slug}`
 
-El listado soporta filtros opcionales por `query`, `kind`, `status` y `area`.
+El listado soporta filtros opcionales por `query`, `kind`, `status`, `area` y `tag`.
 
 ## OpenAPI y Swagger
 
@@ -90,6 +92,7 @@ Semántica:
 - `DOCUMENTATION_NOT_FOUND`
 - `DOCUMENTATION_SLUG_CONFLICT`
 - `DOCUMENTATION_FAQ_ITEMS_INVALID`
+- `DOCUMENTATION_TAGS_INVALID`
 - `DOCUMENTATION_TITLE_CONVENTION_INVALID`
 - `VALIDATION_ERROR`
 - `INTERNAL_SERVER_ERROR`
@@ -141,7 +144,15 @@ Todos los campos son opcionales.
   "sortOrder": 1,
   "kind": "Page",
   "status": "Draft",
-  "area": "Backend"
+  "area": "Backend",
+  "tags": [
+    {
+      "name": "backend"
+    },
+    {
+      "name": "dotnet"
+    }
+  ]
 }
 ```
 
@@ -174,11 +185,19 @@ Ejemplo FAQ:
   "title": "Quick Start",
   "contentMarkdown": "## Updated",
   "sortOrder": 2,
-  "status": "Published"
+  "status": "Published",
+  "tags": [
+    {
+      "name": "architecture"
+    },
+    {
+      "name": "dotnet"
+    }
+  ]
 }
 ```
 
-Todos los campos son opcionales.
+Todos los campos son opcionales. Si `tags` se envia en update, reemplaza la coleccion completa.
 
 ## Desarrollo local
 
@@ -217,6 +236,7 @@ Hasta este punto, Atlas ya tiene:
 - CRUD base de documentación anidada
 - clasificacion inicial de `Documentation` mediante `kind`
 - organizacion inicial de `Documentation` mediante `area`
+- clasificacion transversal de `Documentation` mediante `tags`
 - FAQ estructurada con `faqItems` y reemplazo completo de coleccion en update
 - OpenAPI y Swagger en desarrollo
 - CI base

@@ -26,6 +26,11 @@ public class DocumentationConfiguration : IEntityTypeConfiguration<Documentation
         .HasForeignKey(faqItem => faqItem.DocumentationId)
         .OnDelete(DeleteBehavior.Cascade);
 
+    builder.HasMany(documentation => documentation.Tags)
+        .WithOne()
+        .HasForeignKey(tag => tag.DocumentationId)
+        .OnDelete(DeleteBehavior.Cascade);
+
     builder.Navigation(documentation => documentation.FaqItems)
         .UsePropertyAccessMode(PropertyAccessMode.Field);
 
@@ -73,6 +78,9 @@ public class DocumentationConfiguration : IEntityTypeConfiguration<Documentation
         .HasConversion<string>()
         .HasMaxLength(50)
         .IsRequired();
+
+    builder.Navigation(documentation => documentation.Tags)
+    .UsePropertyAccessMode(PropertyAccessMode.Field);
 
     builder.Property(documentation => documentation.CreatedAtUtc)
         .HasColumnName("created_at_utc")

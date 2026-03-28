@@ -7,4 +7,5 @@ public record UpdateProjectDocumentationCommand(
     string? ContentMarkdown,
     int? SortOrder,
     DocumentationStatus? Status,
-    IReadOnlyCollection<UpdateProjectDocumentationFaqItem>? FaqItems = null);
+    IReadOnlyCollection<UpdateProjectDocumentationFaqItem>? FaqItems = null,
+    IReadOnlyCollection<UpdateProjectDocumentationTag>? Tags = null);

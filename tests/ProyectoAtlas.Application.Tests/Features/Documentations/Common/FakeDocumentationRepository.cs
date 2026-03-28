@@ -14,6 +14,7 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
   public DocumentationKind? ReceivedKind { get; private set; }
   public DocumentationStatus? ReceivedStatus { get; private set; }
   public DocumentationArea? ReceivedArea { get; private set; }
+  public string? ReceivedTag { get; private set; }
   public IEnumerable<Documentation> PagedDocumentations { get; set; } = [];
   public int PagedTotalCount { get; set; }
   public Documentation? DocumentationBySlug { get; set; }
@@ -32,6 +33,7 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
       DocumentationKind? kind = null,
       DocumentationStatus? status = null,
       DocumentationArea? area = null,
+      string? tag = null,
       CancellationToken cancellationToken = default)
   {
     ReceivedProjectId = projectId;
@@ -41,6 +43,7 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
     ReceivedKind = kind;
     ReceivedStatus = status;
     ReceivedArea = area;
+    ReceivedTag = tag;
 
     return Task.FromResult((PagedDocumentations, PagedTotalCount));
   }

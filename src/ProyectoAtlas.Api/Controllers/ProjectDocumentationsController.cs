@@ -45,9 +45,10 @@ public class ProjectDocumentationsController(
       [FromQuery] DocumentationKind? kind = null,
       [FromQuery] DocumentationStatus? status = null,
       [FromQuery] DocumentationArea? area = null,
+      [FromQuery] string? tag = null,
       CancellationToken cancellationToken = default)
   {
-    ListProjectDocumentationsQuery queryModel = new(page, pageSize, query, kind, status, area);
+    ListProjectDocumentationsQuery queryModel = new(page, pageSize, query, kind, status, area, tag);
     ListProjectDocumentationsResponse response =
         await listProjectDocumentationsQueryHandler.Execute(projectSlug, queryModel, cancellationToken);
 

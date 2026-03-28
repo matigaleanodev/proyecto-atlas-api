@@ -5,6 +5,7 @@ namespace ProyectoAtlas.Domain.Documentations;
 
 public partial class Documentation
 {
+  private readonly List<DocumentationTag> _tags = [];
   private readonly List<DocumentationFaqItem> _faqItems = [];
 
   private Documentation()
@@ -19,6 +20,7 @@ public partial class Documentation
     DocumentationKind kind,
     DocumentationStatus status,
     DocumentationArea area,
+    IReadOnlyCollection<DocumentationTagData>? tags = null,
     IReadOnlyCollection<DocumentationFaqItemData>? faqItems = null)
   {
     Id = Guid.NewGuid();
@@ -35,6 +37,14 @@ public partial class Documentation
           "FAQ documentation must have at least one FAQ item, and non-FAQ documentation cannot include FAQ items.");
     }
 
+
+
+    if (!CanAssignTags(tags))
+    {
+      throw new InvalidDocumentationTagListException(
+          "Documentation cannot have duplicate tags or empty tag names.");
+    }
+
     DateTime now = DateTime.UtcNow;
 
     ProjectId = projectId;
@@ -47,6 +57,11 @@ public partial class Documentation
     Area = area;
     CreatedAtUtc = now;
     UpdatedAtUtc = now;
+
+    if (tags is { Count: > 0 })
+    {
+      ReplaceTagsInternal(tags);
+    }
 
     if (kind == DocumentationKind.FAQ)
     {
@@ -63,6 +78,7 @@ public partial class Documentation
   public DocumentationKind Kind { get; private set; }
   public DocumentationStatus Status { get; private set; }
   public DocumentationArea Area { get; private set; }
+  public IReadOnlyCollection<DocumentationTag> Tags => _tags.AsReadOnly();
   public IReadOnlyCollection<DocumentationFaqItem> FaqItems => _faqItems.AsReadOnly();
   public DateTime CreatedAtUtc { get; private set; }
   public DateTime UpdatedAtUtc { get; private set; }
@@ -96,6 +112,18 @@ public partial class Documentation
       Status = status.Value;
     }
 
+    UpdatedAtUtc = DateTime.UtcNow;
+  }
+
+  public void ReplaceTags(IReadOnlyCollection<DocumentationTagData> tags)
+  {
+    if (!CanAssignTags(tags))
+    {
+      throw new InvalidDocumentationTagListException(
+          "Documentation cannot have duplicate tags or empty tag names.");
+    }
+
+    ReplaceTagsInternal(tags);
     UpdatedAtUtc = DateTime.UtcNow;
   }
 
@@ -152,6 +180,21 @@ public partial class Documentation
         .Count() == validFaqItems.Count;
   }
 
+  private static bool CanAssignTags(IReadOnlyCollection<DocumentationTagData>? tags)
+  {
+    IReadOnlyCollection<DocumentationTagData> validTags = tags ?? [];
+    if (validTags.Count == 0)
+    {
+      return true;
+    }
+
+    return validTags
+        .Where(tag => !string.IsNullOrWhiteSpace(tag.Name))
+        .Select(tag => tag.Name.Trim().ToLowerInvariant())
+        .Distinct()
+        .Count() == validTags.Count;
+  }
+
   private void ReplaceFaqItemsInternal(IReadOnlyCollection<DocumentationFaqItemData> faqItems)
   {
     _faqItems.Clear();
@@ -166,4 +209,13 @@ public partial class Documentation
     }
   }
 
+  private void ReplaceTagsInternal(IReadOnlyCollection<DocumentationTagData> tags)
+  {
+    _tags.Clear();
+
+    foreach (DocumentationTagData tag in tags.OrderBy(tag => tag.Name, StringComparer.OrdinalIgnoreCase))
+    {
+      _tags.Add(new DocumentationTag(Id, tag.Name));
+    }
+  }
 }

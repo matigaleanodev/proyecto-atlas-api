@@ -58,13 +58,15 @@ public class UpdateProjectDocumentationCommandHandlerTests
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
     Documentation documentation = new(
-        project.Id,
-        "Common Questions",
-        "## Intro",
-        1,
-        DocumentationKind.FAQ,
-        DocumentationStatus.Draft,
-        DocumentationArea.Product,
+        projectId: project.Id,
+        title: "Common Questions",
+        contentMarkdown: "## Intro",
+        sortOrder: 1,
+        kind: DocumentationKind.FAQ,
+        status: DocumentationStatus.Draft,
+        area: DocumentationArea.Product,
+        tags: null,
+        faqItems:
         [
           new DocumentationFaqItemData("Old question", "Old answer", 1)
         ]);
@@ -92,6 +94,182 @@ public class UpdateProjectDocumentationCommandHandlerTests
     Assert.Equal(2, result.FaqItems.Count);
     Assert.Equal("What is Atlas?", result.FaqItems.First().Question);
     Assert.Equal("Engineering teams.", result.FaqItems.Last().Answer);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldReplaceTags_WhenTagsAreProvided()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        projectId: project.Id,
+        title: "Getting Started",
+        contentMarkdown: "# Atlas",
+        sortOrder: 1,
+        kind: DocumentationKind.Note,
+        status: DocumentationStatus.Draft,
+        area: DocumentationArea.Backend,
+        tags:
+        [
+          new DocumentationTagData("backend"),
+          new DocumentationTagData("api")
+        ]);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Getting Started",
+        "## Updated",
+        2,
+        DocumentationStatus.Published,
+        null,
+        [
+          new UpdateProjectDocumentationTag("dotnet"),
+          new UpdateProjectDocumentationTag("architecture")
+        ]);
+
+    Documentation result = await useCase.Execute("proyecto-atlas", "getting-started", input);
+
+    string[] tagNames = result.Tags
+        .Select(tag => tag.Name)
+        .OrderBy(name => name, StringComparer.Ordinal)
+        .ToArray();
+
+    Assert.Equal(["architecture", "dotnet"], tagNames);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldKeepTags_WhenTagsAreNotProvided()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        projectId: project.Id,
+        title: "Getting Started",
+        contentMarkdown: "# Atlas",
+        sortOrder: 1,
+        kind: DocumentationKind.Note,
+        status: DocumentationStatus.Draft,
+        area: DocumentationArea.Backend,
+        tags:
+        [
+          new DocumentationTagData("backend"),
+          new DocumentationTagData("api")
+        ]);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published);
+
+    Documentation result = await useCase.Execute("proyecto-atlas", "getting-started", input);
+
+    string[] tagNames = result.Tags
+        .Select(tag => tag.Name)
+        .OrderBy(name => name, StringComparer.Ordinal)
+        .ToArray();
+
+    Assert.Equal(["api", "backend"], tagNames);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationTagsException_WhenTagNameIsEmpty()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        project.Id,
+        "Getting Started",
+        "# Atlas",
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published,
+        null,
+        [
+          new UpdateProjectDocumentationTag(" ")
+        ]);
+
+    await Assert.ThrowsAsync<InvalidDocumentationTagsException>(() =>
+        useCase.Execute("proyecto-atlas", "getting-started", input));
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationTagsException_WhenTagsAreDuplicated()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        project.Id,
+        "Getting Started",
+        "# Atlas",
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published,
+        null,
+        [
+          new UpdateProjectDocumentationTag("Node"),
+          new UpdateProjectDocumentationTag(" node ")
+        ]);
+
+    await Assert.ThrowsAsync<InvalidDocumentationTagsException>(() =>
+        useCase.Execute("proyecto-atlas", "getting-started", input));
   }
 
   [Fact]

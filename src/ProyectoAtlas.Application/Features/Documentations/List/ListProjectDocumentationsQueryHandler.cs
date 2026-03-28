@@ -12,7 +12,7 @@ public class ListProjectDocumentationsQueryHandler(IDocumentationRepository docu
     Project project = await projectRepository.GetBySlug(projectSlug, cancellationToken)
         ?? throw new ProjectNotFoundException(projectSlug);
 
-    (int page, int pageSize, string? query, DocumentationKind? kind, DocumentationStatus? status, DocumentationArea? area) = input;
+    (int page, int pageSize, string? query, DocumentationKind? kind, DocumentationStatus? status, DocumentationArea? area, string? tag) = input;
 
     (IEnumerable<Documentation>? documentations, int totalCount) = await documentationRepository.GetPagedList(
       project.Id,
@@ -22,6 +22,7 @@ public class ListProjectDocumentationsQueryHandler(IDocumentationRepository docu
       kind,
       status,
       area,
+      tag,
       cancellationToken);
 
     List<Documentation> items = [.. documentations];
