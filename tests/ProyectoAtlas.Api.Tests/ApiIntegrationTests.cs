@@ -158,12 +158,14 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     CreateProjectDocumentationCommand input = new(
-        "Common Questions",
-        "## Intro",
-        2,
-        DocumentationKind.FAQ,
-        DocumentationStatus.Draft,
-        DocumentationArea.Product,
+        Title: "Common Questions",
+        ContentMarkdown: "## Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.FAQ,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Product,
+        Tags: null,
+        FaqItems:
         [
           new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1),
           new CreateProjectDocumentationFaqItem("Who uses it?", "Engineering teams.", 2)
@@ -190,7 +192,15 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     JsonElement getRoot = getDocument.RootElement;
 
     Assert.Equal(2, getRoot.GetProperty("faqItems").GetArrayLength());
-    Assert.Equal("What is Atlas?", getRoot.GetProperty("faqItems")[0].GetProperty("question").GetString());
+    string[] questions = getRoot.GetProperty("faqItems")
+        .EnumerateArray()
+        .Select(item => item.GetProperty("question").GetString() ?? string.Empty)
+        .OrderBy(question => question, StringComparer.Ordinal)
+        .ToArray();
+
+    Assert.Equal(
+        ["What is Atlas?", "Who uses it?"],
+        questions);
   }
 
   [Fact]
@@ -362,6 +372,7 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         DocumentationKind.FAQ,
         DocumentationStatus.Draft,
         DocumentationArea.Product,
+        null,
         []);
 
     HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
@@ -379,12 +390,14 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     CreateProjectDocumentationCommand input = new(
-        "Getting Started Extended",
-        "# Intro",
-        2,
-        DocumentationKind.Page,
-        DocumentationStatus.Draft,
-        DocumentationArea.Backend,
+        Title: "Getting Started Extended",
+        ContentMarkdown: "# Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.Page,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags: null,
+        FaqItems:
         [
           new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1)
         ]);
@@ -397,6 +410,59 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
         HttpStatusCode.BadRequest,
         AtlasErrorCodes.DocumentationFaqItemsInvalid,
         "Only FAQ");
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenTagNameIsEmpty()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        Title: "Getting Started With Tags",
+        ContentMarkdown: "# Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.Note,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags:
+        [
+          new CreateProjectDocumentationTag(" ")
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTagsInvalid,
+        "non-empty");
+  }
+
+  [Fact]
+  public async Task PostProjectDocumentations_ShouldReturnBadRequest_WhenTagsAreDuplicated()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        Title: "Getting Started With Tags",
+        ContentMarkdown: "# Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.Note,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags:
+        [
+          new CreateProjectDocumentationTag("Node"),
+          new CreateProjectDocumentationTag(" node ")
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(
+        response,
+        HttpStatusCode.BadRequest,
+        AtlasErrorCodes.DocumentationTagsInvalid,
+        "duplicate");
   }
 
   [Fact]
@@ -625,12 +691,14 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   {
     HttpClient client = _factory.CreateClient();
     CreateProjectDocumentationCommand createInput = new(
-        "Common Questions",
-        "## Intro",
-        2,
-        DocumentationKind.FAQ,
-        DocumentationStatus.Draft,
-        DocumentationArea.Product,
+        Title: "Common Questions",
+        ContentMarkdown: "## Intro",
+        SortOrder: 2,
+        Kind: DocumentationKind.FAQ,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Product,
+        Tags: null,
+        FaqItems:
         [
           new CreateProjectDocumentationFaqItem("Old question", "Old answer", 1)
         ]);

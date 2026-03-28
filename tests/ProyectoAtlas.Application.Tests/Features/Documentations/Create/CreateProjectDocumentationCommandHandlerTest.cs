@@ -53,12 +53,14 @@ public class CreateDocumentationUseCaseTests
     FakeDocumentationRepository documentationRepository = new();
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
     CreateProjectDocumentationCommand input = new(
-        "Common Questions",
-        "## Intro",
-        1,
-        DocumentationKind.FAQ,
-        DocumentationStatus.Draft,
-        DocumentationArea.Product,
+        Title: "Common Questions",
+        ContentMarkdown: "## Intro",
+        SortOrder: 1,
+        Kind: DocumentationKind.FAQ,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Product,
+        Tags: null,
+        FaqItems:
         [
           new CreateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 1),
           new CreateProjectDocumentationFaqItem("Who uses it?", "Engineering teams.", 2)
@@ -159,15 +161,77 @@ public class CreateDocumentationUseCaseTests
         new FakeDocumentationRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
-        "Common Questions",
-        "## Intro",
-        1,
-        DocumentationKind.FAQ,
-        DocumentationStatus.Draft,
-        DocumentationArea.Product,
-        []);
+        Title: "Common Questions",
+        ContentMarkdown: "## Intro",
+        SortOrder: 1,
+        Kind: DocumentationKind.FAQ,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Product,
+        Tags: null,
+        FaqItems: []);
 
     await Assert.ThrowsAsync<InvalidDocumentationFaqItemsException>(() =>
+        createDocumentationUseCase.Execute("proyecto-atlas", input));
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationTagsException_WhenTagNameIsEmpty()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
+        new FakeDocumentationRepository(),
+        projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        Title: "Getting Started",
+        ContentMarkdown: "# Atlas",
+        SortOrder: 1,
+        Kind: DocumentationKind.Note,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags:
+        [
+          new CreateProjectDocumentationTag(" ")
+        ]);
+
+    await Assert.ThrowsAsync<InvalidDocumentationTagsException>(() =>
+        createDocumentationUseCase.Execute("proyecto-atlas", input));
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationTagsException_WhenTagsAreDuplicated()
+  {
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = new Project(
+          "Proyecto Atlas",
+          "Backend for project documentation based on markdown",
+          "https://github.com/matigaleanodev/proyecto-atlas-api",
+          "#1E293B"),
+    };
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
+        new FakeDocumentationRepository(),
+        projectRepository);
+    CreateProjectDocumentationCommand input = new(
+        Title: "Getting Started",
+        ContentMarkdown: "# Atlas",
+        SortOrder: 1,
+        Kind: DocumentationKind.Note,
+        Status: DocumentationStatus.Draft,
+        Area: DocumentationArea.Backend,
+        Tags:
+        [
+          new CreateProjectDocumentationTag("Node"),
+          new CreateProjectDocumentationTag(" node ")
+        ]);
+
+    await Assert.ThrowsAsync<InvalidDocumentationTagsException>(() =>
         createDocumentationUseCase.Execute("proyecto-atlas", input));
   }
 

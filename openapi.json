@@ -818,6 +818,15 @@
           "area": {
             "$ref": "#/components/schemas/DocumentationArea"
           },
+          "tags": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CreateProjectDocumentationTag"
+            }
+          },
           "faqItems": {
             "type": [
               "null",
@@ -857,6 +866,17 @@
               "string"
             ],
             "format": "int32"
+          }
+        }
+      },
+      "CreateProjectDocumentationTag": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
           }
         }
       },
@@ -905,6 +925,15 @@
           },
           "area": {
             "$ref": "#/components/schemas/DocumentationArea"
+          },
+          "tags": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DocumentationTag"
+            }
           },
           "faqItems": {
             "type": [
@@ -978,6 +1007,32 @@
       },
       "DocumentationStatus": {
         "type": "integer"
+      },
+      "DocumentationTag": {
+        "required": [
+          "documentationId",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "normalizedName": {
+            "type": "string"
+          },
+          "canonicalName": {
+            "type": "string"
+          }
+        }
       },
       "ListProjectDocumentationsResponse": {
         "required": [

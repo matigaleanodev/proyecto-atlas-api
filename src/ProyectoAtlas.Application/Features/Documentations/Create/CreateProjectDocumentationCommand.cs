@@ -9,4 +9,5 @@ public record CreateProjectDocumentationCommand(
     DocumentationKind Kind,
     DocumentationStatus Status,
     DocumentationArea Area,
+    IReadOnlyCollection<CreateProjectDocumentationTag>? Tags = null,
     IReadOnlyCollection<CreateProjectDocumentationFaqItem>? FaqItems = null);
