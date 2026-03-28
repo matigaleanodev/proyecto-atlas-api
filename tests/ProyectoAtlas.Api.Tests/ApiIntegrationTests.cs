@@ -590,6 +590,26 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal("Architecture", items[0].GetProperty("area").GetString());
   }
 
+  [Fact]
+  public async Task GetProjectDocumentations_ShouldFilterByTag()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/documentations?tag=architecture");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement items = root.GetProperty("items");
+
+    Assert.Equal(1, items.GetArrayLength());
+    Assert.Equal("ADR-001 Architecture", items[0].GetProperty("title").GetString());
+    Assert.Equal(2, items[0].GetProperty("tags").GetArrayLength());
+  }
+
   [Theory]
   [InlineData("/projects/proyecto-atlas/documentations?kind=InvalidKind")]
   [InlineData("/projects/proyecto-atlas/documentations?status=InvalidStatus")]

@@ -20,9 +20,11 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     DocumentationKind? kind = null,
     DocumentationStatus? status = null,
     DocumentationArea? area = null,
+    string? tag = null,
     CancellationToken cancellationToken = default)
   {
     IQueryable<Documentation> documentationsQuery = dbContext.Documentations
+        .Include(documentation => documentation.Tags)
         .Include(documentation => documentation.FaqItems)
         .Where(documentation => documentation.ProjectId == projectId);
 
@@ -49,6 +51,14 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
       documentationsQuery = documentationsQuery.Where(documentation => documentation.Status == status.Value);
     }
 
+    if (!string.IsNullOrWhiteSpace(tag))
+    {
+      string normalizedTag = tag.Trim().ToLowerInvariant();
+
+      documentationsQuery = documentationsQuery.Where(documentation =>
+          documentation.Tags.Any(documentationTag => documentationTag.NormalizedName == normalizedTag));
+    }
+
     int totalCount = await documentationsQuery.CountAsync(cancellationToken);
 
     List<Documentation> documentations = await documentationsQuery
@@ -62,6 +72,7 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
   public async Task<Documentation?> GetBySlug(Guid projectId, string slug, CancellationToken cancellationToken = default)
   {
     return await dbContext.Documentations
+        .Include(documentation => documentation.Tags)
         .Include(documentation => documentation.FaqItems)
         .FirstOrDefaultAsync(documentation => documentation.ProjectId == projectId && documentation.Slug == slug, cancellationToken);
   }

@@ -171,6 +171,13 @@
             "schema": {
               "$ref": "#/components/schemas/DocumentationArea"
             }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

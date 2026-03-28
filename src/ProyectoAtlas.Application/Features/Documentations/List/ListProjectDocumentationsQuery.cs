@@ -8,5 +8,6 @@ public record ListProjectDocumentationsQuery(
     string? Query = null,
     DocumentationKind? Kind = null,
     DocumentationStatus? Status = null,
-    DocumentationArea? Area = null
+    DocumentationArea? Area = null,
+    string? Tag = null
     );

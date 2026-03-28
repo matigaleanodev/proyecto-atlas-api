@@ -61,7 +61,8 @@ public class ListProjectDocumentationsQueryHandlerTests
         "docs",
         DocumentationKind.Decision,
         DocumentationStatus.Published,
-        DocumentationArea.Architecture);
+        DocumentationArea.Architecture,
+        "node");
 
     await useCase.Execute("proyecto-atlas", input);
 
@@ -72,6 +73,7 @@ public class ListProjectDocumentationsQueryHandlerTests
     Assert.Equal(DocumentationKind.Decision, documentationRepository.ReceivedKind);
     Assert.Equal(DocumentationStatus.Published, documentationRepository.ReceivedStatus);
     Assert.Equal(DocumentationArea.Architecture, documentationRepository.ReceivedArea);
+    Assert.Equal("node", documentationRepository.ReceivedTag);
   }
 
   [Fact]
