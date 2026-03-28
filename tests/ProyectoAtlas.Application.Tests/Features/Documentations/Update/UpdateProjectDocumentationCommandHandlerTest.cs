@@ -58,13 +58,15 @@ public class UpdateProjectDocumentationCommandHandlerTests
         "https://github.com/matigaleanodev/proyecto-atlas-api",
         "#1E293B");
     Documentation documentation = new(
-        project.Id,
-        "Common Questions",
-        "## Intro",
-        1,
-        DocumentationKind.FAQ,
-        DocumentationStatus.Draft,
-        DocumentationArea.Product,
+        projectId: project.Id,
+        title: "Common Questions",
+        contentMarkdown: "## Intro",
+        sortOrder: 1,
+        kind: DocumentationKind.FAQ,
+        status: DocumentationStatus.Draft,
+        area: DocumentationArea.Product,
+        tags: null,
+        faqItems:
         [
           new DocumentationFaqItemData("Old question", "Old answer", 1)
         ]);

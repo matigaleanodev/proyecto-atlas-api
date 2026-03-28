@@ -56,14 +56,15 @@ public class CreateProjectDocumentationCommandHandler(
         .ToList();
 
       documentation = new(
-        project.Id,
-        input.Title,
-        input.ContentMarkdown,
-        input.SortOrder,
-        input.Kind,
-        input.Status,
-        input.Area,
-        faqItems);
+        projectId: project.Id,
+        title: input.Title,
+        contentMarkdown: input.ContentMarkdown,
+        sortOrder: input.SortOrder,
+        kind: input.Kind,
+        status: input.Status,
+        area: input.Area,
+        tags: null,
+        faqItems: faqItems);
 
     }
     catch (InvalidDocumentationTitleException exception)
