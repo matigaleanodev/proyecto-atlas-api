@@ -273,6 +273,49 @@ public class UpdateProjectDocumentationCommandHandlerTests
   }
 
   [Fact]
+  public async Task Execute_ShouldThrowInvalidDocumentationFaqItemsException_WhenFaqItemSortOrderIsInvalid()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        projectId: project.Id,
+        title: "Common Questions",
+        contentMarkdown: "## Intro",
+        sortOrder: 1,
+        kind: DocumentationKind.FAQ,
+        status: DocumentationStatus.Draft,
+        area: DocumentationArea.Product,
+        tags: null,
+        faqItems:
+        [
+          new DocumentationFaqItemData("Old question", "Old answer", 1)
+        ]);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Common Questions",
+        "## Updated",
+        2,
+        DocumentationStatus.Published,
+        [
+          new UpdateProjectDocumentationFaqItem("What is Atlas?", "Atlas is the documentation backend.", 0)
+        ]);
+
+    await Assert.ThrowsAsync<InvalidDocumentationFaqItemsException>(() =>
+        useCase.Execute("proyecto-atlas", "common-questions", input));
+  }
+
+  [Fact]
   public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
     UpdateProjectDocumentationCommandHandler useCase = new(

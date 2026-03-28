@@ -34,6 +34,11 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
       }
     }
 
+    if (input.FaqItems is not null && input.FaqItems.Any(item => item.SortOrder < 1))
+    {
+      throw new InvalidDocumentationFaqItemsException("FAQ items must have a sort order greater than 0.");
+    }
+
     try
     {
       documentation.Update(
