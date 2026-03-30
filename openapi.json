@@ -1214,6 +1214,15 @@
           "updatedAtUtc": {
             "type": "string",
             "format": "date-time"
+          },
+          "links": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ProjectLink"
+            }
           }
         },
         "example": {
@@ -1226,6 +1235,50 @@
           "createdAtUtc": "2026-03-24T18:30:00Z",
           "updatedAtUtc": "2026-03-24T18:30:00Z"
         }
+      },
+      "ProjectLink": {
+        "required": [
+          "projectId",
+          "title",
+          "sortOrder",
+          "description",
+          "url",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "description": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectLinkKind"
+          }
+        }
+      },
+      "ProjectLinkKind": {
+        "type": "integer"
       },
       "UpdateProjectCommand": {
         "required": [
