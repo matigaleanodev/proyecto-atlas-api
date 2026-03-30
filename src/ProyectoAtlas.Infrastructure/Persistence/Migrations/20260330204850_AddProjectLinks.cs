@@ -36,7 +36,7 @@ public partial class AddProjectLinks : Migration
     migrationBuilder.CreateIndex(
         name: "IX_project_links_project_id_sort_order",
         table: "project_links",
-        columns: new[] { "project_id", "sort_order" },
+        columns: ["project_id", "sort_order"],
         unique: true);
   }
 

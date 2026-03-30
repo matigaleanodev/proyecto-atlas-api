@@ -23,7 +23,10 @@ public class ProjectLink
       throw new ArgumentOutOfRangeException(nameof(sortOrder), "Sort order must be greater than 0.");
     }
 
-    if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out _))
+    bool isValidUrl = Uri.TryCreate(url.Trim(), UriKind.Absolute, out Uri? uri) &&
+        (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+
+    if (!isValidUrl)
     {
       throw new ArgumentException("Invalid URL format.", nameof(url));
     }
