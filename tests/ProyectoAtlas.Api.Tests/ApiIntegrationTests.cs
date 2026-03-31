@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using ProyectoAtlas.Application.Errors;
 using ProyectoAtlas.Domain.Documentations;
+using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.Tests;
 
@@ -84,6 +85,38 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
   }
 
   [Fact]
+  public async Task PostProjects_ShouldReturnCreatedProjectWithLinks()
+  {
+    HttpClient client = _factory.CreateClient();
+    string suffix = Guid.NewGuid().ToString("N")[..8];
+    CreateProjectCommand input = new(
+        $"Proyecto Atlas {suffix}",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B",
+        [
+          new CreateProjectLink("Repository", "https://github.com/matigaleanodev/proyecto-atlas-api", "Main source code", 2, ProjectLinkKind.Repository),
+          new CreateProjectLink("Board", "https://linear.app/proyecto-atlas", "Work tracking board", 1, ProjectLinkKind.Board)
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+
+    JsonElement[] links = root.GetProperty("links").EnumerateArray().ToArray();
+    Assert.Equal(2, links.Length);
+    Assert.Equal("Board", links[0].GetProperty("title").GetString());
+    Assert.Equal("https://linear.app/proyecto-atlas", links[0].GetProperty("url").GetString());
+    Assert.Equal("Work tracking board", links[0].GetProperty("description").GetString());
+    Assert.Equal(1, links[0].GetProperty("sortOrder").GetInt32());
+    Assert.Equal("Board", links[0].GetProperty("kind").GetString());
+  }
+
+  [Fact]
   public async Task PostProjects_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
   {
     HttpClient client = _factory.CreateClient();
@@ -118,6 +151,26 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
     Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.ProjectSlugConflict, "Project slug");
+  }
+
+  [Fact]
+  public async Task PostProjects_ShouldReturnBadRequest_WhenLinksContainDuplicateSortOrders()
+  {
+    HttpClient client = _factory.CreateClient();
+    CreateProjectCommand input = new(
+        "Proyecto Atlas New",
+        "Backend for project documentation based on markdown",
+        "https://github.com/example/proyecto-atlas-new",
+        "#111827",
+        [
+          new CreateProjectLink("Repository", "https://github.com/example/proyecto-atlas-new", "Main source code", 1, ProjectLinkKind.Repository),
+          new CreateProjectLink("Board", "https://linear.app/proyecto-atlas-new", "Work tracking board", 1, ProjectLinkKind.Board)
+        ]);
+
+    HttpResponseMessage response = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.BadRequest, AtlasErrorCodes.ProjectLinkItemInvalid, "duplicate sort order");
   }
 
   [Fact]
@@ -1071,6 +1124,10 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
 
     Assert.Equal("proyecto-atlas", root.GetProperty("slug").GetString());
     Assert.Equal("Proyecto Atlas", root.GetProperty("title").GetString());
+    JsonElement[] links = root.GetProperty("links").EnumerateArray().ToArray();
+    Assert.Equal(2, links.Length);
+    Assert.Equal("Repository", links[0].GetProperty("title").GetString());
+    Assert.Equal("Board", links[1].GetProperty("title").GetString());
   }
 
   [Fact]
@@ -1108,6 +1165,82 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal(input.RepositoryUrl, root.GetProperty("repositoryUrl").GetString());
     Assert.Equal(input.Color, root.GetProperty("color").GetString());
     Assert.Equal("atlas-platform", root.GetProperty("slug").GetString());
+    Assert.Equal(2, root.GetProperty("links").GetArrayLength());
+  }
+
+  [Fact]
+  public async Task PatchProject_ShouldReplaceLinks_WhenLinksAreProvided()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectCommand input = new(
+        "Atlas Platform",
+        null,
+        null,
+        null,
+        [
+          new UpdateProjectLink("Monitoring", "https://grafana.example.com/atlas", "Operational dashboards", 1, ProjectLinkKind.Monitoring),
+          new UpdateProjectLink("Environment", "https://vercel.example.com/atlas", "Deployment environment", 2, ProjectLinkKind.Environment)
+        ]);
+
+    HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/proyecto-atlas", input);
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement[] links = root.GetProperty("links").EnumerateArray().ToArray();
+
+    Assert.Equal(2, links.Length);
+    Assert.Equal("Monitoring", links[0].GetProperty("title").GetString());
+    Assert.Equal("https://grafana.example.com/atlas", links[0].GetProperty("url").GetString());
+    Assert.Equal("Operational dashboards", links[0].GetProperty("description").GetString());
+    Assert.Equal("Monitoring", links[0].GetProperty("kind").GetString());
+    Assert.DoesNotContain(links, link => link.GetProperty("title").GetString() == "Repository");
+  }
+
+  [Fact]
+  public async Task PatchProject_ShouldPreserveLinks_WhenLinksAreNotProvided()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectCommand input = new(
+        "Atlas Platform",
+        "Updated backend for project documentation",
+        null,
+        null);
+
+    HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/proyecto-atlas", input);
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement root = jsonDocument.RootElement;
+    JsonElement[] links = root.GetProperty("links").EnumerateArray().ToArray();
+
+    Assert.Equal(2, links.Length);
+    Assert.Equal("Repository", links[0].GetProperty("title").GetString());
+    Assert.Equal("Board", links[1].GetProperty("title").GetString());
+  }
+
+  [Fact]
+  public async Task PatchProject_ShouldReturnBadRequest_WhenLinksContainDuplicateSortOrders()
+  {
+    HttpClient client = _factory.CreateClient();
+    UpdateProjectCommand input = new(
+        null,
+        null,
+        null,
+        null,
+        [
+          new UpdateProjectLink("Repository", "https://github.com/matigaleanodev/proyecto-atlas-api", "Main source code", 1, ProjectLinkKind.Repository),
+          new UpdateProjectLink("Board", "https://linear.app/proyecto-atlas", "Work tracking board", 1, ProjectLinkKind.Board)
+        ]);
+
+    HttpResponseMessage response = await client.PatchAsJsonAsync("/projects/proyecto-atlas", input);
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.BadRequest, AtlasErrorCodes.ProjectLinkItemInvalid, "duplicate sort order");
   }
 
   [Fact]

@@ -26,6 +26,32 @@ public class CreateProjectCommandHandlerTests
   }
 
   [Fact]
+  public async Task Execute_ShouldReturnProjectWithLinks_WhenLinksAreProvided()
+  {
+    FakeProjectRepository projectRepository = new FakeProjectRepository();
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository);
+    CreateProjectCommand input = new CreateProjectCommand(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B",
+        [
+          new CreateProjectLink("Repository", "https://github.com/matigaleanodev/proyecto-atlas-api", "Main source code", 2, ProjectLinkKind.Repository),
+          new CreateProjectLink("Board", "https://linear.app/proyecto-atlas", "Work tracking board", 1, ProjectLinkKind.Board)
+        ]);
+
+    Project result = await createProjectUseCase.Execute(input);
+
+    Assert.Equal(2, result.Links.Count);
+    ProjectLink firstLink = result.Links.OrderBy(link => link.SortOrder).First();
+    Assert.Equal("Board", firstLink.Title);
+    Assert.Equal("https://linear.app/proyecto-atlas", firstLink.Url);
+    Assert.Equal("Work tracking board", firstLink.Description);
+    Assert.Equal(1, firstLink.SortOrder);
+    Assert.Equal(ProjectLinkKind.Board, firstLink.Kind);
+  }
+
+  [Fact]
   public async Task Execute_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
   {
     FakeProjectRepository projectRepository = new FakeProjectRepository();
@@ -64,5 +90,22 @@ public class CreateProjectCommandHandlerTests
     CreateProjectCommand input = new CreateProjectCommand(title!, description!, repositoryUrl!, color!);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() => createProjectUseCase.Execute(input));
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidProjectLinkItemException_WhenLinksContainDuplicateSortOrders()
+  {
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(new FakeProjectRepository());
+    CreateProjectCommand input = new CreateProjectCommand(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B",
+        [
+          new CreateProjectLink("Repository", "https://github.com/matigaleanodev/proyecto-atlas-api", "Main source code", 1, ProjectLinkKind.Repository),
+          new CreateProjectLink("Board", "https://linear.app/proyecto-atlas", "Work tracking board", 1, ProjectLinkKind.Board)
+        ]);
+
+    await Assert.ThrowsAsync<InvalidProjectLinkItemException>(() => createProjectUseCase.Execute(input));
   }
 }
