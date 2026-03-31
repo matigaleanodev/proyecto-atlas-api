@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi;
 using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
@@ -14,6 +15,24 @@ public static class OpenApiExampleTransformers
       CancellationToken cancellationToken)
   {
     Type? type = context.JsonTypeInfo.Type;
+    Type? enumType = Nullable.GetUnderlyingType(type) ?? type;
+
+    if (enumType.IsEnum)
+    {
+      schema.Type = JsonSchemaType.String;
+      schema.Format = null;
+      schema.Pattern = null;
+      schema.Enum =
+      [
+        .. Enum.GetNames(enumType)
+            .Select(name => JsonValue.Create(name)!)
+      ];
+    }
+
+    if (type == typeof(UpdateProjectCommand))
+    {
+      schema.Required?.Clear();
+    }
 
     schema.Example = type switch
     {
@@ -31,7 +50,16 @@ public static class OpenApiExampleTransformers
             "title": "Proyecto Atlas",
             "description": "Backend for project documentation based on markdown",
             "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
-            "color": "#1E293B"
+            "color": "#1E293B",
+            "links": [
+              {
+                "title": "Repository",
+                "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+                "description": "Main source code",
+                "sortOrder": 1,
+                "kind": "Repository"
+              }
+            ]
           }
           """),
       Type currentType when currentType == typeof(UpdateProjectCommand) => ParseJson(
@@ -40,7 +68,16 @@ public static class OpenApiExampleTransformers
             "title": "Atlas Platform",
             "description": "Updated backend for project documentation",
             "repositoryUrl": "https://github.com/matigaleanodev/atlas-platform",
-            "color": "#0F172A"
+            "color": "#0F172A",
+            "links": [
+              {
+                "title": "Monitoring",
+                "url": "https://grafana.example.com/atlas-platform",
+                "description": "Operational dashboards",
+                "sortOrder": 1,
+                "kind": "Monitoring"
+              }
+            ]
           }
           """),
       Type currentType when currentType == typeof(Project) => ParseJson(
@@ -52,6 +89,17 @@ public static class OpenApiExampleTransformers
             "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
             "color": "#1E293B",
             "slug": "proyecto-atlas",
+            "links": [
+              {
+                "id": "4d987fe2-3489-46db-9b83-e493750a8d8e",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "title": "Repository",
+                "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+                "description": "Main source code",
+                "sortOrder": 1,
+                "kind": "Repository"
+              }
+            ],
             "createdAtUtc": "2026-03-24T18:30:00Z",
             "updatedAtUtc": "2026-03-24T18:30:00Z"
           }
@@ -67,6 +115,17 @@ public static class OpenApiExampleTransformers
                 "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
                 "color": "#1E293B",
                 "slug": "proyecto-atlas",
+                "links": [
+                  {
+                    "id": "4d987fe2-3489-46db-9b83-e493750a8d8e",
+                    "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                    "title": "Repository",
+                    "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+                    "description": "Main source code",
+                    "sortOrder": 1,
+                    "kind": "Repository"
+                  }
+                ],
                 "createdAtUtc": "2026-03-24T18:30:00Z",
                 "updatedAtUtc": "2026-03-24T18:30:00Z"
               }

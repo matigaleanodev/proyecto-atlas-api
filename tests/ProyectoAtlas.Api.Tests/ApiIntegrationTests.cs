@@ -1079,6 +1079,9 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.True(root.GetProperty("totalItems").GetInt32() >= 1);
     Assert.True(root.GetProperty("totalPages").GetInt32() >= 1);
     Assert.True(root.GetProperty("items").GetArrayLength() <= 2);
+    JsonElement firstProject = root.GetProperty("items")[0];
+    Assert.True(firstProject.TryGetProperty("links", out JsonElement links));
+    Assert.True(links.ValueKind == JsonValueKind.Array);
   }
 
   [Fact]
@@ -1126,8 +1129,8 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     Assert.Equal("Proyecto Atlas", root.GetProperty("title").GetString());
     JsonElement[] links = root.GetProperty("links").EnumerateArray().ToArray();
     Assert.Equal(2, links.Length);
-    Assert.Equal("Repository", links[0].GetProperty("title").GetString());
-    Assert.Equal("Board", links[1].GetProperty("title").GetString());
+    Assert.Equal("Board", links[0].GetProperty("title").GetString());
+    Assert.Equal("Repository", links[1].GetProperty("title").GetString());
   }
 
   [Fact]
@@ -1219,8 +1222,8 @@ public class ApiIntegrationTests(ApiTestWebApplicationFactory factory) : IClassF
     JsonElement[] links = root.GetProperty("links").EnumerateArray().ToArray();
 
     Assert.Equal(2, links.Length);
-    Assert.Equal("Repository", links[0].GetProperty("title").GetString());
-    Assert.Equal("Board", links[1].GetProperty("title").GetString());
+    Assert.Equal("Board", links[0].GetProperty("title").GetString());
+    Assert.Equal("Repository", links[1].GetProperty("title").GetString());
   }
 
   [Fact]
