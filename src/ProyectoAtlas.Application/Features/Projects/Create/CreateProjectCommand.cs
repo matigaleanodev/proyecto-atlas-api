@@ -4,6 +4,7 @@ public record CreateProjectCommand(
     string Title,
     string Description,
     string RepositoryUrl,
-    string Color);
+    string Color,
+    IReadOnlyCollection<CreateProjectLink>? Links = null);
 
 

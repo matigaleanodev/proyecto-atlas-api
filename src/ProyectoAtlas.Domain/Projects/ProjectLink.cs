@@ -6,7 +6,7 @@ public class ProjectLink
   {
   }
 
-  public ProjectLink(Guid projectId, string title, int sortOrder, string url, ProjectLinkKind kind, string description)
+  public ProjectLink(Guid projectId, string title, string url, string description, int sortOrder, ProjectLinkKind kind)
   {
 
     ArgumentException.ThrowIfNullOrWhiteSpace(title);
@@ -34,18 +34,18 @@ public class ProjectLink
     Id = Guid.NewGuid();
     ProjectId = projectId;
     Title = title.Trim();
-    SortOrder = sortOrder;
     Url = url.Trim();
-    Kind = kind;
     Description = description.Trim();
+    SortOrder = sortOrder;
+    Kind = kind;
   }
 
   public Guid Id { get; private set; }
   public Guid ProjectId { get; private set; }
   public string Title { get; private set; } = null!;
-  public int SortOrder { get; private set; }
-  public string Description { get; private set; } = null!;
   public string Url { get; private set; } = null!;
+  public string Description { get; private set; } = null!;
+  public int SortOrder { get; private set; }
   public ProjectLinkKind Kind { get; private set; }
 
 

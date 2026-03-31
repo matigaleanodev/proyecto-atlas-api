@@ -782,6 +782,15 @@
           },
           "color": {
             "type": "string"
+          },
+          "links": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CreateProjectLink"
+            }
           }
         },
         "example": {
@@ -884,6 +893,38 @@
         "properties": {
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "CreateProjectLink": {
+        "required": [
+          "title",
+          "url",
+          "description",
+          "sortOrder",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectLinkKind"
           }
         }
       },
@@ -1240,9 +1281,9 @@
         "required": [
           "projectId",
           "title",
-          "sortOrder",
-          "description",
           "url",
+          "description",
+          "sortOrder",
           "kind"
         ],
         "type": "object",
@@ -1258,6 +1299,12 @@
           "title": {
             "type": "string"
           },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "sortOrder": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
@@ -1265,12 +1312,6 @@
               "string"
             ],
             "format": "int32"
-          },
-          "description": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
           },
           "kind": {
             "$ref": "#/components/schemas/ProjectLinkKind"
@@ -1312,6 +1353,15 @@
               "null",
               "string"
             ]
+          },
+          "links": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UpdateProjectLink"
+            }
           }
         },
         "example": {
@@ -1419,6 +1469,38 @@
         "properties": {
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "UpdateProjectLink": {
+        "required": [
+          "title",
+          "url",
+          "description",
+          "sortOrder",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectLinkKind"
           }
         }
       }

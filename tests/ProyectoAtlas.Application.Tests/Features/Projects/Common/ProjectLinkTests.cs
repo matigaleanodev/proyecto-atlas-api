@@ -15,16 +15,16 @@ public class ProjectLinkTests
         [
           new ProjectLinkData(
               "Repository",
-              2,
               "https://github.com/matigaleanodev/proyecto-atlas-api",
-              ProjectLinkKind.Repository,
-              "Main source repository"),
+              "Main source repository",
+              2,
+              ProjectLinkKind.Repository),
           new ProjectLinkData(
               "Docs",
-              1,
               "https://docs.example.com/atlas",
-              ProjectLinkKind.Documentation,
-              "External documentation")
+              "External documentation",
+              1,
+              ProjectLinkKind.Documentation)
         ]);
 
     Assert.Equal(2, project.Links.Count);
@@ -43,16 +43,16 @@ public class ProjectLinkTests
         [
           new ProjectLinkData(
               "Repository",
-              1,
               "https://github.com/matigaleanodev/proyecto-atlas-api",
-              ProjectLinkKind.Repository,
-              "Main source repository"),
+              "Main source repository",
+              1,
+              ProjectLinkKind.Repository),
           new ProjectLinkData(
               "Docs",
-              1,
               "https://docs.example.com/atlas",
-              ProjectLinkKind.Documentation,
-              "External documentation")
+              "External documentation",
+              1,
+              ProjectLinkKind.Documentation)
         ]);
 
     Assert.Throws<InvalidProjectLinkListException>(action);
@@ -69,26 +69,26 @@ public class ProjectLinkTests
         [
           new ProjectLinkData(
               "Repository",
-              1,
               "https://github.com/matigaleanodev/proyecto-atlas-api",
-              ProjectLinkKind.Repository,
-              "Main source repository")
+              "Main source repository",
+              1,
+              ProjectLinkKind.Repository)
         ]);
 
     project.ReplaceLinks(
         [
           new ProjectLinkData(
               "Board",
-              1,
               "https://linear.app/atlas",
-              ProjectLinkKind.Board,
-              "Planning board"),
+              "Planning board",
+              1,
+              ProjectLinkKind.Board),
           new ProjectLinkData(
               "Monitoring",
-              2,
               "https://grafana.example.com/atlas",
-              ProjectLinkKind.Monitoring,
-              "Operational dashboards")
+              "Operational dashboards",
+              2,
+              ProjectLinkKind.Monitoring)
         ]);
 
     Assert.Equal(2, project.Links.Count);
@@ -110,10 +110,10 @@ public class ProjectLinkTests
         [
           new ProjectLinkData(
               "Repository",
-              0,
               "https://github.com/matigaleanodev/proyecto-atlas-api",
-              ProjectLinkKind.Repository,
-              "Main source repository")
+              "Main source repository",
+              0,
+              ProjectLinkKind.Repository)
         ]);
 
     Assert.Throws<InvalidProjectLinkListException>(action);

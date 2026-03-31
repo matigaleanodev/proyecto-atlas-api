@@ -4,4 +4,5 @@ public record UpdateProjectCommand(
       string? Title,
       string? Description,
       string? RepositoryUrl,
-      string? Color);
+      string? Color,
+       IReadOnlyCollection<UpdateProjectLink>? Links = null);

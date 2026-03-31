@@ -19,7 +19,8 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
       string? query = null,
       CancellationToken cancellationToken = default)
   {
-    IQueryable<Project> projectsQuery = dbContext.Projects;
+    IQueryable<Project> projectsQuery = dbContext.Projects
+        .Include(project => project.Links);
 
     if (!string.IsNullOrWhiteSpace(query))
     {
@@ -43,7 +44,9 @@ public class ProjectRepository(ProyectoAtlasDbContext dbContext) : IProjectRepos
 
   public async Task<Project?> GetBySlug(string slug, CancellationToken cancellationToken = default)
   {
-    return await dbContext.Projects.FirstOrDefaultAsync(p => p.Slug == slug, cancellationToken);
+    return await dbContext.Projects
+        .Include(project => project.Links)
+        .FirstOrDefaultAsync(p => p.Slug == slug, cancellationToken);
   }
 
   public async Task Update(Project project, CancellationToken cancellationToken = default)

@@ -103,10 +103,10 @@ public class Project
       _links.Add(new ProjectLink(
           Id,
           linkData.Title,
-          linkData.SortOrder,
           linkData.Url,
-          linkData.Kind,
-          linkData.Description));
+          linkData.Description,
+          linkData.SortOrder,
+          linkData.Kind));
     }
 
   }
