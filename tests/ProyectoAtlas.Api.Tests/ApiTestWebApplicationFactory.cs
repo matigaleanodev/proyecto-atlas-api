@@ -70,12 +70,19 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
                 "Proyecto Atlas",
                 "Backend for project documentation based on markdown",
                 "https://github.com/matigaleanodev/proyecto-atlas-api",
-                "#1E293B"),
+                "#1E293B",
+                [
+                  new ProjectLinkData("Repository", "https://github.com/matigaleanodev/proyecto-atlas-api", "Main source code", 1, ProjectLinkKind.Repository),
+                  new ProjectLinkData("Board", "https://linear.app/proyecto-atlas", "Work tracking board", 2, ProjectLinkKind.Board)
+                ]),
             new Project(
                 "Atlas Docs",
                 "Documentation explorer and reader",
                 "https://github.com/matigaleanodev/atlas-docs",
-                "#0F172A"),
+                "#0F172A",
+                [
+                  new ProjectLinkData("Documentation", "https://docs.example.com/atlas-docs", "Published docs site", 1, ProjectLinkKind.Documentation)
+                ]),
             new Project(
                 "Task Forge",
                 "Project planning backend for teams",

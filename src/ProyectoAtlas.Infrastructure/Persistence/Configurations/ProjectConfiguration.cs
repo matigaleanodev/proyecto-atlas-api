@@ -11,7 +11,16 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
     builder.ToTable("projects");
 
     builder.HasKey(project => project.Id);
+
     builder.HasIndex(project => project.Slug).IsUnique();
+
+
+    builder.HasMany(project => project.Links)
+        .WithOne()
+        .HasForeignKey(link => link.ProjectId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    builder.Navigation(project => project.Links).UsePropertyAccessMode(PropertyAccessMode.Field);
 
     builder.Property(project => project.Id)
         .HasColumnName("id")

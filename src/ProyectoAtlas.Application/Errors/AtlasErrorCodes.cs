@@ -11,4 +11,5 @@ public static class AtlasErrorCodes
   public const string ProjectSlugConflict = "PROJECT_SLUG_CONFLICT";
   public const string ValidationError = "VALIDATION_ERROR";
   public const string DocumentationFaqItemsInvalid = "DOCUMENTATION_FAQ_ITEMS_INVALID";
+  public const string ProjectLinkItemInvalid = "PROJECT_LINK_ITEM_INVALID";
 }

@@ -22,6 +22,9 @@ La API expone dos recursos:
 Reglas vigentes:
 
 - `Project.slug` es único globalmente
+- `Project.links` permite enlaces enriquecidos del proyecto con `title`, `url`, `description`, `sortOrder` y `kind`
+- `Project.links` se reemplaza como colección completa en update solo si `links` se envia; si no se envia, la colección actual se preserva
+- `Project.links.kind` se define al crear cada link y no se edita después
 - `Documentation.slug` es único dentro de cada proyecto
 - `Documentation.kind` clasifica el contenido documental y hoy admite `Page`, `Decision`, `Note`, `FAQ` y `ReleaseNotes`
 - `Documentation.kind` se define al crear y no se edita después
@@ -114,7 +117,16 @@ Semántica:
   "title": "Proyecto Atlas",
   "description": "Backend for project documentation based on markdown",
   "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
-  "color": "#1E293B"
+  "color": "#1E293B",
+  "links": [
+    {
+      "title": "Repository",
+      "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+      "description": "Main source code",
+      "sortOrder": 1,
+      "kind": "Repository"
+    }
+  ]
 }
 ```
 
@@ -127,11 +139,20 @@ Semántica:
   "title": "Atlas Platform",
   "description": "Updated backend for project documentation",
   "repositoryUrl": "https://github.com/example/atlas-platform",
-  "color": "#0F172A"
+  "color": "#0F172A",
+  "links": [
+    {
+      "title": "Monitoring",
+      "url": "https://grafana.example.com/atlas-platform",
+      "description": "Operational dashboards",
+      "sortOrder": 1,
+      "kind": "Monitoring"
+    }
+  ]
 }
 ```
 
-Todos los campos son opcionales.
+Todos los campos son opcionales. Si `links` se envia en update, reemplaza la coleccion completa.
 
 ### Crear documentación
 
@@ -233,6 +254,7 @@ Hasta este punto, Atlas ya tiene:
 
 - health check operativo
 - CRUD base de proyectos
+- enlaces tipados de proyecto mediante `links`
 - CRUD base de documentación anidada
 - clasificacion inicial de `Documentation` mediante `kind`
 - organizacion inicial de `Documentation` mediante `area`

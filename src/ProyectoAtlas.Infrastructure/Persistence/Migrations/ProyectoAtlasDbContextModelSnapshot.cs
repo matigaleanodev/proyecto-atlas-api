@@ -205,6 +205,50 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                     b.ToTable("projects", (string)null);
                 });
 
+            modelBuilder.Entity("ProyectoAtlas.Domain.Projects.ProjectLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("kind");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId", "SortOrder")
+                        .IsUnique();
+
+                    b.ToTable("project_links", (string)null);
+                });
+
             modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.Documentation", b =>
                 {
                     b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
@@ -232,11 +276,25 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProyectoAtlas.Domain.Projects.ProjectLink", b =>
+                {
+                    b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
+                        .WithMany("Links")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.Documentation", b =>
                 {
                     b.Navigation("FaqItems");
 
                     b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("ProyectoAtlas.Domain.Projects.Project", b =>
+                {
+                    b.Navigation("Links");
                 });
 #pragma warning restore 612, 618
         }

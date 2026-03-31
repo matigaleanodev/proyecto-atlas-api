@@ -782,13 +782,31 @@
           },
           "color": {
             "type": "string"
+          },
+          "links": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CreateProjectLink"
+            }
           }
         },
         "example": {
           "title": "Proyecto Atlas",
           "description": "Backend for project documentation based on markdown",
           "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
-          "color": "#1E293B"
+          "color": "#1E293B",
+          "links": [
+            {
+              "title": "Repository",
+              "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+              "description": "Main source code",
+              "sortOrder": 1,
+              "kind": "Repository"
+            }
+          ]
         }
       },
       "CreateProjectDocumentationCommand": {
@@ -887,6 +905,38 @@
           }
         }
       },
+      "CreateProjectLink": {
+        "required": [
+          "title",
+          "url",
+          "description",
+          "sortOrder",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectLinkKind"
+          }
+        }
+      },
       "Documentation": {
         "required": [
           "projectId",
@@ -974,7 +1024,17 @@
         }
       },
       "DocumentationArea": {
-        "type": "integer"
+        "enum": [
+          "Product",
+          "Architecture",
+          "Backend",
+          "Frontend",
+          "Operations",
+          "DevOps",
+          "Security",
+          "UX"
+        ],
+        "type": "string"
       },
       "DocumentationFaqItem": {
         "required": [
@@ -1010,10 +1070,22 @@
         }
       },
       "DocumentationKind": {
-        "type": "integer"
+        "enum": [
+          "Page",
+          "Decision",
+          "Note",
+          "FAQ",
+          "ReleaseNotes"
+        ],
+        "type": "string"
       },
       "DocumentationStatus": {
-        "type": "integer"
+        "enum": [
+          "Draft",
+          "Published",
+          "Archived"
+        ],
+        "type": "string"
       },
       "DocumentationTag": {
         "required": [
@@ -1169,6 +1241,17 @@
               "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
               "color": "#1E293B",
               "slug": "proyecto-atlas",
+              "links": [
+                {
+                  "id": "4d987fe2-3489-46db-9b83-e493750a8d8e",
+                  "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                  "title": "Repository",
+                  "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+                  "description": "Main source code",
+                  "sortOrder": 1,
+                  "kind": "Repository"
+                }
+              ],
               "createdAtUtc": "2026-03-24T18:30:00Z",
               "updatedAtUtc": "2026-03-24T18:30:00Z"
             }
@@ -1214,6 +1297,15 @@
           "updatedAtUtc": {
             "type": "string",
             "format": "date-time"
+          },
+          "links": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ProjectLink"
+            }
           }
         },
         "example": {
@@ -1223,17 +1315,73 @@
           "repositoryUrl": "https://github.com/matigaleanodev/proyecto-atlas-api",
           "color": "#1E293B",
           "slug": "proyecto-atlas",
+          "links": [
+            {
+              "id": "4d987fe2-3489-46db-9b83-e493750a8d8e",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "title": "Repository",
+              "url": "https://github.com/matigaleanodev/proyecto-atlas-api",
+              "description": "Main source code",
+              "sortOrder": 1,
+              "kind": "Repository"
+            }
+          ],
           "createdAtUtc": "2026-03-24T18:30:00Z",
           "updatedAtUtc": "2026-03-24T18:30:00Z"
         }
       },
-      "UpdateProjectCommand": {
+      "ProjectLink": {
         "required": [
+          "projectId",
           "title",
+          "url",
           "description",
-          "repositoryUrl",
-          "color"
+          "sortOrder",
+          "kind"
         ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectLinkKind"
+          }
+        }
+      },
+      "ProjectLinkKind": {
+        "enum": [
+          "Repository",
+          "Documentation",
+          "Board",
+          "Monitoring",
+          "Environment"
+        ],
+        "type": "string"
+      },
+      "UpdateProjectCommand": {
         "type": "object",
         "properties": {
           "title": {
@@ -1259,13 +1407,31 @@
               "null",
               "string"
             ]
+          },
+          "links": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/UpdateProjectLink"
+            }
           }
         },
         "example": {
           "title": "Atlas Platform",
           "description": "Updated backend for project documentation",
           "repositoryUrl": "https://github.com/matigaleanodev/atlas-platform",
-          "color": "#0F172A"
+          "color": "#0F172A",
+          "links": [
+            {
+              "title": "Monitoring",
+              "url": "https://grafana.example.com/atlas-platform",
+              "description": "Operational dashboards",
+              "sortOrder": 1,
+              "kind": "Monitoring"
+            }
+          ]
         }
       },
       "UpdateProjectDocumentationCommand": {
@@ -1366,6 +1532,38 @@
         "properties": {
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "UpdateProjectLink": {
+        "required": [
+          "title",
+          "url",
+          "description",
+          "sortOrder",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectLinkKind"
           }
         }
       }

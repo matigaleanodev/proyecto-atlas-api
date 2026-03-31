@@ -50,21 +50,18 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
 
       if (input.FaqItems is not null)
       {
-        IReadOnlyCollection<DocumentationFaqItemData> faqItems = input.FaqItems
+        IReadOnlyCollection<DocumentationFaqItemData> faqItems = [.. input.FaqItems
             .Select(item => new DocumentationFaqItemData(
                 item.Question,
                 item.Answer,
-                item.SortOrder))
-            .ToList();
+                item.SortOrder))];
 
         documentation.ReplaceFaqItems(faqItems);
       }
 
       if (input.Tags is not null)
       {
-        IReadOnlyCollection<DocumentationTagData> tags = input.Tags
-            .Select(tag => new DocumentationTagData(tag.Name))
-            .ToList();
+        IReadOnlyCollection<DocumentationTagData> tags = [.. input.Tags.Select(tag => new DocumentationTagData(tag.Name))];
 
         documentation.ReplaceTags(tags);
       }
