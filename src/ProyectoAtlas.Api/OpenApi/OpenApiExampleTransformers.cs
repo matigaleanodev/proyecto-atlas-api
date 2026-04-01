@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Domain.Documentations;
+using ProyectoAtlas.Domain.Features;
 using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.OpenApi;
@@ -30,6 +31,11 @@ public static class OpenApiExampleTransformers
     }
 
     if (type == typeof(UpdateProjectCommand))
+    {
+      schema.Required?.Clear();
+    }
+
+    if (type == typeof(UpdateProjectFeatureCommand))
     {
       schema.Required?.Clear();
     }
@@ -128,6 +134,56 @@ public static class OpenApiExampleTransformers
                 ],
                 "createdAtUtc": "2026-03-24T18:30:00Z",
                 "updatedAtUtc": "2026-03-24T18:30:00Z"
+              }
+            ],
+            "page": 1,
+            "pageSize": 10,
+            "totalPages": 1,
+            "totalItems": 1
+          }
+          """),
+      Type currentType when currentType == typeof(CreateProjectFeatureCommand) => ParseJson(
+          """
+          {
+            "title": "Authentication API",
+            "summary": "Expose the first auth endpoints for Atlas clients.",
+            "status": "Planned"
+          }
+          """),
+      Type currentType when currentType == typeof(UpdateProjectFeatureCommand) => ParseJson(
+          """
+          {
+            "title": "Authentication API",
+            "summary": "Expose login and token refresh endpoints.",
+            "status": "InProgress"
+          }
+          """),
+      Type currentType when currentType == typeof(Feature) => ParseJson(
+          """
+          {
+            "id": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "title": "Authentication API",
+            "summary": "Expose the first auth endpoints for Atlas clients.",
+            "slug": "authentication-api",
+            "status": "Planned",
+            "createdAtUtc": "2026-04-01T12:00:00Z",
+            "updatedAtUtc": "2026-04-01T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListProjectFeaturesResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "title": "Authentication API",
+                "summary": "Expose the first auth endpoints for Atlas clients.",
+                "slug": "authentication-api",
+                "status": "Planned",
+                "createdAtUtc": "2026-04-01T12:00:00Z",
+                "updatedAtUtc": "2026-04-01T12:00:00Z"
               }
             ],
             "page": 1,
