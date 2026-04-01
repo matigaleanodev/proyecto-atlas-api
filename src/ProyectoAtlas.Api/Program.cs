@@ -5,6 +5,7 @@ using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Api.OpenApi;
 using ProyectoAtlas.Application.Errors;
 using ProyectoAtlas.Infrastructure.Documentations;
+using ProyectoAtlas.Infrastructure.Features;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.Projects;
 
@@ -43,10 +44,16 @@ builder.Services.AddScoped<ListProjectDocumentationsQueryHandler>();
 builder.Services.AddScoped<GetProjectDocumentationBySlugQueryHandler>();
 builder.Services.AddScoped<UpdateProjectDocumentationCommandHandler>();
 builder.Services.AddScoped<DeleteProjectDocumentationCommandHandler>();
+builder.Services.AddScoped<CreateProjectFeatureCommandHandler>();
+builder.Services.AddScoped<ListProjectFeaturesQueryHandler>();
+builder.Services.AddScoped<GetProjectFeatureBySlugQueryHandler>();
+builder.Services.AddScoped<UpdateProjectFeatureCommandHandler>();
+builder.Services.AddScoped<DeleteProjectFeatureCommandHandler>();
 
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IDocumentationRepository, DocumentationRepository>();
+builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
