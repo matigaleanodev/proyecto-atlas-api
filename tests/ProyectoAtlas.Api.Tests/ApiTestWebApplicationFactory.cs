@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ProyectoAtlas.Domain.Documentations;
+using ProyectoAtlas.Domain.Features;
 using ProyectoAtlas.Domain.Projects;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.Projects;
@@ -55,7 +56,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     await dbContext.Database.ExecuteSqlRawAsync(
         """
-        TRUNCATE TABLE documentations, projects RESTART IDENTITY CASCADE;
+        TRUNCATE TABLE features, documentations, projects RESTART IDENTITY CASCADE;
         """);
   }
 
@@ -125,6 +126,28 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     ];
 
     await dbContext.Documentations.AddRangeAsync(documentations);
+    await dbContext.SaveChangesAsync();
+
+    Feature[] features =
+    [
+      new Feature(
+          projects[0].Id,
+          "Authentication API",
+          "Expose login endpoints.",
+          FeatureStatus.Planned),
+      new Feature(
+          projects[0].Id,
+          "Documentation Search",
+          "Index technical content for search.",
+          FeatureStatus.InProgress),
+      new Feature(
+          projects[1].Id,
+          "Reader UI",
+          "Render published content for readers.",
+          FeatureStatus.Done)
+    ];
+
+    await dbContext.Features.AddRangeAsync(features);
     await dbContext.SaveChangesAsync();
   }
 }
