@@ -56,7 +56,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     await dbContext.Database.ExecuteSqlRawAsync(
         """
-        TRUNCATE TABLE features, documentations, projects RESTART IDENTITY CASCADE;
+        TRUNCATE TABLE documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
         """);
   }
 
@@ -126,6 +126,18 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     ];
 
     await dbContext.Documentations.AddRangeAsync(documentations);
+    await dbContext.SaveChangesAsync();
+
+    DocumentationRelation[] documentationRelations =
+    [
+      new DocumentationRelation(
+          projects[0].Id,
+          documentations[0].Id,
+          documentations[1].Id,
+          DocumentationRelationKind.Implements)
+    ];
+
+    await dbContext.DocumentationRelations.AddRangeAsync(documentationRelations);
     await dbContext.SaveChangesAsync();
 
     Feature[] features =
