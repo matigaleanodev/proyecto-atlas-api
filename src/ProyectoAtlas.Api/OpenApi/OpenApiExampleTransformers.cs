@@ -192,6 +192,39 @@ public static class OpenApiExampleTransformers
             "totalItems": 1
           }
           """),
+      Type currentType when currentType == typeof(CreateDocumentationRelationCommand) => ParseJson(
+          """
+          {
+            "targetDocumentationSlug": "adr-001-architecture",
+            "kind": "Implements"
+          }
+          """),
+      Type currentType when currentType == typeof(DocumentationRelation) => ParseJson(
+          """
+          {
+            "id": "57d10b57-d4cf-4771-bf4d-ea690fb07191",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "sourceDocumentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "targetDocumentationId": "96e358ab-8ea3-4030-b9f0-238ed459e537",
+            "kind": "Implements",
+            "createdAtUtc": "2026-04-02T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListDocumentationRelationsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "57d10b57-d4cf-4771-bf4d-ea690fb07191",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "sourceDocumentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "targetDocumentationId": "96e358ab-8ea3-4030-b9f0-238ed459e537",
+                "kind": "Implements",
+                "createdAtUtc": "2026-04-02T12:00:00Z"
+              }
+            ]
+          }
+          """),
       Type currentType when currentType == typeof(CreateProjectDocumentationCommand) => ParseJson(
           """
           {
