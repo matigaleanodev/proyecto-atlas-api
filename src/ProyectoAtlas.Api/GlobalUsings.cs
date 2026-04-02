@@ -1,3 +1,7 @@
+global using ProyectoAtlas.Application.Features.DocumentationRelations.Common;
+global using ProyectoAtlas.Application.Features.DocumentationRelations.Create;
+global using ProyectoAtlas.Application.Features.DocumentationRelations.Delete;
+global using ProyectoAtlas.Application.Features.DocumentationRelations.List;
 global using ProyectoAtlas.Application.Features.Documentations.Common;
 global using ProyectoAtlas.Application.Features.Documentations.Create;
 global using ProyectoAtlas.Application.Features.Documentations.Delete;

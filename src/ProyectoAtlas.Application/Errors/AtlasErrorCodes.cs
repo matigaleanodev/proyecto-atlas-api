@@ -3,6 +3,9 @@ namespace ProyectoAtlas.Application.Errors;
 public static class AtlasErrorCodes
 {
   public const string DocumentationNotFound = "DOCUMENTATION_NOT_FOUND";
+  public const string DocumentationRelationConflict = "DOCUMENTATION_RELATION_CONFLICT";
+  public const string DocumentationRelationInvalid = "DOCUMENTATION_RELATION_INVALID";
+  public const string DocumentationRelationNotFound = "DOCUMENTATION_RELATION_NOT_FOUND";
   public const string DocumentationSlugConflict = "DOCUMENTATION_SLUG_CONFLICT";
   public const string DocumentationTitleConventionInvalid = "DOCUMENTATION_TITLE_CONVENTION_INVALID";
   public const string DocumentationTagsInvalid = "DOCUMENTATION_TAGS_INVALID";

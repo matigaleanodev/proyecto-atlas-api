@@ -5,6 +5,220 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/projects/{projectSlug}/documentations/{sourceDocumentationSlug}/relations": {
+      "post": {
+        "tags": [
+          "DocumentationRelations"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceDocumentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationRelationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationRelationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationRelationCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentationRelation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "DocumentationRelations"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceDocumentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDocumentationRelationsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/documentations/{sourceDocumentationSlug}/relations/{relationId}": {
+      "delete": {
+        "tags": [
+          "DocumentationRelations"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceDocumentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": { }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -1141,6 +1355,25 @@
           "code": "PROJECT_SLUG_CONFLICT"
         }
       },
+      "CreateDocumentationRelationCommand": {
+        "required": [
+          "targetDocumentationSlug",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "targetDocumentationSlug": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DocumentationRelationKind"
+          }
+        },
+        "example": {
+          "targetDocumentationSlug": "adr-001-architecture",
+          "kind": "Implements"
+        }
+      },
       "CreateProjectCommand": {
         "required": [
           "title",
@@ -1482,6 +1715,57 @@
         ],
         "type": "string"
       },
+      "DocumentationRelation": {
+        "required": [
+          "projectId",
+          "sourceDocumentationId",
+          "targetDocumentationId",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceDocumentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetDocumentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DocumentationRelationKind"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "57d10b57-d4cf-4771-bf4d-ea690fb07191",
+          "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+          "sourceDocumentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+          "targetDocumentationId": "96e358ab-8ea3-4030-b9f0-238ed459e537",
+          "kind": "Implements",
+          "createdAtUtc": "2026-04-02T12:00:00Z"
+        }
+      },
+      "DocumentationRelationKind": {
+        "enum": [
+          "RelatedTo",
+          "DependsOn",
+          "Implements",
+          "Supersedes"
+        ],
+        "type": "string"
+      },
       "DocumentationStatus": {
         "enum": [
           "Draft",
@@ -1572,6 +1856,32 @@
           "Done"
         ],
         "type": "string"
+      },
+      "ListDocumentationRelationsResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentationRelation"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "57d10b57-d4cf-4771-bf4d-ea690fb07191",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "sourceDocumentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "targetDocumentationId": "96e358ab-8ea3-4030-b9f0-238ed459e537",
+              "kind": "Implements",
+              "createdAtUtc": "2026-04-02T12:00:00Z"
+            }
+          ]
+        }
       },
       "ListProjectDocumentationsResponse": {
         "required": [
@@ -2130,6 +2440,9 @@
     }
   },
   "tags": [
+    {
+      "name": "DocumentationRelations"
+    },
     {
       "name": "Health"
     },
