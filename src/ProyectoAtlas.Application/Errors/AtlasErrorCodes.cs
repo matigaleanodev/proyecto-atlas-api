@@ -8,6 +8,7 @@ public static class AtlasErrorCodes
   public const string DocumentationRelationNotFound = "DOCUMENTATION_RELATION_NOT_FOUND";
   public const string DocumentationSlugConflict = "DOCUMENTATION_SLUG_CONFLICT";
   public const string DocumentationTitleConventionInvalid = "DOCUMENTATION_TITLE_CONVENTION_INVALID";
+  public const string DocumentationVersionNotFound = "DOCUMENTATION_VERSION_NOT_FOUND";
   public const string DocumentationTagsInvalid = "DOCUMENTATION_TAGS_INVALID";
   public const string FeatureNotFound = "FEATURE_NOT_FOUND";
   public const string FeatureSlugConflict = "FEATURE_SLUG_CONFLICT";

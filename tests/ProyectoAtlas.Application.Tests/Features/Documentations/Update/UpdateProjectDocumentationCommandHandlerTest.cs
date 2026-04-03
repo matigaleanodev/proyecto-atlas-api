@@ -29,7 +29,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",
         "## Updated",
@@ -78,7 +78,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Common Questions",
         "## Updated",
@@ -125,7 +125,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Getting Started",
         "## Updated",
@@ -176,7 +176,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",
         "## Updated",
@@ -217,7 +217,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",
         "## Updated",
@@ -256,7 +256,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",
         "## Updated",
@@ -301,7 +301,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Common Questions",
         "## Updated",
@@ -320,6 +320,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
   {
     UpdateProjectDocumentationCommandHandler useCase = new(
         new FakeDocumentationRepository(),
+        new FakeDocumentationVersionRepository(),
         new FakeProjectRepository());
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",
@@ -345,6 +346,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     };
     UpdateProjectDocumentationCommandHandler useCase = new(
         new FakeDocumentationRepository(),
+        new FakeDocumentationVersionRepository(),
         projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",
@@ -380,7 +382,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, new FakeDocumentationVersionRepository(), projectRepository);
     UpdateProjectDocumentationCommand input = new(
         "Architecture without ADR prefix",
         "## Updated",
@@ -407,6 +409,7 @@ public class UpdateProjectDocumentationCommandHandlerTests
   {
     UpdateProjectDocumentationCommandHandler useCase = new(
         new FakeDocumentationRepository(),
+        new FakeDocumentationVersionRepository(),
         new FakeProjectRepository());
     UpdateProjectDocumentationCommand input = new(
         "Quick Start",

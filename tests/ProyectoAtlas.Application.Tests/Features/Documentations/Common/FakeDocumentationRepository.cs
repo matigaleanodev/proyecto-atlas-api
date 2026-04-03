@@ -60,6 +60,15 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
     return Task.CompletedTask;
   }
 
+  public Task Update(
+      Documentation documentation,
+      DocumentationVersion? version,
+      CancellationToken cancellationToken = default)
+  {
+    UpdatedDocumentation = documentation;
+    return Task.CompletedTask;
+  }
+
   public Task Delete(Documentation documentation, CancellationToken cancellationToken = default)
   {
     DeletedDocumentation = documentation;

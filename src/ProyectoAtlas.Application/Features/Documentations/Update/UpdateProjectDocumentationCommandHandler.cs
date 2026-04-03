@@ -1,9 +1,13 @@
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Projects;
+using ProyectoAtlas.Application.Features.DocumentationVersions.Common;
 
 namespace ProyectoAtlas.Application.Features.Documentations.Update;
 
-public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository documentationRepository, IProjectRepository projectRepository)
+public class UpdateProjectDocumentationCommandHandler(
+    IDocumentationRepository documentationRepository,
+    IDocumentationVersionRepository documentationVersionRepository,
+    IProjectRepository projectRepository)
 {
   public async Task<Documentation> Execute(string projectSlug, string slug, UpdateProjectDocumentationCommand input, CancellationToken cancellationToken = default)
   {
@@ -39,8 +43,16 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
       throw new InvalidDocumentationFaqItemsException("FAQ items must have a sort order greater than 0.");
     }
 
+    DocumentationVersion? version = null;
+
     try
     {
+      if (ShouldCreateVersion(documentation, input))
+      {
+        int nextVersionNumber = await documentationVersionRepository.GetNextVersionNumber(documentation.Id, cancellationToken);
+        version = DocumentationVersion.CreateSnapshot(documentation, nextVersionNumber);
+      }
+
       documentation.Update(
         title: input.Title,
         contentMarkdown: input.ContentMarkdown,
@@ -79,8 +91,17 @@ public class UpdateProjectDocumentationCommandHandler(IDocumentationRepository d
       throw new InvalidDocumentationTagsException(exception.Message);
     }
 
-    await documentationRepository.Update(documentation, cancellationToken);
+    await documentationRepository.Update(documentation, version, cancellationToken);
 
     return documentation;
+  }
+
+  private static bool ShouldCreateVersion(Documentation documentation, UpdateProjectDocumentationCommand input)
+  {
+    bool titleChanged = !string.IsNullOrWhiteSpace(input.Title) && !string.Equals(documentation.Title, input.Title, StringComparison.Ordinal);
+    bool contentChanged = !string.IsNullOrWhiteSpace(input.ContentMarkdown) && !string.Equals(documentation.ContentMarkdown, input.ContentMarkdown, StringComparison.Ordinal);
+    bool statusChanged = input.Status.HasValue && documentation.Status != input.Status.Value;
+
+    return titleChanged || contentChanged || statusChanged;
   }
 }
