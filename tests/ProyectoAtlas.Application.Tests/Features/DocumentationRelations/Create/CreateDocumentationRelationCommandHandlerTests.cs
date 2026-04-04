@@ -115,5 +115,10 @@ public class CreateDocumentationRelationCommandHandlerTests
     }
 
     public Task Update(Documentation documentation, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task Update(
+        Documentation documentation,
+        DocumentationVersion? version,
+        CancellationToken cancellationToken = default) => Task.CompletedTask;
   }
 }

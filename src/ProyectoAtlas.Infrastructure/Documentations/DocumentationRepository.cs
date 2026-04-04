@@ -83,6 +83,21 @@ public class DocumentationRepository(ProyectoAtlasDbContext dbContext) : IDocume
     await SaveChanges(documentation.Slug, cancellationToken);
   }
 
+  public async Task Update(
+      Documentation documentation,
+      DocumentationVersion? version,
+      CancellationToken cancellationToken = default)
+  {
+    dbContext.Documentations.Update(documentation);
+
+    if (version is not null)
+    {
+      await dbContext.Set<DocumentationVersion>().AddAsync(version, cancellationToken);
+    }
+
+    await SaveChanges(documentation.Slug, cancellationToken);
+  }
+
   public async Task Delete(Documentation documentation, CancellationToken cancellationToken = default)
   {
     dbContext.Documentations.Remove(documentation);

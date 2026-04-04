@@ -219,6 +219,130 @@
         }
       }
     },
+    "/projects/{projectSlug}/documentations/{slug}/versions": {
+      "get": {
+        "tags": [
+          "DocumentationVersions"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDocumentationVersionsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/documentations/{slug}/versions/{versionNumber}": {
+      "get": {
+        "tags": [
+          "DocumentationVersions"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "versionNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentationVersion"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -1800,6 +1924,56 @@
           }
         }
       },
+      "DocumentationVersion": {
+        "required": [
+          "documentationId",
+          "versionNumber",
+          "title",
+          "contentMarkdown",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "title": {
+            "type": "string"
+          },
+          "contentMarkdown": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DocumentationStatus"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "3f373334-b57e-489d-8f1a-0d6eb0aee149",
+          "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+          "versionNumber": 2,
+          "title": "Getting Started",
+          "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial anterior.",
+          "status": "Draft",
+          "createdAtUtc": "2026-04-04T12:00:00Z"
+        }
+      },
       "Feature": {
         "required": [
           "projectId",
@@ -1879,6 +2053,33 @@
               "targetDocumentationId": "96e358ab-8ea3-4030-b9f0-238ed459e537",
               "kind": "Implements",
               "createdAtUtc": "2026-04-02T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "ListDocumentationVersionsResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentationVersion"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "3f373334-b57e-489d-8f1a-0d6eb0aee149",
+              "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "versionNumber": 2,
+              "title": "Getting Started",
+              "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial anterior.",
+              "status": "Draft",
+              "createdAtUtc": "2026-04-04T12:00:00Z"
             }
           ]
         }
@@ -2442,6 +2643,9 @@
   "tags": [
     {
       "name": "DocumentationRelations"
+    },
+    {
+      "name": "DocumentationVersions"
     },
     {
       "name": "Health"

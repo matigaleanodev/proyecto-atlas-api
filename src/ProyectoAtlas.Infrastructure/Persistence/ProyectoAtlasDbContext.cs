@@ -10,6 +10,7 @@ public class ProyectoAtlasDbContext(DbContextOptions<ProyectoAtlasDbContext> opt
   public DbSet<ProjectLink> ProjectLinks => Set<ProjectLink>();
   public DbSet<Documentation> Documentations => Set<Documentation>();
   public DbSet<DocumentationRelation> DocumentationRelations => Set<DocumentationRelation>();
+  public DbSet<DocumentationVersion> DocumentationVersions => Set<DocumentationVersion>();
   public DbSet<DocumentationFaqItem> DocumentationFaqItems => Set<DocumentationFaqItem>();
   public DbSet<DocumentationTag> DocumentationTags => Set<DocumentationTag>();
   public DbSet<Feature> Features => Set<Feature>();

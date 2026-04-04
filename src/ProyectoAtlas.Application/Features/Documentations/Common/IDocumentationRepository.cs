@@ -22,5 +22,7 @@ public interface IDocumentationRepository
 
   Task Update(Documentation documentation, CancellationToken cancellationToken = default);
 
+  Task Update(Documentation documentation, DocumentationVersion? version, CancellationToken cancellationToken = default);
+
   Task Delete(Documentation documentation, CancellationToken cancellationToken = default);
 }
