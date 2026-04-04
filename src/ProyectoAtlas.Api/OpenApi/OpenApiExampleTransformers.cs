@@ -225,6 +225,34 @@ public static class OpenApiExampleTransformers
             ]
           }
           """),
+      Type currentType when currentType == typeof(DocumentationVersion) => ParseJson(
+          """
+          {
+            "id": "3f373334-b57e-489d-8f1a-0d6eb0aee149",
+            "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "versionNumber": 2,
+            "title": "Getting Started",
+            "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial anterior.",
+            "status": "Draft",
+            "createdAtUtc": "2026-04-04T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListDocumentationVersionsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "3f373334-b57e-489d-8f1a-0d6eb0aee149",
+                "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "versionNumber": 2,
+                "title": "Getting Started",
+                "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial anterior.",
+                "status": "Draft",
+                "createdAtUtc": "2026-04-04T12:00:00Z"
+              }
+            ]
+          }
+          """),
       Type currentType when currentType == typeof(CreateProjectDocumentationCommand) => ParseJson(
           """
           {
