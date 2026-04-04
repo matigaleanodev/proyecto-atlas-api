@@ -50,6 +50,89 @@ public class UpdateProjectDocumentationCommandHandlerTests
   }
 
   [Fact]
+  public async Task Execute_ShouldCreateVersion_WhenVersionedFieldsChange()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        project.Id,
+        "Getting Started",
+        "# Atlas",
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    FakeDocumentationVersionRepository documentationVersionRepository = new()
+    {
+      NextVersionNumber = 3
+    };
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, documentationVersionRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        "Quick Start",
+        "## Updated",
+        3,
+        DocumentationStatus.Published);
+
+    await useCase.Execute("proyecto-atlas", "getting-started", input);
+
+    Assert.NotNull(documentationRepository.UpdatedVersion);
+    Assert.Equal(3, documentationRepository.UpdatedVersion.VersionNumber);
+    Assert.Equal("Getting Started", documentationRepository.UpdatedVersion.Title);
+    Assert.Equal("# Atlas", documentationRepository.UpdatedVersion.ContentMarkdown);
+    Assert.Equal(DocumentationStatus.Draft, documentationRepository.UpdatedVersion.Status);
+    Assert.Equal(documentation.Id, documentationVersionRepository.ReceivedDocumentationId);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldNotCreateVersion_WhenOnlySortOrderChanges()
+  {
+    Project project = new(
+        "Proyecto Atlas",
+        "Backend for project documentation based on markdown",
+        "https://github.com/matigaleanodev/proyecto-atlas-api",
+        "#1E293B");
+    Documentation documentation = new(
+        project.Id,
+        "Getting Started",
+        "# Atlas",
+        1,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Backend);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project,
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation,
+    };
+    FakeDocumentationVersionRepository documentationVersionRepository = new();
+    UpdateProjectDocumentationCommandHandler useCase = new(documentationRepository, documentationVersionRepository, projectRepository);
+    UpdateProjectDocumentationCommand input = new(
+        null,
+        null,
+        5,
+        null);
+
+    await useCase.Execute("proyecto-atlas", "getting-started", input);
+
+    Assert.Null(documentationRepository.UpdatedVersion);
+    Assert.Equal(Guid.Empty, documentationVersionRepository.ReceivedDocumentationId);
+  }
+
+  [Fact]
   public async Task Execute_ShouldReplaceFaqItems_WhenDocumentationIsFaq()
   {
     Project project = new(

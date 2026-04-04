@@ -6,6 +6,7 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
 {
   public Documentation? AddedDocumentation { get; private set; }
   public Documentation? UpdatedDocumentation { get; private set; }
+  public DocumentationVersion? UpdatedVersion { get; private set; }
   public Documentation? DeletedDocumentation { get; private set; }
   public Guid ReceivedProjectId { get; private set; }
   public int ReceivedPage { get; private set; }
@@ -66,6 +67,7 @@ internal sealed class FakeDocumentationRepository : IDocumentationRepository
       CancellationToken cancellationToken = default)
   {
     UpdatedDocumentation = documentation;
+    UpdatedVersion = version;
     return Task.CompletedTask;
   }
 
