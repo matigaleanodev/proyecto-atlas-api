@@ -5,6 +5,7 @@ using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Api.OpenApi;
 using ProyectoAtlas.Application.Errors;
 using ProyectoAtlas.Infrastructure.DocumentationRelations;
+using ProyectoAtlas.Infrastructure.DocumentationResources;
 using ProyectoAtlas.Infrastructure.Documentations;
 using ProyectoAtlas.Infrastructure.DocumentationVersions;
 using ProyectoAtlas.Infrastructure.Features;
@@ -51,6 +52,9 @@ builder.Services.AddScoped<GetDocumentationVersionByNumberQueryHandler>();
 builder.Services.AddScoped<CreateDocumentationRelationCommandHandler>();
 builder.Services.AddScoped<ListDocumentationRelationsQueryHandler>();
 builder.Services.AddScoped<DeleteDocumentationRelationCommandHandler>();
+builder.Services.AddScoped<CreateDocumentationResourceCommandHandler>();
+builder.Services.AddScoped<ListDocumentationResourcesQueryHandler>();
+builder.Services.AddScoped<DeleteDocumentationResourceCommandHandler>();
 builder.Services.AddScoped<CreateProjectFeatureCommandHandler>();
 builder.Services.AddScoped<ListProjectFeaturesQueryHandler>();
 builder.Services.AddScoped<GetProjectFeatureBySlugQueryHandler>();
@@ -62,6 +66,7 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IDocumentationRepository, DocumentationRepository>();
 builder.Services.AddScoped<IDocumentationVersionRepository, DocumentationVersionRepository>();
 builder.Services.AddScoped<IDocumentationRelationRepository, DocumentationRelationRepository>();
+builder.Services.AddScoped<IDocumentationResourceRepository, DocumentationResourceRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 
 

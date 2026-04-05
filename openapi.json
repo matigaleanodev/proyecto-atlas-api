@@ -219,6 +219,220 @@
         }
       }
     },
+    "/projects/{projectSlug}/documentations/{documentationSlug}/resources": {
+      "post": {
+        "tags": [
+          "DocumentationResources"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationResourceCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationResourceCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentationResourceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentationResource"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "DocumentationResources"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDocumentationResourcesResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/documentations/{documentationSlug}/resources/{resourceId}": {
+      "delete": {
+        "tags": [
+          "DocumentationResources"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": { }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectSlug}/documentations/{slug}/versions": {
       "get": {
         "tags": [
@@ -1498,6 +1712,30 @@
           "kind": "Implements"
         }
       },
+      "CreateDocumentationResourceCommand": {
+        "required": [
+          "title",
+          "url",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DocumentationResourceKind"
+          }
+        },
+        "example": {
+          "title": "OpenAPI Spec",
+          "url": "https://api.example.com/openapi.json",
+          "kind": "ApiSpec"
+        }
+      },
       "CreateProjectCommand": {
         "required": [
           "title",
@@ -1890,6 +2128,62 @@
         ],
         "type": "string"
       },
+      "DocumentationResource": {
+        "required": [
+          "documentationId",
+          "title",
+          "url",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "normalizedTitle": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "normalizedUrl": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/DocumentationResourceKind"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "e8d6b8d1-6610-4ebf-a4f3-a264cb14b512",
+          "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+          "title": "OpenAPI Spec",
+          "url": "https://api.example.com/openapi.json",
+          "kind": "ApiSpec",
+          "createdAtUtc": "2026-04-05T12:00:00Z"
+        }
+      },
+      "DocumentationResourceKind": {
+        "enum": [
+          "Link",
+          "Repository",
+          "Design",
+          "ApiSpec",
+          "File"
+        ],
+        "type": "string"
+      },
       "DocumentationStatus": {
         "enum": [
           "Draft",
@@ -2053,6 +2347,32 @@
               "targetDocumentationId": "96e358ab-8ea3-4030-b9f0-238ed459e537",
               "kind": "Implements",
               "createdAtUtc": "2026-04-02T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "ListDocumentationResourcesResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentationResource"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "e8d6b8d1-6610-4ebf-a4f3-a264cb14b512",
+              "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "title": "OpenAPI Spec",
+              "url": "https://api.example.com/openapi.json",
+              "kind": "ApiSpec",
+              "createdAtUtc": "2026-04-05T12:00:00Z"
             }
           ]
         }
@@ -2643,6 +2963,9 @@
   "tags": [
     {
       "name": "DocumentationRelations"
+    },
+    {
+      "name": "DocumentationResources"
     },
     {
       "name": "DocumentationVersions"

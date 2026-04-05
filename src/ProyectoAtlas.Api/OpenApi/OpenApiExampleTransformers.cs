@@ -225,6 +225,40 @@ public static class OpenApiExampleTransformers
             ]
           }
           """),
+      Type currentType when currentType == typeof(CreateDocumentationResourceCommand) => ParseJson(
+          """
+          {
+            "title": "OpenAPI Spec",
+            "url": "https://api.example.com/openapi.json",
+            "kind": "ApiSpec"
+          }
+          """),
+      Type currentType when currentType == typeof(DocumentationResource) => ParseJson(
+          """
+          {
+            "id": "e8d6b8d1-6610-4ebf-a4f3-a264cb14b512",
+            "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "title": "OpenAPI Spec",
+            "url": "https://api.example.com/openapi.json",
+            "kind": "ApiSpec",
+            "createdAtUtc": "2026-04-05T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListDocumentationResourcesResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "e8d6b8d1-6610-4ebf-a4f3-a264cb14b512",
+                "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "title": "OpenAPI Spec",
+                "url": "https://api.example.com/openapi.json",
+                "kind": "ApiSpec",
+                "createdAtUtc": "2026-04-05T12:00:00Z"
+              }
+            ]
+          }
+          """),
       Type currentType when currentType == typeof(DocumentationVersion) => ParseJson(
           """
           {
