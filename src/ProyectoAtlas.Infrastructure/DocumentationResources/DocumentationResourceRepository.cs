@@ -17,8 +17,7 @@ public class DocumentationResourceRepository(ProyectoAtlasDbContext dbContext) :
     }
     catch (DbUpdateException exception) when (
         exception.InnerException is PostgresException postgresException &&
-        postgresException.SqlState == PostgresErrorCodes.UniqueViolation &&
-        postgresException.ConstraintName == "IX_documentation_resources_documentation_id_normalized_title_normalized_url_kind")
+        postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
     {
       throw new DuplicateDocumentationResourceException(resource.Title);
     }
