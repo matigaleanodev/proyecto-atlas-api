@@ -7,6 +7,9 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations;
 /// <inheritdoc />
 public partial class AddDocumentationRelations : Migration
 {
+  private static readonly string[] DocumentationRelationIndexColumns =
+      ["project_id", "source_documentation_id", "target_documentation_id", "kind"];
+
   /// <inheritdoc />
   protected override void Up(MigrationBuilder migrationBuilder)
   {
@@ -47,7 +50,7 @@ public partial class AddDocumentationRelations : Migration
     migrationBuilder.CreateIndex(
         name: "IX_documentation_relations_project_id_source_documentation_id_~",
         table: "documentation_relations",
-        columns: new[] { "project_id", "source_documentation_id", "target_documentation_id", "kind" },
+        columns: DocumentationRelationIndexColumns,
         unique: true);
 
     migrationBuilder.CreateIndex(

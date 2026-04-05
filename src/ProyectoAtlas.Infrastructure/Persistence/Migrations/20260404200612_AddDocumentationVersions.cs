@@ -7,6 +7,8 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations;
 /// <inheritdoc />
 public partial class AddDocumentationVersions : Migration
 {
+  private static readonly string[] DocumentationVersionIndexColumns = ["documentation_id", "version_number"];
+
   /// <inheritdoc />
   protected override void Up(MigrationBuilder migrationBuilder)
   {
@@ -36,7 +38,7 @@ public partial class AddDocumentationVersions : Migration
     migrationBuilder.CreateIndex(
         name: "IX_documentation_versions_documentation_id_version_number",
         table: "documentation_versions",
-        columns: new[] { "documentation_id", "version_number" },
+        columns: DocumentationVersionIndexColumns,
         unique: true);
   }
 

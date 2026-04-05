@@ -7,6 +7,9 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations;
 /// <inheritdoc />
 public partial class AddDocumentationResources : Migration
 {
+  private static readonly string[] DocumentationResourceIndexColumns =
+      ["documentation_id", "normalized_title", "normalized_url", "kind"];
+
   /// <inheritdoc />
   protected override void Up(MigrationBuilder migrationBuilder)
   {
@@ -37,7 +40,7 @@ public partial class AddDocumentationResources : Migration
     migrationBuilder.CreateIndex(
         name: "IX_documentation_resources_documentation_id_normalized_title_n~",
         table: "documentation_resources",
-        columns: new[] { "documentation_id", "normalized_title", "normalized_url", "kind" },
+        columns: DocumentationResourceIndexColumns,
         unique: true);
   }
 
