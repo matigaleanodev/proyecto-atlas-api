@@ -7,6 +7,8 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations;
 /// <inheritdoc />
 public partial class AddFeatures : Migration
 {
+  private static readonly string[] FeatureSlugIndexColumns = ["project_id", "slug"];
+
   /// <inheritdoc />
   protected override void Up(MigrationBuilder migrationBuilder)
   {
@@ -37,7 +39,7 @@ public partial class AddFeatures : Migration
     migrationBuilder.CreateIndex(
         name: "IX_features_project_id_slug",
         table: "features",
-        columns: new[] { "project_id", "slug" },
+        columns: FeatureSlugIndexColumns,
         unique: true);
   }
 

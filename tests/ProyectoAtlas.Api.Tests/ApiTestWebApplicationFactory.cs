@@ -56,7 +56,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     await dbContext.Database.ExecuteSqlRawAsync(
         """
-        TRUNCATE TABLE documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
+        TRUNCATE TABLE documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
         """);
   }
 
@@ -138,6 +138,18 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     ];
 
     await dbContext.DocumentationRelations.AddRangeAsync(documentationRelations);
+    await dbContext.SaveChangesAsync();
+
+    DocumentationResource[] documentationResources =
+    [
+      new DocumentationResource(
+          documentations[0].Id,
+          "OpenAPI Spec",
+          "https://api.example.com/openapi.json",
+          DocumentationResourceKind.ApiSpec)
+    ];
+
+    await dbContext.DocumentationResources.AddRangeAsync(documentationResources);
     await dbContext.SaveChangesAsync();
 
     Feature[] features =

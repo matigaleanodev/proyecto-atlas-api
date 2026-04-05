@@ -5,30 +5,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoAtlas.Infrastructure.Persistence.Migrations;
 
 /// <inheritdoc />
-public partial class AddDocumentationVersions : Migration
+public partial class AddDocumentationResources : Migration
 {
-  private static readonly string[] DocumentationVersionIndexColumns = ["documentation_id", "version_number"];
+  private static readonly string[] DocumentationResourceIndexColumns =
+      ["documentation_id", "normalized_title", "normalized_url", "kind"];
 
   /// <inheritdoc />
   protected override void Up(MigrationBuilder migrationBuilder)
   {
     migrationBuilder.CreateTable(
-        name: "documentation_versions",
+        name: "documentation_resources",
         columns: table => new
         {
           id = table.Column<Guid>(type: "uuid", nullable: false),
           documentation_id = table.Column<Guid>(type: "uuid", nullable: false),
-          version_number = table.Column<int>(type: "integer", nullable: false),
           title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-          content_markdown = table.Column<string>(type: "text", nullable: false),
-          status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+          normalized_title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+          url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+          normalized_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+          kind = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
           created_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
         },
         constraints: table =>
         {
-          table.PrimaryKey("PK_documentation_versions", x => x.id);
+          table.PrimaryKey("PK_documentation_resources", x => x.id);
           table.ForeignKey(
-                    name: "FK_documentation_versions_documentations_documentation_id",
+                    name: "FK_documentation_resources_documentations_documentation_id",
                     column: x => x.documentation_id,
                     principalTable: "documentations",
                     principalColumn: "id",
@@ -36,9 +38,9 @@ public partial class AddDocumentationVersions : Migration
         });
 
     migrationBuilder.CreateIndex(
-        name: "IX_documentation_versions_documentation_id_version_number",
-        table: "documentation_versions",
-        columns: DocumentationVersionIndexColumns,
+        name: "IX_documentation_resources_documentation_id_normalized_title_n~",
+        table: "documentation_resources",
+        columns: DocumentationResourceIndexColumns,
         unique: true);
   }
 
@@ -46,6 +48,6 @@ public partial class AddDocumentationVersions : Migration
   protected override void Down(MigrationBuilder migrationBuilder)
   {
     migrationBuilder.DropTable(
-        name: "documentation_versions");
+        name: "documentation_resources");
   }
 }
