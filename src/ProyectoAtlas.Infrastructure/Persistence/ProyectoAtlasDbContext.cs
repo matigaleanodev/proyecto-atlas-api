@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Features;
+using ProyectoAtlas.Domain.Milestones;
 using ProyectoAtlas.Domain.Projects;
 namespace ProyectoAtlas.Infrastructure.Persistence;
 
@@ -15,6 +16,7 @@ public class ProyectoAtlasDbContext(DbContextOptions<ProyectoAtlasDbContext> opt
   public DbSet<DocumentationFaqItem> DocumentationFaqItems => Set<DocumentationFaqItem>();
   public DbSet<DocumentationTag> DocumentationTags => Set<DocumentationTag>();
   public DbSet<Feature> Features => Set<Feature>();
+  public DbSet<Milestone> Milestones => Set<Milestone>();
 
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
