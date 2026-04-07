@@ -16,6 +16,8 @@ public static class AtlasErrorCodes
   public const string FeatureNotFound = "FEATURE_NOT_FOUND";
   public const string FeatureSlugConflict = "FEATURE_SLUG_CONFLICT";
   public const string InternalServerError = "INTERNAL_SERVER_ERROR";
+  public const string MilestoneNotFound = "MILESTONE_NOT_FOUND";
+  public const string MilestoneSlugConflict = "MILESTONE_SLUG_CONFLICT";
   public const string ProjectNotFound = "PROJECT_NOT_FOUND";
   public const string ProjectSlugConflict = "PROJECT_SLUG_CONFLICT";
   public const string ValidationError = "VALIDATION_ERROR";
