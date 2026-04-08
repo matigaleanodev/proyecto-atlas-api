@@ -4,6 +4,8 @@ global using ProyectoAtlas.Application.Features.Documentations.Create;
 global using ProyectoAtlas.Application.Features.Documentations.Update;
 global using ProyectoAtlas.Application.Features.Features.Create;
 global using ProyectoAtlas.Application.Features.Features.Update;
+global using ProyectoAtlas.Application.Features.Milestones.Create;
+global using ProyectoAtlas.Application.Features.Milestones.Update;
 global using ProyectoAtlas.Application.Features.Projects.Common;
 global using ProyectoAtlas.Application.Features.Projects.Create;
 global using ProyectoAtlas.Application.Features.Projects.Update;

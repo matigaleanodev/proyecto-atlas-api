@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Features;
+using ProyectoAtlas.Domain.Milestones;
 using ProyectoAtlas.Domain.Projects;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.Projects;
@@ -56,7 +57,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     await dbContext.Database.ExecuteSqlRawAsync(
         """
-        TRUNCATE TABLE documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
+        TRUNCATE TABLE milestones, documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
         """);
   }
 
@@ -172,6 +173,30 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     ];
 
     await dbContext.Features.AddRangeAsync(features);
+    await dbContext.SaveChangesAsync();
+
+    Milestone[] milestones =
+    [
+      new Milestone(
+          projects[0].Id,
+          "MVP Release",
+          "Cerrar la primera entrega publica.",
+          MilestoneStatus.Planned,
+          new DateTime(2026, 5, 15, 0, 0, 0, DateTimeKind.Utc)),
+      new Milestone(
+          projects[0].Id,
+          "General Availability",
+          "Cerrar la entrega general del producto.",
+          MilestoneStatus.InProgress,
+          new DateTime(2026, 6, 30, 0, 0, 0, DateTimeKind.Utc)),
+      new Milestone(
+          projects[1].Id,
+          "Reader Launch",
+          "Publicar la primera version de lectura.",
+          MilestoneStatus.Done)
+    ];
+
+    await dbContext.Milestones.AddRangeAsync(milestones);
     await dbContext.SaveChangesAsync();
   }
 }
