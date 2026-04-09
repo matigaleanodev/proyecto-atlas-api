@@ -4,6 +4,7 @@ using Microsoft.OpenApi;
 using ProyectoAtlas.Api.Errors;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Features;
+using ProyectoAtlas.Domain.Milestones;
 using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Api.OpenApi;
@@ -184,6 +185,61 @@ public static class OpenApiExampleTransformers
                 "status": "Planned",
                 "createdAtUtc": "2026-04-01T12:00:00Z",
                 "updatedAtUtc": "2026-04-01T12:00:00Z"
+              }
+            ],
+            "page": 1,
+            "pageSize": 10,
+            "totalPages": 1,
+            "totalItems": 1
+          }
+          """),
+      Type currentType when currentType == typeof(CreateProjectMilestoneCommand) => ParseJson(
+          """
+          {
+            "title": "MVP Release",
+            "summary": "Cerrar la primera entrega publica del proyecto.",
+            "status": "Planned",
+            "targetDateUtc": "2026-05-15T00:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(UpdateProjectMilestoneCommand) => ParseJson(
+          """
+          {
+            "title": "MVP Release",
+            "summary": "Cerrar la primera entrega publica con documentacion y features base.",
+            "status": "InProgress",
+            "targetDateUtc": "2026-05-20T00:00:00Z",
+            "clearTargetDate": false
+          }
+          """),
+      Type currentType when currentType == typeof(Milestone) => ParseJson(
+          """
+          {
+            "id": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "title": "MVP Release",
+            "summary": "Cerrar la primera entrega publica del proyecto.",
+            "slug": "mvp-release",
+            "status": "Planned",
+            "targetDateUtc": "2026-05-15T00:00:00Z",
+            "createdAtUtc": "2026-04-08T12:00:00Z",
+            "updatedAtUtc": "2026-04-08T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListProjectMilestonesResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "title": "MVP Release",
+                "summary": "Cerrar la primera entrega publica del proyecto.",
+                "slug": "mvp-release",
+                "status": "Planned",
+                "targetDateUtc": "2026-05-15T00:00:00Z",
+                "createdAtUtc": "2026-04-08T12:00:00Z",
+                "updatedAtUtc": "2026-04-08T12:00:00Z"
               }
             ],
             "page": 1,
