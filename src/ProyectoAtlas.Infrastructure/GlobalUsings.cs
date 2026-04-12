@@ -5,3 +5,4 @@ global using ProyectoAtlas.Application.Features.DocumentationVersions.Common;
 global using ProyectoAtlas.Application.Features.Features.Common;
 global using ProyectoAtlas.Application.Features.Milestones.Common;
 global using ProyectoAtlas.Application.Features.Projects.Common;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Common;
