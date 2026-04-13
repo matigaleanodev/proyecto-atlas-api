@@ -11,6 +11,7 @@ using ProyectoAtlas.Infrastructure.DocumentationVersions;
 using ProyectoAtlas.Infrastructure.Features;
 using ProyectoAtlas.Infrastructure.Milestones;
 using ProyectoAtlas.Infrastructure.Persistence;
+using ProyectoAtlas.Infrastructure.ProjectRelations;
 using ProyectoAtlas.Infrastructure.Projects;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -66,6 +67,9 @@ builder.Services.AddScoped<ListProjectMilestonesQueryHandler>();
 builder.Services.AddScoped<GetProjectMilestoneBySlugQueryHandler>();
 builder.Services.AddScoped<UpdateProjectMilestoneCommandHandler>();
 builder.Services.AddScoped<DeleteProjectMilestoneCommandHandler>();
+builder.Services.AddScoped<CreateProjectRelationCommandHandler>();
+builder.Services.AddScoped<ListProjectRelationsQueryHandler>();
+builder.Services.AddScoped<DeleteProjectRelationCommandHandler>();
 
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -75,6 +79,7 @@ builder.Services.AddScoped<IDocumentationRelationRepository, DocumentationRelati
 builder.Services.AddScoped<IDocumentationResourceRepository, DocumentationResourceRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
 builder.Services.AddScoped<IMilestoneRepository, MilestoneRepository>();
+builder.Services.AddScoped<IProjectRelationRepository, ProjectRelationRepository>();
 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

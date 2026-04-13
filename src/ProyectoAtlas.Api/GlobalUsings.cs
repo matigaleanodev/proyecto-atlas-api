@@ -34,3 +34,7 @@ global using ProyectoAtlas.Application.Features.Projects.Delete;
 global using ProyectoAtlas.Application.Features.Projects.GetBySlug;
 global using ProyectoAtlas.Application.Features.Projects.List;
 global using ProyectoAtlas.Application.Features.Projects.Update;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Common;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Create;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Delete;
+global using ProyectoAtlas.Application.Features.ProjectRelations.List;
