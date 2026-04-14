@@ -32,6 +32,10 @@ global using ProyectoAtlas.Application.Features.Projects.Delete;
 global using ProyectoAtlas.Application.Features.Projects.GetBySlug;
 global using ProyectoAtlas.Application.Features.Projects.List;
 global using ProyectoAtlas.Application.Features.Projects.Update;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Common;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Create;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Delete;
+global using ProyectoAtlas.Application.Features.ProjectRelations.List;
 global using ProyectoAtlas.Application.Tests.Features.DocumentationRelations.Common;
 global using ProyectoAtlas.Application.Tests.Features.DocumentationResources.Common;
 global using ProyectoAtlas.Application.Tests.Features.Documentations.Common;
@@ -39,3 +43,4 @@ global using ProyectoAtlas.Application.Tests.Features.DocumentationVersions.Comm
 global using ProyectoAtlas.Application.Tests.Features.Features.Common;
 global using ProyectoAtlas.Application.Tests.Features.Milestones.Common;
 global using ProyectoAtlas.Application.Tests.Features.Projects.Common;
+global using ProyectoAtlas.Application.Tests.Features.ProjectRelations.Common;
