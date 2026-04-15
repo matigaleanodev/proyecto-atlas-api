@@ -143,6 +143,37 @@ public static class OpenApiExampleTransformers
             "totalItems": 1
           }
           """),
+      Type currentType when currentType == typeof(CreateProjectRelationCommand) => ParseJson(
+          """
+          {
+            "targetProjectSlug": "atlas-docs",
+            "kind": "IntegratesWith"
+          }
+          """),
+      Type currentType when currentType == typeof(ProjectRelation) => ParseJson(
+          """
+          {
+            "id": "1d0d5e72-2d8b-4b8b-a6fb-4db77f1b6954",
+            "sourceProjectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "targetProjectId": "a7b8736d-a6c8-431b-a8e9-2d59e42ff8b2",
+            "kind": "IntegratesWith",
+            "createdAtUtc": "2026-04-10T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListProjectRelationsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "1d0d5e72-2d8b-4b8b-a6fb-4db77f1b6954",
+                "sourceProjectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "targetProjectId": "a7b8736d-a6c8-431b-a8e9-2d59e42ff8b2",
+                "kind": "IntegratesWith",
+                "createdAtUtc": "2026-04-10T12:00:00Z"
+              }
+            ]
+          }
+          """),
       Type currentType when currentType == typeof(CreateProjectFeatureCommand) => ParseJson(
           """
           {

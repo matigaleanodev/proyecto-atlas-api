@@ -8,6 +8,7 @@ namespace ProyectoAtlas.Infrastructure.Persistence;
 public class ProyectoAtlasDbContext(DbContextOptions<ProyectoAtlasDbContext> options) : DbContext(options)
 {
   public DbSet<Project> Projects => Set<Project>();
+  public DbSet<ProjectRelation> ProjectRelations => Set<ProjectRelation>();
   public DbSet<ProjectLink> ProjectLinks => Set<ProjectLink>();
   public DbSet<Documentation> Documentations => Set<Documentation>();
   public DbSet<DocumentationResource> DocumentationResources => Set<DocumentationResource>();
