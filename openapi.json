@@ -1727,6 +1727,196 @@
         }
       }
     },
+    "/projects/{sourceProjectSlug}/relations": {
+      "post": {
+        "tags": [
+          "ProjectRelations"
+        ],
+        "parameters": [
+          {
+            "name": "sourceProjectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRelationCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRelationCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectRelationCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRelation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ProjectRelations"
+        ],
+        "parameters": [
+          {
+            "name": "sourceProjectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListProjectRelationsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{sourceProjectSlug}/relations/{relationId}": {
+      "delete": {
+        "tags": [
+          "ProjectRelations"
+        ],
+        "parameters": [
+          {
+            "name": "sourceProjectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": { }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects": {
       "post": {
         "tags": [
@@ -2344,6 +2534,25 @@
           "summary": "Cerrar la primera entrega publica del proyecto.",
           "status": "Planned",
           "targetDateUtc": "2026-05-15T00:00:00Z"
+        }
+      },
+      "CreateProjectRelationCommand": {
+        "required": [
+          "targetProjectSlug",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "targetProjectSlug": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectRelationKind"
+          }
+        },
+        "example": {
+          "targetProjectSlug": "atlas-docs",
+          "kind": "IntegratesWith"
         }
       },
       "Documentation": {
@@ -3022,6 +3231,31 @@
           "totalItems": 1
         }
       },
+      "ListProjectRelationsResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectRelation"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "1d0d5e72-2d8b-4b8b-a6fb-4db77f1b6954",
+              "sourceProjectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "targetProjectId": "a7b8736d-a6c8-431b-a8e9-2d59e42ff8b2",
+              "kind": "IntegratesWith",
+              "createdAtUtc": "2026-04-10T12:00:00Z"
+            }
+          ]
+        }
+      },
       "ListProjectsResponse": {
         "required": [
           "items",
@@ -3282,6 +3516,51 @@
           "Board",
           "Monitoring",
           "Environment"
+        ],
+        "type": "string"
+      },
+      "ProjectRelation": {
+        "required": [
+          "sourceProjectId",
+          "targetProjectId",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceProjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetProjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ProjectRelationKind"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "1d0d5e72-2d8b-4b8b-a6fb-4db77f1b6954",
+          "sourceProjectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+          "targetProjectId": "a7b8736d-a6c8-431b-a8e9-2d59e42ff8b2",
+          "kind": "IntegratesWith",
+          "createdAtUtc": "2026-04-10T12:00:00Z"
+        }
+      },
+      "ProjectRelationKind": {
+        "enum": [
+          "DependsOn",
+          "IntegratesWith",
+          "Extends",
+          "Replaces"
         ],
         "type": "string"
       },
@@ -3576,6 +3855,9 @@
     },
     {
       "name": "ProjectMilestones"
+    },
+    {
+      "name": "ProjectRelations"
     },
     {
       "name": "Projects"

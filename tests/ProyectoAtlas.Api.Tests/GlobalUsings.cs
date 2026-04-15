@@ -6,7 +6,7 @@ global using ProyectoAtlas.Application.Features.Features.Create;
 global using ProyectoAtlas.Application.Features.Features.Update;
 global using ProyectoAtlas.Application.Features.Milestones.Create;
 global using ProyectoAtlas.Application.Features.Milestones.Update;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Create;
 global using ProyectoAtlas.Application.Features.Projects.Common;
 global using ProyectoAtlas.Application.Features.Projects.Create;
 global using ProyectoAtlas.Application.Features.Projects.Update;
-global using ProyectoAtlas.Application.Features.ProjectRelations.Create;
