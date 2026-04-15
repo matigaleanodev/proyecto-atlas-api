@@ -9,3 +9,4 @@ global using ProyectoAtlas.Application.Features.Milestones.Update;
 global using ProyectoAtlas.Application.Features.Projects.Common;
 global using ProyectoAtlas.Application.Features.Projects.Create;
 global using ProyectoAtlas.Application.Features.Projects.Update;
+global using ProyectoAtlas.Application.Features.ProjectRelations.Create;
