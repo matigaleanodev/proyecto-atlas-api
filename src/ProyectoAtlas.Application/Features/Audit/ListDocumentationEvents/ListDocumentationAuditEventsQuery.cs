@@ -1,0 +1,3 @@
+namespace ProyectoAtlas.Application.Features.Audit.ListDocumentationEvents;
+
+public record ListDocumentationAuditEventsQuery;
