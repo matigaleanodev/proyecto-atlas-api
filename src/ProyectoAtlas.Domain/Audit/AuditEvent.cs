@@ -27,10 +27,18 @@ public class AuditEvent
       string entityTitle,
       AuditAction action)
   {
-    ArgumentOutOfRangeException.ThrowIfZero(projectId);
-    ArgumentOutOfRangeException.ThrowIfZero(entityId);
     ArgumentException.ThrowIfNullOrWhiteSpace(entitySlug);
     ArgumentException.ThrowIfNullOrWhiteSpace(entityTitle);
+
+    if (projectId == Guid.Empty)
+    {
+      throw new ArgumentException("Project id cannot be empty.", nameof(projectId));
+    }
+
+    if (entityId == Guid.Empty)
+    {
+      throw new ArgumentException("Entity id cannot be empty.", nameof(entityId));
+    }
 
     if (entityType == AuditEntityType.Project && documentationId.HasValue)
     {
