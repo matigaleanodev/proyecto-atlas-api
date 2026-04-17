@@ -1,3 +1,4 @@
+global using ProyectoAtlas.Application.Features.Audit.Common;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Common;
 global using ProyectoAtlas.Application.Features.DocumentationResources.Common;
 global using ProyectoAtlas.Application.Features.Documentations.Common;
