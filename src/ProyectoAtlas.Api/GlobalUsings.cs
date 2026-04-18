@@ -1,3 +1,6 @@
+global using ProyectoAtlas.Application.Features.Audit.Common;
+global using ProyectoAtlas.Application.Features.Audit.ListDocumentationEvents;
+global using ProyectoAtlas.Application.Features.Audit.ListProjectEvents;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Common;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Create;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Delete;
