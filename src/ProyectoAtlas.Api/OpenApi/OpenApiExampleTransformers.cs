@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using ProyectoAtlas.Api.Errors;
+using ProyectoAtlas.Domain.Audit;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Features;
 using ProyectoAtlas.Domain.Milestones;
@@ -141,6 +142,56 @@ public static class OpenApiExampleTransformers
             "pageSize": 10,
             "totalPages": 1,
             "totalItems": 1
+          }
+          """),
+      Type currentType when currentType == typeof(AuditEvent) => ParseJson(
+          """
+          {
+            "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "entityType": "Documentation",
+            "entityId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "entitySlug": "getting-started",
+            "entityTitle": "Getting Started",
+            "action": "Updated",
+            "occurredAtUtc": "2026-04-16T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListProjectAuditEventsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "documentationId": null,
+                "entityType": "Project",
+                "entityId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "entitySlug": "proyecto-atlas",
+                "entityTitle": "Proyecto Atlas",
+                "action": "Updated",
+                "occurredAtUtc": "2026-04-16T12:00:00Z"
+              }
+            ]
+          }
+          """),
+      Type currentType when currentType == typeof(ListDocumentationAuditEventsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "entityType": "Documentation",
+                "entityId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "entitySlug": "getting-started",
+                "entityTitle": "Getting Started",
+                "action": "Updated",
+                "occurredAtUtc": "2026-04-16T12:00:00Z"
+              }
+            ]
           }
           """),
       Type currentType when currentType == typeof(CreateProjectRelationCommand) => ParseJson(
