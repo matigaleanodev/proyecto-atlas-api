@@ -6,6 +6,7 @@ namespace ProyectoAtlas.Application.Features.Documentations.Create;
 
 public class CreateProjectDocumentationCommandHandler(
     IDocumentationRepository documentationRepository,
+    IAuditEventRepository auditEventRepository,
     IProjectRepository projectRepository)
 {
   public async Task<Documentation> Execute(
@@ -108,6 +109,7 @@ public class CreateProjectDocumentationCommandHandler(
     }
 
     await documentationRepository.Add(documentation, cancellationToken);
+    await auditEventRepository.Add(AuditEventFactory.ForDocumentation(documentation, Domain.Audit.AuditAction.Created), cancellationToken);
 
     return documentation;
   }

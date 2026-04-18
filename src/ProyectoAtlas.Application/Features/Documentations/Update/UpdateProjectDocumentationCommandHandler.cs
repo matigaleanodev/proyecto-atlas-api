@@ -6,6 +6,7 @@ namespace ProyectoAtlas.Application.Features.Documentations.Update;
 
 public class UpdateProjectDocumentationCommandHandler(
     IDocumentationRepository documentationRepository,
+    IAuditEventRepository auditEventRepository,
     IDocumentationVersionRepository documentationVersionRepository,
     IProjectRepository projectRepository)
 {
@@ -92,6 +93,7 @@ public class UpdateProjectDocumentationCommandHandler(
     }
 
     await documentationRepository.Update(documentation, version, cancellationToken);
+    await auditEventRepository.Add(AuditEventFactory.ForDocumentation(documentation, Domain.Audit.AuditAction.Updated), cancellationToken);
 
     return documentation;
   }

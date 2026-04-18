@@ -3,7 +3,10 @@ using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Application.Features.Documentations.Delete;
 
-public class DeleteProjectDocumentationCommandHandler(IDocumentationRepository documentationRepository, IProjectRepository projectRepository)
+public class DeleteProjectDocumentationCommandHandler(
+    IDocumentationRepository documentationRepository,
+    IAuditEventRepository auditEventRepository,
+    IProjectRepository projectRepository)
 {
   public async Task Execute(string projectSlug, string slug, CancellationToken cancellationToken = default)
   {
@@ -16,6 +19,7 @@ public class DeleteProjectDocumentationCommandHandler(IDocumentationRepository d
     Documentation documentation = await documentationRepository.GetBySlug(project.Id, slug, cancellationToken)
         ?? throw new DocumentationNotFoundException(projectSlug, slug);
 
+    await auditEventRepository.Add(AuditEventFactory.ForDocumentation(documentation, Domain.Audit.AuditAction.Deleted), cancellationToken);
     await documentationRepository.Delete(documentation, cancellationToken);
   }
 }
