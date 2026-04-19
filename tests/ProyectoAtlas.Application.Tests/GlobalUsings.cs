@@ -1,3 +1,6 @@
+global using ProyectoAtlas.Application.Features.Audit.Common;
+global using ProyectoAtlas.Application.Features.Audit.ListDocumentationEvents;
+global using ProyectoAtlas.Application.Features.Audit.ListProjectEvents;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Common;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Create;
 global using ProyectoAtlas.Application.Features.DocumentationRelations.Delete;
@@ -36,6 +39,7 @@ global using ProyectoAtlas.Application.Features.Projects.Delete;
 global using ProyectoAtlas.Application.Features.Projects.GetBySlug;
 global using ProyectoAtlas.Application.Features.Projects.List;
 global using ProyectoAtlas.Application.Features.Projects.Update;
+global using ProyectoAtlas.Application.Tests.Features.Audit.Common;
 global using ProyectoAtlas.Application.Tests.Features.DocumentationRelations.Common;
 global using ProyectoAtlas.Application.Tests.Features.DocumentationResources.Common;
 global using ProyectoAtlas.Application.Tests.Features.Documentations.Common;
