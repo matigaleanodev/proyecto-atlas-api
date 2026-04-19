@@ -57,7 +57,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     await dbContext.Database.ExecuteSqlRawAsync(
         """
-        TRUNCATE TABLE project_relations, milestones, documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
+        TRUNCATE TABLE audit_events, project_relations, milestones, documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
         """);
   }
 
