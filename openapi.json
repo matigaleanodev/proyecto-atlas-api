@@ -5,6 +5,63 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/projects/{projectSlug}/documentations/{documentationSlug}/audit-events": {
+      "get": {
+        "tags": [
+          "DocumentationAuditEvents"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDocumentationAuditEventsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectSlug}/documentations/{sourceDocumentationSlug}/relations": {
       "post": {
         "tags": [
@@ -565,6 +622,55 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/audit-events": {
+      "get": {
+        "tags": [
+          "ProjectAuditEvents"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListProjectAuditEventsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -2262,6 +2368,81 @@
           "code": "PROJECT_SLUG_CONFLICT"
         }
       },
+      "AuditAction": {
+        "enum": [
+          "Created",
+          "Updated",
+          "Deleted"
+        ],
+        "type": "string"
+      },
+      "AuditEntityType": {
+        "enum": [
+          "Project",
+          "Documentation"
+        ],
+        "type": "string"
+      },
+      "AuditEvent": {
+        "required": [
+          "projectId",
+          "documentationId",
+          "entityType",
+          "entityId",
+          "entitySlug",
+          "entityTitle",
+          "action"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "entityType": {
+            "$ref": "#/components/schemas/AuditEntityType"
+          },
+          "entityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entitySlug": {
+            "type": "string"
+          },
+          "entityTitle": {
+            "type": "string"
+          },
+          "action": {
+            "$ref": "#/components/schemas/AuditAction"
+          },
+          "occurredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+          "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+          "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+          "entityType": "Documentation",
+          "entityId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+          "entitySlug": "getting-started",
+          "entityTitle": "Getting Started",
+          "action": "Updated",
+          "occurredAtUtc": "2026-04-16T12:00:00Z"
+        }
+      },
       "CreateDocumentationRelationCommand": {
         "required": [
           "targetDocumentationSlug",
@@ -2945,6 +3126,35 @@
         ],
         "type": "string"
       },
+      "ListDocumentationAuditEventsResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditEvent"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "entityType": "Documentation",
+              "entityId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "entitySlug": "getting-started",
+              "entityTitle": "Getting Started",
+              "action": "Updated",
+              "occurredAtUtc": "2026-04-16T12:00:00Z"
+            }
+          ]
+        }
+      },
       "ListDocumentationRelationsResponse": {
         "required": [
           "items"
@@ -3020,6 +3230,35 @@
               "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial anterior.",
               "status": "Draft",
               "createdAtUtc": "2026-04-04T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "ListProjectAuditEventsResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditEvent"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "documentationId": null,
+              "entityType": "Project",
+              "entityId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "entitySlug": "proyecto-atlas",
+              "entityTitle": "Proyecto Atlas",
+              "action": "Updated",
+              "occurredAtUtc": "2026-04-16T12:00:00Z"
             }
           ]
         }
@@ -3836,6 +4075,9 @@
   },
   "tags": [
     {
+      "name": "DocumentationAuditEvents"
+    },
+    {
       "name": "DocumentationRelations"
     },
     {
@@ -3846,6 +4088,9 @@
     },
     {
       "name": "Health"
+    },
+    {
+      "name": "ProjectAuditEvents"
     },
     {
       "name": "ProjectDocumentations"
