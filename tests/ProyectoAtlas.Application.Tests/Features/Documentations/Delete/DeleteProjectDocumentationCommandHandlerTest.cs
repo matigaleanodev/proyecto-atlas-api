@@ -29,11 +29,14 @@ public class DeleteProjectDocumentationCommandHandlerTests
     {
       DocumentationBySlug = documentation,
     };
-    DeleteProjectDocumentationCommandHandler useCase = new(documentationRepository, projectRepository);
+    FakeAuditEventRepository auditEventRepository = new();
+    DeleteProjectDocumentationCommandHandler useCase = new(documentationRepository, auditEventRepository, projectRepository);
 
     await useCase.Execute("proyecto-atlas", "getting-started");
 
     Assert.Same(documentation, documentationRepository.DeletedDocumentation);
+    Assert.NotNull(auditEventRepository.AddedAuditEvent);
+    Assert.Equal(Domain.Audit.AuditAction.Deleted, auditEventRepository.AddedAuditEvent.Action);
   }
 
   [Fact]
@@ -41,6 +44,7 @@ public class DeleteProjectDocumentationCommandHandlerTests
   {
     DeleteProjectDocumentationCommandHandler useCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         new FakeProjectRepository());
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() =>
@@ -61,6 +65,7 @@ public class DeleteProjectDocumentationCommandHandlerTests
     };
     DeleteProjectDocumentationCommandHandler useCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
 
     await Assert.ThrowsAsync<DocumentationNotFoundException>(() =>
@@ -80,6 +85,7 @@ public class DeleteProjectDocumentationCommandHandlerTests
   {
     DeleteProjectDocumentationCommandHandler useCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         new FakeProjectRepository());
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() =>

@@ -16,7 +16,8 @@ public class UpdateProjectCommandHandlerTests
     {
       ProjectBySlug = existingProject
     };
-    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository);
+    FakeAuditEventRepository auditEventRepository = new();
+    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository, auditEventRepository);
     UpdateProjectCommand input = new UpdateProjectCommand(
         "Proyecto Atlas API",
         "Updated backend for project documentation",
@@ -31,6 +32,8 @@ public class UpdateProjectCommandHandlerTests
     Assert.Equal(input.Color, result.Color);
     Assert.Equal("proyecto-atlas-api", result.Slug);
     Assert.Same(result, projectRepository.UpdatedProject);
+    Assert.NotNull(auditEventRepository.AddedAuditEvent);
+    Assert.Equal(Domain.Audit.AuditAction.Updated, auditEventRepository.AddedAuditEvent.Action);
   }
 
   [Fact]
@@ -45,7 +48,7 @@ public class UpdateProjectCommandHandlerTests
     {
       ProjectBySlug = existingProject
     };
-    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository);
+    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository, new FakeAuditEventRepository());
     UpdateProjectCommand input = new UpdateProjectCommand("Atlas Platform", null, null, null);
 
     Project result = await useCase.Execute("proyecto-atlas", input);
@@ -56,7 +59,7 @@ public class UpdateProjectCommandHandlerTests
   [Fact]
   public async Task Execute_ShouldThrowProjectNotFoundException_WhenProjectDoesNotExist()
   {
-    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(new FakeProjectRepository());
+    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(new FakeProjectRepository(), new FakeAuditEventRepository());
     UpdateProjectCommand input = new UpdateProjectCommand("Atlas Platform", null, null, null);
 
     await Assert.ThrowsAsync<ProjectNotFoundException>(() => useCase.Execute("missing-project", input));
@@ -77,7 +80,7 @@ public class UpdateProjectCommandHandlerTests
     {
       ProjectBySlug = existingProject
     };
-    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository);
+    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository, new FakeAuditEventRepository());
     UpdateProjectCommand input = new UpdateProjectCommand(
         "Proyecto Atlas API",
         null,
@@ -114,7 +117,7 @@ public class UpdateProjectCommandHandlerTests
     {
       ProjectBySlug = existingProject
     };
-    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository);
+    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository, new FakeAuditEventRepository());
     UpdateProjectCommand input = new UpdateProjectCommand(
         "Proyecto Atlas API",
         "Updated backend for project documentation",
@@ -143,7 +146,7 @@ public class UpdateProjectCommandHandlerTests
     {
       ProjectBySlug = existingProject
     };
-    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository);
+    UpdateProjectCommandHandler useCase = new UpdateProjectCommandHandler(projectRepository, new FakeAuditEventRepository());
     UpdateProjectCommand input = new UpdateProjectCommand(
         null,
         null,
