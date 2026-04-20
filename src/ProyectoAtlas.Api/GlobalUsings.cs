@@ -34,6 +34,7 @@ global using ProyectoAtlas.Application.Features.Milestones.Update;
 global using ProyectoAtlas.Application.Features.ProjectRelations.Common;
 global using ProyectoAtlas.Application.Features.ProjectRelations.Create;
 global using ProyectoAtlas.Application.Features.ProjectRelations.Delete;
+global using ProyectoAtlas.Application.Features.ProjectRelations.ListIncoming;
 global using ProyectoAtlas.Application.Features.ProjectRelations.List;
 global using ProyectoAtlas.Application.Features.Projects.Common;
 global using ProyectoAtlas.Application.Features.Projects.Create;
