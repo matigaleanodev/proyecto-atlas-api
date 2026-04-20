@@ -11,6 +11,7 @@ namespace ProyectoAtlas.Api.Controllers;
 public class ProjectRelationsController(
     CreateProjectRelationCommandHandler createProjectRelationCommandHandler,
     ListProjectRelationsQueryHandler listProjectRelationsQueryHandler,
+    ListIncomingProjectRelationsQueryHandler listIncomingProjectRelationsQueryHandler,
     DeleteProjectRelationCommandHandler deleteProjectRelationCommandHandler) : ControllerBase
 {
   [HttpPost]
@@ -41,6 +42,20 @@ public class ProjectRelationsController(
       CancellationToken cancellationToken = default)
   {
     ListProjectRelationsResponse response = await listProjectRelationsQueryHandler.Execute(
+        sourceProjectSlug,
+        cancellationToken);
+
+    return Ok(response);
+  }
+
+  [HttpGet("incoming")]
+  [ProducesResponseType(typeof(ListProjectRelationsResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  public async Task<IActionResult> GetIncomingRelations(
+      string sourceProjectSlug,
+      CancellationToken cancellationToken = default)
+  {
+    ListProjectRelationsResponse response = await listIncomingProjectRelationsQueryHandler.Execute(
         sourceProjectSlug,
         cancellationToken);
 

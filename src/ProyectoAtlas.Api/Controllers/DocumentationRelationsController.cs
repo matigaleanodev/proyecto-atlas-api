@@ -11,6 +11,7 @@ namespace ProyectoAtlas.Api.Controllers;
 public class DocumentationRelationsController(
     CreateDocumentationRelationCommandHandler createDocumentationRelationCommandHandler,
     ListDocumentationRelationsQueryHandler listDocumentationRelationsQueryHandler,
+    ListIncomingDocumentationRelationsQueryHandler listIncomingDocumentationRelationsQueryHandler,
     DeleteDocumentationRelationCommandHandler deleteDocumentationRelationCommandHandler) : ControllerBase
 {
   [HttpPost]
@@ -44,6 +45,22 @@ public class DocumentationRelationsController(
       CancellationToken cancellationToken = default)
   {
     ListDocumentationRelationsResponse response = await listDocumentationRelationsQueryHandler.Execute(
+        projectSlug,
+        sourceDocumentationSlug,
+        cancellationToken);
+
+    return Ok(response);
+  }
+
+  [HttpGet("incoming")]
+  [ProducesResponseType(typeof(ListDocumentationRelationsResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  public async Task<IActionResult> GetIncomingRelations(
+      string projectSlug,
+      string sourceDocumentationSlug,
+      CancellationToken cancellationToken = default)
+  {
+    ListDocumentationRelationsResponse response = await listIncomingDocumentationRelationsQueryHandler.Execute(
         projectSlug,
         sourceDocumentationSlug,
         cancellationToken);

@@ -56,6 +56,7 @@ builder.Services.AddScoped<ListDocumentationVersionsQueryHandler>();
 builder.Services.AddScoped<GetDocumentationVersionByNumberQueryHandler>();
 builder.Services.AddScoped<CreateDocumentationRelationCommandHandler>();
 builder.Services.AddScoped<ListDocumentationRelationsQueryHandler>();
+builder.Services.AddScoped<ListIncomingDocumentationRelationsQueryHandler>();
 builder.Services.AddScoped<DeleteDocumentationRelationCommandHandler>();
 builder.Services.AddScoped<CreateDocumentationResourceCommandHandler>();
 builder.Services.AddScoped<ListDocumentationResourcesQueryHandler>();
@@ -72,6 +73,7 @@ builder.Services.AddScoped<UpdateProjectMilestoneCommandHandler>();
 builder.Services.AddScoped<DeleteProjectMilestoneCommandHandler>();
 builder.Services.AddScoped<CreateProjectRelationCommandHandler>();
 builder.Services.AddScoped<ListProjectRelationsQueryHandler>();
+builder.Services.AddScoped<ListIncomingProjectRelationsQueryHandler>();
 builder.Services.AddScoped<DeleteProjectRelationCommandHandler>();
 
 
