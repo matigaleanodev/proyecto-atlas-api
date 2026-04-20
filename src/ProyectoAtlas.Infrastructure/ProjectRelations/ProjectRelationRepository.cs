@@ -23,6 +23,16 @@ public class ProjectRelationRepository(ProyectoAtlasDbContext dbContext) : IProj
         .ToListAsync(cancellationToken);
   }
 
+  public async Task<IReadOnlyCollection<ProjectRelation>> GetIncomingList(
+      Guid targetProjectId,
+      CancellationToken cancellationToken = default)
+  {
+    return await dbContext.ProjectRelations
+        .Where(relation => relation.TargetProjectId == targetProjectId)
+        .OrderBy(relation => relation.CreatedAtUtc)
+        .ToListAsync(cancellationToken);
+  }
+
   public async Task<ProjectRelation?> GetById(
       Guid sourceProjectId,
       Guid relationId,
