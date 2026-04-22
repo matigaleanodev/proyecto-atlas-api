@@ -14,6 +14,8 @@ public static class AtlasErrorCodes
   public const string DocumentationVersionNotFound = "DOCUMENTATION_VERSION_NOT_FOUND";
   public const string DocumentationTagsInvalid = "DOCUMENTATION_TAGS_INVALID";
   public const string FeatureNotFound = "FEATURE_NOT_FOUND";
+  public const string FeatureDocumentationLinkConflict = "FEATURE_DOCUMENTATION_LINK_CONFLICT";
+  public const string FeatureDocumentationLinkNotFound = "FEATURE_DOCUMENTATION_LINK_NOT_FOUND";
   public const string FeatureSlugConflict = "FEATURE_SLUG_CONFLICT";
   public const string InternalServerError = "INTERNAL_SERVER_ERROR";
   public const string MilestoneNotFound = "MILESTONE_NOT_FOUND";
