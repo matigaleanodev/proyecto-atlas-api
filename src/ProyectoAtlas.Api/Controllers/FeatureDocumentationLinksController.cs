@@ -53,10 +53,11 @@ public class FeatureDocumentationLinksController(
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
   public async Task<IActionResult> DeleteLink(
       string projectSlug,
+      string featureSlug,
       Guid linkId,
       CancellationToken cancellationToken = default)
   {
-    await deleteFeatureDocumentationLinkCommandHandler.Execute(projectSlug, linkId, cancellationToken);
+    await deleteFeatureDocumentationLinkCommandHandler.Execute(projectSlug, featureSlug, linkId, cancellationToken);
     return NoContent();
   }
 }

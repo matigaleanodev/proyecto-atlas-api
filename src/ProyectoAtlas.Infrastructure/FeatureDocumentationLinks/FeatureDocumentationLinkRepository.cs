@@ -29,10 +29,10 @@ public class FeatureDocumentationLinkRepository(ProyectoAtlasDbContext dbContext
         .ToListAsync(cancellationToken);
   }
 
-  public async Task<FeatureDocumentationLink?> GetById(Guid projectId, Guid linkId, CancellationToken cancellationToken = default)
+  public async Task<FeatureDocumentationLink?> GetById(Guid featureId, Guid linkId, CancellationToken cancellationToken = default)
   {
     return await dbContext.FeatureDocumentationLinks
-        .FirstOrDefaultAsync(link => link.ProjectId == projectId && link.Id == linkId, cancellationToken);
+        .FirstOrDefaultAsync(link => link.FeatureId == featureId && link.Id == linkId, cancellationToken);
   }
 
   public async Task Delete(FeatureDocumentationLink link, CancellationToken cancellationToken = default)
@@ -49,8 +49,7 @@ public class FeatureDocumentationLinkRepository(ProyectoAtlasDbContext dbContext
     }
     catch (DbUpdateException exception) when (
         exception.InnerException is PostgresException postgresException &&
-        postgresException.SqlState == PostgresErrorCodes.UniqueViolation &&
-        postgresException.ConstraintName == "IX_feature_documentation_links_project_id_feature_id_documentation_id")
+        postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
     {
       throw new DuplicateFeatureDocumentationLinkException();
     }

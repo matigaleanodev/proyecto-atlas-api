@@ -62,6 +62,63 @@
         }
       }
     },
+    "/projects/{projectSlug}/documentations/{documentationSlug}/features": {
+      "get": {
+        "tags": [
+          "DocumentationFeatureLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDocumentationFeatureLinksResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectSlug}/documentations/{sourceDocumentationSlug}/relations": {
       "post": {
         "tags": [
@@ -656,6 +713,210 @@
                   "$ref": "#/components/schemas/DocumentationVersion"
                 }
               }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/features/{featureSlug}/documentations": {
+      "post": {
+        "tags": [
+          "FeatureDocumentationLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "featureSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeatureDocumentationLinkCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeatureDocumentationLinkCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFeatureDocumentationLinkCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureDocumentationLink"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FeatureDocumentationLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "featureSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFeatureDocumentationLinksResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/features/{featureSlug}/documentations/{linkId}": {
+      "delete": {
+        "tags": [
+          "FeatureDocumentationLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "featureSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": { }
             }
           },
           "404": {
@@ -2592,6 +2853,20 @@
           "kind": "ApiSpec"
         }
       },
+      "CreateFeatureDocumentationLinkCommand": {
+        "required": [
+          "documentationSlug"
+        ],
+        "type": "object",
+        "properties": {
+          "documentationSlug": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "documentationSlug": "getting-started"
+        }
+      },
       "CreateProjectCommand": {
         "required": [
           "title",
@@ -3224,6 +3499,43 @@
           "updatedAtUtc": "2026-04-01T12:00:00Z"
         }
       },
+      "FeatureDocumentationLink": {
+        "required": [
+          "projectId",
+          "featureId",
+          "documentationId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "featureId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "9c0f0f43-b4d0-4b6b-a0f8-a1eb0f4a5dd0",
+          "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+          "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+          "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+          "createdAtUtc": "2026-04-22T12:00:00Z"
+        }
+      },
       "FeatureStatus": {
         "enum": [
           "Planned",
@@ -3257,6 +3569,31 @@
               "entityTitle": "Getting Started",
               "action": "Updated",
               "occurredAtUtc": "2026-04-16T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "ListDocumentationFeatureLinksResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDocumentationLink"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "9c0f0f43-b4d0-4b6b-a0f8-a1eb0f4a5dd0",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+              "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "createdAtUtc": "2026-04-22T12:00:00Z"
             }
           ]
         }
@@ -3336,6 +3673,31 @@
               "contentMarkdown": "# Proyecto Atlas\n\nGuia inicial anterior.",
               "status": "Draft",
               "createdAtUtc": "2026-04-04T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "ListFeatureDocumentationLinksResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDocumentationLink"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "9c0f0f43-b4d0-4b6b-a0f8-a1eb0f4a5dd0",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+              "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+              "createdAtUtc": "2026-04-22T12:00:00Z"
             }
           ]
         }
@@ -4184,6 +4546,9 @@
       "name": "DocumentationAuditEvents"
     },
     {
+      "name": "DocumentationFeatureLinks"
+    },
+    {
       "name": "DocumentationRelations"
     },
     {
@@ -4191,6 +4556,9 @@
     },
     {
       "name": "DocumentationVersions"
+    },
+    {
+      "name": "FeatureDocumentationLinks"
     },
     {
       "name": "Health"

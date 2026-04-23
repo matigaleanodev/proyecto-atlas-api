@@ -2,6 +2,7 @@ global using ProyectoAtlas.Application.Features.DocumentationRelations.Create;
 global using ProyectoAtlas.Application.Features.DocumentationResources.Create;
 global using ProyectoAtlas.Application.Features.Documentations.Create;
 global using ProyectoAtlas.Application.Features.Documentations.Update;
+global using ProyectoAtlas.Application.Features.FeatureDocumentationLinks.Create;
 global using ProyectoAtlas.Application.Features.Features.Create;
 global using ProyectoAtlas.Application.Features.Features.Update;
 global using ProyectoAtlas.Application.Features.Milestones.Create;
