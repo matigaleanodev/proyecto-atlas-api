@@ -19,6 +19,7 @@ public class ProyectoAtlasDbContext(DbContextOptions<ProyectoAtlasDbContext> opt
   public DbSet<DocumentationFaqItem> DocumentationFaqItems => Set<DocumentationFaqItem>();
   public DbSet<DocumentationTag> DocumentationTags => Set<DocumentationTag>();
   public DbSet<Feature> Features => Set<Feature>();
+  public DbSet<FeatureDocumentationLink> FeatureDocumentationLinks => Set<FeatureDocumentationLink>();
   public DbSet<Milestone> Milestones => Set<Milestone>();
 
 
