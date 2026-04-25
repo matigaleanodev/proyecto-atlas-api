@@ -11,6 +11,7 @@ using ProyectoAtlas.Infrastructure.Documentations;
 using ProyectoAtlas.Infrastructure.DocumentationVersions;
 using ProyectoAtlas.Infrastructure.FeatureDocumentationLinks;
 using ProyectoAtlas.Infrastructure.Features;
+using ProyectoAtlas.Infrastructure.MilestoneFeatureLinks;
 using ProyectoAtlas.Infrastructure.Milestones;
 using ProyectoAtlas.Infrastructure.Persistence;
 using ProyectoAtlas.Infrastructure.ProjectRelations;
@@ -76,6 +77,10 @@ builder.Services.AddScoped<ListProjectMilestonesQueryHandler>();
 builder.Services.AddScoped<GetProjectMilestoneBySlugQueryHandler>();
 builder.Services.AddScoped<UpdateProjectMilestoneCommandHandler>();
 builder.Services.AddScoped<DeleteProjectMilestoneCommandHandler>();
+builder.Services.AddScoped<CreateMilestoneFeatureLinkCommandHandler>();
+builder.Services.AddScoped<ListMilestoneFeatureLinksQueryHandler>();
+builder.Services.AddScoped<ListFeatureMilestoneLinksQueryHandler>();
+builder.Services.AddScoped<DeleteMilestoneFeatureLinkCommandHandler>();
 builder.Services.AddScoped<CreateProjectRelationCommandHandler>();
 builder.Services.AddScoped<ListProjectRelationsQueryHandler>();
 builder.Services.AddScoped<ListIncomingProjectRelationsQueryHandler>();
@@ -90,6 +95,7 @@ builder.Services.AddScoped<IDocumentationRelationRepository, DocumentationRelati
 builder.Services.AddScoped<IDocumentationResourceRepository, DocumentationResourceRepository>();
 builder.Services.AddScoped<IFeatureDocumentationLinkRepository, FeatureDocumentationLinkRepository>();
 builder.Services.AddScoped<IFeatureRepository, FeatureRepository>();
+builder.Services.AddScoped<IMilestoneFeatureLinkRepository, MilestoneFeatureLinkRepository>();
 builder.Services.AddScoped<IMilestoneRepository, MilestoneRepository>();
 builder.Services.AddScoped<IProjectRelationRepository, ProjectRelationRepository>();
 

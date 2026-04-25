@@ -352,6 +352,50 @@ public static class OpenApiExampleTransformers
             "updatedAtUtc": "2026-04-08T12:00:00Z"
           }
           """),
+      Type currentType when currentType == typeof(CreateMilestoneFeatureLinkCommand) => ParseJson(
+          """
+          {
+            "featureSlug": "authentication-api"
+          }
+          """),
+      Type currentType when currentType == typeof(MilestoneFeatureLink) => ParseJson(
+          """
+          {
+            "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+            "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+            "createdAtUtc": "2026-04-24T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListMilestoneFeatureLinksResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+                "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "createdAtUtc": "2026-04-24T12:00:00Z"
+              }
+            ]
+          }
+          """),
+      Type currentType when currentType == typeof(ListFeatureMilestoneLinksResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+                "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "createdAtUtc": "2026-04-24T12:00:00Z"
+              }
+            ]
+          }
+          """),
       Type currentType when currentType == typeof(ListProjectMilestonesResponse) => ParseJson(
           """
           {

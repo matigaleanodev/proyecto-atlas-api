@@ -21,6 +21,7 @@ public class ProyectoAtlasDbContext(DbContextOptions<ProyectoAtlasDbContext> opt
   public DbSet<Feature> Features => Set<Feature>();
   public DbSet<FeatureDocumentationLink> FeatureDocumentationLinks => Set<FeatureDocumentationLink>();
   public DbSet<Milestone> Milestones => Set<Milestone>();
+  public DbSet<MilestoneFeatureLink> MilestoneFeatureLinks => Set<MilestoneFeatureLink>();
 
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
