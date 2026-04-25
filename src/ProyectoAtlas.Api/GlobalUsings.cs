@@ -31,6 +31,7 @@ global using ProyectoAtlas.Application.Features.Features.GetBySlug;
 global using ProyectoAtlas.Application.Features.Features.List;
 global using ProyectoAtlas.Application.Features.Features.Update;
 global using ProyectoAtlas.Application.Features.Health.Check;
+global using ProyectoAtlas.Application.Features.MilestoneFeatureLinks.Common;
 global using ProyectoAtlas.Application.Features.MilestoneFeatureLinks.Create;
 global using ProyectoAtlas.Application.Features.MilestoneFeatureLinks.Delete;
 global using ProyectoAtlas.Application.Features.MilestoneFeatureLinks.ListByFeature;
