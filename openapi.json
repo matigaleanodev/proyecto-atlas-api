@@ -932,6 +932,63 @@
         }
       }
     },
+    "/projects/{projectSlug}/features/{featureSlug}/milestones": {
+      "get": {
+        "tags": [
+          "FeatureMilestoneLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "featureSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFeatureMilestoneLinksResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -940,6 +997,210 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/milestones/{milestoneSlug}/features": {
+      "post": {
+        "tags": [
+          "MilestoneFeatureLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "milestoneSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMilestoneFeatureLinkCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMilestoneFeatureLinkCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMilestoneFeatureLinkCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneFeatureLink"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "MilestoneFeatureLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "milestoneSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMilestoneFeatureLinksResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{projectSlug}/milestones/{milestoneSlug}/features/{linkId}": {
+      "delete": {
+        "tags": [
+          "MilestoneFeatureLinks"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "milestoneSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": { }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -2867,6 +3128,20 @@
           "documentationSlug": "getting-started"
         }
       },
+      "CreateMilestoneFeatureLinkCommand": {
+        "required": [
+          "featureSlug"
+        ],
+        "type": "object",
+        "properties": {
+          "featureSlug": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "featureSlug": "authentication-api"
+        }
+      },
       "CreateProjectCommand": {
         "required": [
           "title",
@@ -3702,6 +3977,56 @@
           ]
         }
       },
+      "ListFeatureMilestoneLinksResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MilestoneFeatureLink"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+              "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+              "createdAtUtc": "2026-04-24T12:00:00Z"
+            }
+          ]
+        }
+      },
+      "ListMilestoneFeatureLinksResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MilestoneFeatureLink"
+            }
+          }
+        },
+        "example": {
+          "items": [
+            {
+              "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+              "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+              "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+              "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+              "createdAtUtc": "2026-04-24T12:00:00Z"
+            }
+          ]
+        }
+      },
       "ListProjectAuditEventsResponse": {
         "required": [
           "items"
@@ -4097,6 +4422,43 @@
           "targetDateUtc": "2026-05-15T00:00:00Z",
           "createdAtUtc": "2026-04-08T12:00:00Z",
           "updatedAtUtc": "2026-04-08T12:00:00Z"
+        }
+      },
+      "MilestoneFeatureLink": {
+        "required": [
+          "projectId",
+          "milestoneId",
+          "featureId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "milestoneId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "featureId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "example": {
+          "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+          "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+          "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+          "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+          "createdAtUtc": "2026-04-24T12:00:00Z"
         }
       },
       "MilestoneStatus": {
@@ -4561,7 +4923,13 @@
       "name": "FeatureDocumentationLinks"
     },
     {
+      "name": "FeatureMilestoneLinks"
+    },
+    {
       "name": "Health"
+    },
+    {
+      "name": "MilestoneFeatureLinks"
     },
     {
       "name": "ProjectAuditEvents"
