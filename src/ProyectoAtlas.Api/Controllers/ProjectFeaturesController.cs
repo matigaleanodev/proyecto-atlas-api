@@ -39,9 +39,10 @@ public class ProjectFeaturesController(
       [FromQuery] int pageSize = 10,
       [FromQuery] string? query = null,
       [FromQuery] FeatureStatus? status = null,
+      [FromQuery] string? linkedDocumentationSlug = null,
       CancellationToken cancellationToken = default)
   {
-    ListProjectFeaturesQuery queryModel = new(page, pageSize, query, status);
+    ListProjectFeaturesQuery queryModel = new(page, pageSize, query, status, linkedDocumentationSlug);
     ListProjectFeaturesResponse response = await listProjectFeaturesQueryHandler.Execute(projectSlug, queryModel, cancellationToken);
 
     return Ok(response);
