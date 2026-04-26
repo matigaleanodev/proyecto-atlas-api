@@ -27,7 +27,12 @@ public class ListProjectFeaturesQueryHandlerTests
       PagedTotalCount = 3
     };
     ListProjectFeaturesQueryHandler handler = new(featureRepository, projectRepository);
-    ListProjectFeaturesQuery input = new(Page: 2, PageSize: 2, Query: "api", Status: FeatureStatus.Planned);
+    ListProjectFeaturesQuery input = new(
+        Page: 2,
+        PageSize: 2,
+        Query: "api",
+        Status: FeatureStatus.Planned,
+        LinkedDocumentationSlug: "getting-started");
 
     ListProjectFeaturesResponse result = await handler.Execute("proyecto-atlas", input);
 
@@ -39,6 +44,7 @@ public class ListProjectFeaturesQueryHandlerTests
     Assert.Equal(project.Id, featureRepository.ReceivedProjectId);
     Assert.Equal(input.Query, featureRepository.ReceivedQuery);
     Assert.Equal(input.Status, featureRepository.ReceivedStatus);
+    Assert.Equal(input.LinkedDocumentationSlug, featureRepository.ReceivedLinkedDocumentationSlug);
   }
 
   [Fact]
