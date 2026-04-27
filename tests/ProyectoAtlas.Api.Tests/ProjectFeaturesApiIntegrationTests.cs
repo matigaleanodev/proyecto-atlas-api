@@ -82,6 +82,24 @@ public class ProjectFeaturesApiIntegrationTests(ApiTestWebApplicationFactory fac
   }
 
   [Fact]
+  public async Task GetFeatures_ShouldFilterByLinkedDocumentationSlug()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/features?linkedDocumentationSlug=getting-started");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("authentication-api", items[0].GetProperty("slug").GetString());
+  }
+
+  [Fact]
   public async Task GetFeatureBySlug_ShouldReturnFeature_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
