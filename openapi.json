@@ -1794,6 +1794,13 @@
             "schema": {
               "$ref": "#/components/schemas/FeatureStatus"
             }
+          },
+          {
+            "name": "linkedDocumentationSlug",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
