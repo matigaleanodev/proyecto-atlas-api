@@ -100,6 +100,23 @@ public class ProjectFeaturesApiIntegrationTests(ApiTestWebApplicationFactory fac
   }
 
   [Fact]
+  public async Task GetFeatures_ShouldReturnEmpty_WhenLinkedDocumentationSlugHasNoMatches()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/features?linkedDocumentationSlug=adr-001-architecture");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Empty(items.EnumerateArray());
+  }
+
+  [Fact]
   public async Task GetFeatureBySlug_ShouldReturnFeature_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
