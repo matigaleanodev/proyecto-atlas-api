@@ -6,4 +6,6 @@ public record ListProjectMilestonesQuery(
     int Page = 1,
     int PageSize = 10,
     string? Query = null,
-    MilestoneStatus? Status = null);
+    MilestoneStatus? Status = null,
+    DateTime? TargetDateUtcFrom = null,
+    DateTime? TargetDateUtcTo = null);
