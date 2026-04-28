@@ -12,6 +12,8 @@ internal sealed class FakeMilestoneRepository : IMilestoneRepository
   public int ReceivedPageSize { get; private set; }
   public string? ReceivedQuery { get; private set; }
   public MilestoneStatus? ReceivedStatus { get; private set; }
+  public DateTime? ReceivedTargetDateUtcFrom { get; private set; }
+  public DateTime? ReceivedTargetDateUtcTo { get; private set; }
   public IEnumerable<Milestone> PagedMilestones { get; set; } = [];
   public int PagedTotalCount { get; set; }
   public Milestone? MilestoneBySlug { get; set; }
@@ -28,6 +30,8 @@ internal sealed class FakeMilestoneRepository : IMilestoneRepository
       int pageSize,
       string? query = null,
       MilestoneStatus? status = null,
+      DateTime? targetDateUtcFrom = null,
+      DateTime? targetDateUtcTo = null,
       CancellationToken cancellationToken = default)
   {
     ReceivedProjectId = projectId;
@@ -35,6 +39,8 @@ internal sealed class FakeMilestoneRepository : IMilestoneRepository
     ReceivedPageSize = pageSize;
     ReceivedQuery = query;
     ReceivedStatus = status;
+    ReceivedTargetDateUtcFrom = targetDateUtcFrom;
+    ReceivedTargetDateUtcTo = targetDateUtcTo;
 
     return Task.FromResult((PagedMilestones, PagedTotalCount));
   }
