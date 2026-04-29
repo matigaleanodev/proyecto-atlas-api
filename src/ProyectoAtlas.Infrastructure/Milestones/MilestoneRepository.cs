@@ -19,6 +19,8 @@ public class MilestoneRepository(ProyectoAtlasDbContext dbContext) : IMilestoneR
       int pageSize,
       string? query = null,
       MilestoneStatus? status = null,
+      DateTime? targetDateUtcFrom = null,
+      DateTime? targetDateUtcTo = null,
       CancellationToken cancellationToken = default)
   {
     IQueryable<Milestone> milestonesQuery = dbContext.Milestones
@@ -36,6 +38,20 @@ public class MilestoneRepository(ProyectoAtlasDbContext dbContext) : IMilestoneR
     if (status.HasValue)
     {
       milestonesQuery = milestonesQuery.Where(milestone => milestone.Status == status.Value);
+    }
+
+    if (targetDateUtcFrom.HasValue)
+    {
+      milestonesQuery = milestonesQuery.Where(milestone =>
+          milestone.TargetDateUtc.HasValue &&
+          milestone.TargetDateUtc.Value >= targetDateUtcFrom.Value);
+    }
+
+    if (targetDateUtcTo.HasValue)
+    {
+      milestonesQuery = milestonesQuery.Where(milestone =>
+          milestone.TargetDateUtc.HasValue &&
+          milestone.TargetDateUtc.Value <= targetDateUtcTo.Value);
     }
 
     int totalCount = await milestonesQuery.CountAsync(cancellationToken);
