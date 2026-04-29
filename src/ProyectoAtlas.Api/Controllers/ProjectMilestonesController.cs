@@ -39,9 +39,11 @@ public class ProjectMilestonesController(
       [FromQuery] int pageSize = 10,
       [FromQuery] string? query = null,
       [FromQuery] MilestoneStatus? status = null,
+      [FromQuery] DateTime? targetDateUtcFrom = null,
+      [FromQuery] DateTime? targetDateUtcTo = null,
       CancellationToken cancellationToken = default)
   {
-    ListProjectMilestonesQuery queryModel = new(page, pageSize, query, status);
+    ListProjectMilestonesQuery queryModel = new(page, pageSize, query, status, targetDateUtcFrom, targetDateUtcTo);
     ListProjectMilestonesResponse response = await listProjectMilestonesQueryHandler.Execute(projectSlug, queryModel, cancellationToken);
 
     return Ok(response);
