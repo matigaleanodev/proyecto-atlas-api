@@ -86,6 +86,41 @@ public class ProjectMilestonesApiIntegrationTests(ApiTestWebApplicationFactory f
   }
 
   [Fact]
+  public async Task GetMilestones_ShouldFilterByQuery()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/milestones?query=general");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("general-availability", items[0].GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task GetMilestones_ShouldFilterByTargetDateRange()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync(
+        "/projects/proyecto-atlas/milestones?targetDateUtcFrom=2026-05-01T00:00:00Z&targetDateUtcTo=2026-05-31T23:59:59Z");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("mvp-release", items[0].GetProperty("slug").GetString());
+  }
+
+  [Fact]
   public async Task GetMilestoneBySlug_ShouldReturnMilestone_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
