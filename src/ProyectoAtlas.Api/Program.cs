@@ -45,6 +45,7 @@ builder.Services.AddScoped<HealthCheckQueryHandler>();
 builder.Services.AddScoped<CreateProjectCommandHandler>();
 builder.Services.AddScoped<ListProjectsQueryHandler>();
 builder.Services.AddScoped<GetProjectBySlugQueryHandler>();
+builder.Services.AddScoped<GetProjectOverviewQueryHandler>();
 builder.Services.AddScoped<UpdateProjectCommandHandler>();
 builder.Services.AddScoped<DeleteProjectCommandHandler>();
 builder.Services.AddScoped<ListProjectAuditEventsQueryHandler>();
@@ -88,6 +89,7 @@ builder.Services.AddScoped<DeleteProjectRelationCommandHandler>();
 
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectOverviewRepository, ProjectOverviewRepository>();
 builder.Services.AddScoped<IAuditEventRepository, AuditEventRepository>();
 builder.Services.AddScoped<IDocumentationRepository, DocumentationRepository>();
 builder.Services.AddScoped<IDocumentationVersionRepository, DocumentationVersionRepository>();
