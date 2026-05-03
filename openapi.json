@@ -5,6 +5,63 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/projects/{projectSlug}/documentations/{documentationSlug}/activity-feed": {
+      "get": {
+        "tags": [
+          "DocumentationActivityFeed"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentationSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDocumentationActivityFeedResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectSlug}/documentations/{documentationSlug}/audit-events": {
       "get": {
         "tags": [
@@ -3550,6 +3607,110 @@
           "updatedAtUtc": "2026-03-24T18:35:00Z"
         }
       },
+      "DocumentationActivityFeedItem": {
+        "required": [
+          "type",
+          "occurredAtUtc"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/DocumentationActivityFeedItemType"
+          },
+          "occurredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "auditAction": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditAction"
+              }
+            ]
+          },
+          "entitySlug": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "entityTitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "versionNumber": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "versionStatus": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentationStatus"
+              }
+            ]
+          },
+          "relationKind": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentationRelationKind"
+              }
+            ]
+          },
+          "relationDirection": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentationActivityRelationDirection"
+              }
+            ]
+          },
+          "relatedDocumentationSlug": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "relatedDocumentationTitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DocumentationActivityFeedItemType": {
+        "enum": [
+          "AuditEvent",
+          "VersionCreated",
+          "RelationCreated"
+        ],
+        "type": "string"
+      },
+      "DocumentationActivityRelationDirection": {
+        "enum": [
+          "Incoming",
+          "Outgoing"
+        ],
+        "type": "string"
+      },
       "DocumentationArea": {
         "enum": [
           "Product",
@@ -3890,6 +4051,20 @@
           "Done"
         ],
         "type": "string"
+      },
+      "GetDocumentationActivityFeedResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentationActivityFeedItem"
+            }
+          }
+        }
       },
       "ListDocumentationAuditEventsResponse": {
         "required": [
@@ -5048,6 +5223,9 @@
     }
   },
   "tags": [
+    {
+      "name": "DocumentationActivityFeed"
+    },
     {
       "name": "DocumentationAuditEvents"
     },
