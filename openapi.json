@@ -1262,6 +1262,55 @@
         }
       }
     },
+    "/projects/{projectSlug}/activity-feed": {
+      "get": {
+        "tags": [
+          "ProjectActivityFeed"
+        ],
+        "parameters": [
+          {
+            "name": "projectSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProjectActivityFeedResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{projectSlug}/audit-events": {
       "get": {
         "tags": [
@@ -4066,6 +4115,20 @@
           }
         }
       },
+      "GetProjectActivityFeedResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectActivityFeedItem"
+            }
+          }
+        }
+      },
       "ListDocumentationAuditEventsResponse": {
         "required": [
           "items"
@@ -4784,6 +4847,107 @@
           "updatedAtUtc": "2026-03-24T18:30:00Z"
         }
       },
+      "ProjectActivityFeedDirection": {
+        "enum": [
+          "Incoming",
+          "Outgoing"
+        ],
+        "type": "string"
+      },
+      "ProjectActivityFeedItem": {
+        "required": [
+          "type",
+          "occurredAtUtc"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ProjectActivityFeedItemType"
+          },
+          "occurredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entitySlug": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "entityTitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "auditAction": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditAction"
+              }
+            ]
+          },
+          "direction": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ProjectActivityFeedDirection"
+              }
+            ]
+          },
+          "relatedEntitySlug": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "relatedEntityTitle": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "documentationRelationKind": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentationRelationKind"
+              }
+            ]
+          },
+          "projectRelationKind": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ProjectRelationKind"
+              }
+            ]
+          }
+        }
+      },
+      "ProjectActivityFeedItemType": {
+        "enum": [
+          "AuditEvent",
+          "FeatureCreated",
+          "FeatureUpdated",
+          "MilestoneCreated",
+          "MilestoneUpdated",
+          "DocumentationRelationCreated",
+          "ProjectRelationCreated",
+          "FeatureDocumentationLinkCreated",
+          "MilestoneFeatureLinkCreated"
+        ],
+        "type": "string"
+      },
       "ProjectLink": {
         "required": [
           "projectId",
@@ -5252,6 +5416,9 @@
     },
     {
       "name": "MilestoneFeatureLinks"
+    },
+    {
+      "name": "ProjectActivityFeed"
     },
     {
       "name": "ProjectAuditEvents"
