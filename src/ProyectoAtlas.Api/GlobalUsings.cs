@@ -1,4 +1,5 @@
 global using ProyectoAtlas.Application.Features.DocumentationActivityFeed;
+global using ProyectoAtlas.Application.Features.ProjectActivityFeed;
 global using ProyectoAtlas.Application.Features.Audit.Common;
 global using ProyectoAtlas.Application.Features.Audit.ListDocumentationEvents;
 global using ProyectoAtlas.Application.Features.Audit.ListProjectEvents;
