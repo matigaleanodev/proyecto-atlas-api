@@ -26,8 +26,12 @@ public static class AtlasErrorCodes
   public const string ProjectSlugConflict = "PROJECT_SLUG_CONFLICT";
   public const string ValidationError = "VALIDATION_ERROR";
   public const string DocumentationFaqItemsInvalid = "DOCUMENTATION_FAQ_ITEMS_INVALID";
+  public const string DocumentationDeleteBlocked = "DOCUMENTATION_DELETE_BLOCKED";
   public const string ProjectLinkItemInvalid = "PROJECT_LINK_ITEM_INVALID";
   public const string ProjectRelationConflict = "PROJECT_RELATION_CONFLICT";
   public const string ProjectRelationInvalid = "PROJECT_RELATION_INVALID";
   public const string ProjectRelationNotFound = "PROJECT_RELATION_NOT_FOUND";
+  public const string FeatureDeleteBlocked = "FEATURE_DELETE_BLOCKED";
+  public const string MilestoneDeleteBlocked = "MILESTONE_DELETE_BLOCKED";
+  public const string ProjectDeleteBlocked = "PROJECT_DELETE_BLOCKED";
 }
