@@ -180,10 +180,26 @@ public class ProjectMilestonesApiIntegrationTests(ApiTestWebApplicationFactory f
   public async Task DeleteMilestone_ShouldReturnNoContent_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
+    CreateProjectMilestoneCommand input = new("Beta Release", "Cerrar la beta.", MilestoneStatus.Planned);
+
+    HttpResponseMessage createResponse = await client.PostAsJsonAsync("/projects/proyecto-atlas/milestones", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/milestones/beta-release");
+
+    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteMilestone_ShouldReturnConflict_WhenMilestoneHasActiveLinks()
+  {
+    HttpClient client = Factory.CreateClient();
 
     HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/milestones/mvp-release");
 
-    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.MilestoneDeleteBlocked, "cannot be deleted");
   }
 
   [Fact]
