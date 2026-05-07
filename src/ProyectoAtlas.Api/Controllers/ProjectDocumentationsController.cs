@@ -85,6 +85,7 @@ public class ProjectDocumentationsController(
   [HttpDelete("{slug}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> DeleteDocumentation(
       string projectSlug,
       string slug,

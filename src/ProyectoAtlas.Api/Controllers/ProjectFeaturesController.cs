@@ -78,6 +78,7 @@ public class ProjectFeaturesController(
   [HttpDelete("{slug}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> DeleteFeature(
       string projectSlug,
       string slug,

@@ -79,6 +79,7 @@ public class ProjectMilestonesController(
   [HttpDelete("{slug}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> DeleteMilestone(
       string projectSlug,
       string slug,
