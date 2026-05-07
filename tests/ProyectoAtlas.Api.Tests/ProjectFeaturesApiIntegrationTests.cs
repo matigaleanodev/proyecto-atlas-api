@@ -167,10 +167,26 @@ public class ProjectFeaturesApiIntegrationTests(ApiTestWebApplicationFactory fac
   public async Task DeleteFeature_ShouldReturnNoContent_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
+    CreateProjectFeatureCommand input = new("Metrics API", "Expose metrics endpoints.", FeatureStatus.Planned);
+
+    HttpResponseMessage createResponse = await client.PostAsJsonAsync("/projects/proyecto-atlas/features", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/features/metrics-api");
+
+    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteFeature_ShouldReturnConflict_WhenFeatureHasActiveLinks()
+  {
+    HttpClient client = Factory.CreateClient();
 
     HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/features/authentication-api");
 
-    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.FeatureDeleteBlocked, "cannot be deleted");
   }
 
   [Fact]
