@@ -1,5 +1,10 @@
 global using ProyectoAtlas.Application.Features.DocumentationActivityFeed;
 global using ProyectoAtlas.Application.Features.ProjectActivityFeed;
+global using ProyectoAtlas.Application.Features.ReleaseNotes.Create;
+global using ProyectoAtlas.Application.Features.ReleaseNotes.Delete;
+global using ProyectoAtlas.Application.Features.ReleaseNotes.GetBySlug;
+global using ProyectoAtlas.Application.Features.ReleaseNotes.List;
+global using ProyectoAtlas.Application.Features.ReleaseNotes.Update;
 global using ProyectoAtlas.Application.Features.Audit.Common;
 global using ProyectoAtlas.Application.Features.Audit.ListDocumentationEvents;
 global using ProyectoAtlas.Application.Features.Audit.ListProjectEvents;
