@@ -59,6 +59,14 @@ public class DocumentationResourceConfiguration : IEntityTypeConfiguration<Docum
         .HasMaxLength(50)
         .IsRequired();
 
+    builder.Property(resource => resource.Description)
+        .HasColumnName("description")
+        .HasMaxLength(280);
+
+    builder.Property(resource => resource.SortOrder)
+        .HasColumnName("sort_order")
+        .IsRequired();
+
     builder.Property(resource => resource.CreatedAtUtc)
         .HasColumnName("created_at_utc")
         .IsRequired();
