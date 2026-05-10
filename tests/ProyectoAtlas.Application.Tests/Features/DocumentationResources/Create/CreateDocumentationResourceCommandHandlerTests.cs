@@ -20,13 +20,20 @@ public class CreateDocumentationResourceCommandHandlerTests
     };
     FakeDocumentationResourceRepository resourceRepository = new();
     CreateDocumentationResourceCommandHandler handler = new(resourceRepository, documentationRepository, projectRepository);
-    CreateDocumentationResourceCommand input = new("OpenAPI Spec", "https://api.example.com/openapi.json", DocumentationResourceKind.ApiSpec);
+    CreateDocumentationResourceCommand input = new(
+        "OpenAPI Spec",
+        "https://api.example.com/openapi.json",
+        DocumentationResourceKind.ApiSpec,
+        "Generated API contract",
+        2);
 
     DocumentationResource result = await handler.Execute("proyecto-atlas", documentation.Slug, input);
 
     Assert.Equal(input.Title, result.Title);
     Assert.Equal(input.Url, result.Url);
     Assert.Equal(input.Kind, result.Kind);
+    Assert.Equal(input.Description, result.Description);
+    Assert.Equal(input.SortOrder, result.SortOrder);
     Assert.Equal(documentation.Id, result.DocumentationId);
     Assert.Same(result, resourceRepository.AddedResource);
   }
