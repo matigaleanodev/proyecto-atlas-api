@@ -563,6 +563,13 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DocumentationResourceKind"
+            }
           }
         ],
         "responses": {
@@ -3727,6 +3734,21 @@
           },
           "kind": {
             "$ref": "#/components/schemas/DocumentationResourceKind"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32",
+            "default": 1
           }
         },
         "example": {
@@ -4382,6 +4404,21 @@
           },
           "kind": {
             "$ref": "#/components/schemas/DocumentationResourceKind"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sortOrder": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32",
+            "default": 1
           },
           "createdAtUtc": {
             "type": "string",
