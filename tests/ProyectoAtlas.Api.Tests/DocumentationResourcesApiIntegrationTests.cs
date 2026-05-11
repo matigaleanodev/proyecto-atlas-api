@@ -14,7 +14,12 @@ public class DocumentationResourcesApiIntegrationTests(ApiTestWebApplicationFact
   public async Task PostDocumentationResources_ShouldReturnCreatedResource()
   {
     HttpClient client = Factory.CreateClient();
-    CreateDocumentationResourceCommand input = new("Architecture Board", "https://miro.com/app/board/uXj123", DocumentationResourceKind.Design);
+    CreateDocumentationResourceCommand input = new(
+        "Architecture Board",
+        "https://miro.com/app/board/uXj123",
+        DocumentationResourceKind.Design,
+        "Collaborative architecture board",
+        1);
 
     HttpResponseMessage response =
         await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started/resources", input);
@@ -28,6 +33,8 @@ public class DocumentationResourcesApiIntegrationTests(ApiTestWebApplicationFact
     Assert.Equal(input.Title, root.GetProperty("title").GetString());
     Assert.Equal(input.Url, root.GetProperty("url").GetString());
     Assert.Equal("Design", root.GetProperty("kind").GetString());
+    Assert.Equal(input.Description, root.GetProperty("description").GetString());
+    Assert.Equal(input.SortOrder, root.GetProperty("sortOrder").GetInt32());
   }
 
   [Fact]
@@ -72,6 +79,37 @@ public class DocumentationResourcesApiIntegrationTests(ApiTestWebApplicationFact
 
     Assert.Single(items.EnumerateArray());
     Assert.Equal("OpenAPI Spec", items[0].GetProperty("title").GetString());
+    Assert.Equal("Generated API contract", items[0].GetProperty("description").GetString());
+    Assert.Equal(2, items[0].GetProperty("sortOrder").GetInt32());
+  }
+
+  [Fact]
+  public async Task GetDocumentationResources_ShouldFilterByKind()
+  {
+    HttpClient client = Factory.CreateClient();
+    CreateDocumentationResourceCommand input = new(
+        "Release Notes Design",
+        "https://figma.com/file/release-notes",
+        DocumentationResourceKind.Design,
+        "Design exploration",
+        1);
+
+    HttpResponseMessage createResponse =
+        await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations/getting-started/resources", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/documentations/getting-started/resources?kind=ApiSpec");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("ApiSpec", items[0].GetProperty("kind").GetString());
   }
 
   [Fact]

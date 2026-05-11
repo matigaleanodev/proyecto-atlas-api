@@ -147,7 +147,9 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
           documentations[0].Id,
           "OpenAPI Spec",
           "https://api.example.com/openapi.json",
-          DocumentationResourceKind.ApiSpec)
+          DocumentationResourceKind.ApiSpec,
+          "Generated API contract",
+          2)
     ];
 
     await dbContext.DocumentationResources.AddRangeAsync(documentationResources);
