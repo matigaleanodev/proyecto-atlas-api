@@ -35,15 +35,47 @@ public class ListDocumentationAuditEventsQueryHandlerTests
         auditEventRepository,
         documentationRepository,
         projectRepository);
+    ListDocumentationAuditEventsQuery query = new(
+        AuditEntityType.Documentation,
+        AuditAction.Updated,
+        new DateTime(2026, 05, 12, 0, 0, 0, DateTimeKind.Utc),
+        new DateTime(2026, 05, 13, 0, 0, 0, DateTimeKind.Utc),
+        5);
 
     ListDocumentationAuditEventsResponse response = await handler.Execute(
         project.Slug,
         documentation.Slug,
-        new ListDocumentationAuditEventsQuery());
+        query);
 
     Assert.Single(response.Items);
     Assert.Equal(project.Id, auditEventRepository.ReceivedProjectId);
     Assert.Equal(documentation.Id, auditEventRepository.ReceivedDocumentationId);
+    Assert.Equal(query, auditEventRepository.ReceivedFilters);
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowInvalidAuditEventQueryException_WhenLimitExceedsMaximum()
+  {
+    Project project = CreateProject();
+    Documentation documentation = CreateDocumentation(project.Id);
+    FakeProjectRepository projectRepository = new()
+    {
+      ProjectBySlug = project
+    };
+    FakeDocumentationRepository documentationRepository = new()
+    {
+      DocumentationBySlug = documentation
+    };
+    ListDocumentationAuditEventsQueryHandler handler = new(
+        new FakeAuditEventRepository(),
+        documentationRepository,
+        projectRepository);
+
+    await Assert.ThrowsAsync<InvalidAuditEventQueryException>(() =>
+        handler.Execute(
+            project.Slug,
+            documentation.Slug,
+            new ListDocumentationAuditEventsQuery(Limit: 101)));
   }
 
   private static Project CreateProject()
