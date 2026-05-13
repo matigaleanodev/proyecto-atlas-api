@@ -83,6 +83,48 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "entityType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AuditEntityType"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AuditAction"
+            }
+          },
+          {
+            "name": "occurredFromUtc",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "occurredToUtc",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -102,6 +144,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListDocumentationAuditEventsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
                 }
               }
             }
@@ -1331,6 +1383,48 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "entityType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AuditEntityType"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AuditAction"
+            }
+          },
+          {
+            "name": "occurredFromUtc",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "occurredToUtc",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -1350,6 +1444,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ListProjectAuditEventsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
                 }
               }
             }
