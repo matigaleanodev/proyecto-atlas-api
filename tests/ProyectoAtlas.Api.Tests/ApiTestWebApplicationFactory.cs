@@ -57,7 +57,7 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
 
     await dbContext.Database.ExecuteSqlRawAsync(
         """
-        TRUNCATE TABLE project_relations, milestones, documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
+        TRUNCATE TABLE audit_events, project_relations, milestone_feature_links, milestones, feature_documentation_links, documentation_resources, documentation_versions, documentation_relations, features, documentations, projects RESTART IDENTITY CASCADE;
         """);
   }
 
@@ -147,7 +147,9 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
           documentations[0].Id,
           "OpenAPI Spec",
           "https://api.example.com/openapi.json",
-          DocumentationResourceKind.ApiSpec)
+          DocumentationResourceKind.ApiSpec,
+          "Generated API contract",
+          2)
     ];
 
     await dbContext.DocumentationResources.AddRangeAsync(documentationResources);
@@ -175,6 +177,17 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     await dbContext.Features.AddRangeAsync(features);
     await dbContext.SaveChangesAsync();
 
+    FeatureDocumentationLink[] featureDocumentationLinks =
+    [
+      new FeatureDocumentationLink(
+          projects[0].Id,
+          features[0].Id,
+          documentations[0].Id)
+    ];
+
+    await dbContext.FeatureDocumentationLinks.AddRangeAsync(featureDocumentationLinks);
+    await dbContext.SaveChangesAsync();
+
     Milestone[] milestones =
     [
       new Milestone(
@@ -197,6 +210,17 @@ public class ApiTestWebApplicationFactory : WebApplicationFactory<Program>, IAsy
     ];
 
     await dbContext.Milestones.AddRangeAsync(milestones);
+    await dbContext.SaveChangesAsync();
+
+    MilestoneFeatureLink[] milestoneFeatureLinks =
+    [
+      new MilestoneFeatureLink(
+          projects[0].Id,
+          milestones[0].Id,
+          features[0].Id)
+    ];
+
+    await dbContext.MilestoneFeatureLinks.AddRangeAsync(milestoneFeatureLinks);
     await dbContext.SaveChangesAsync();
 
     ProjectRelation[] projectRelations =

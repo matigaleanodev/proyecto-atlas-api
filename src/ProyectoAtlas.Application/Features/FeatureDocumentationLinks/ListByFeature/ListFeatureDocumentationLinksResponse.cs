@@ -1,0 +1,5 @@
+using ProyectoAtlas.Domain.Features;
+
+namespace ProyectoAtlas.Application.Features.FeatureDocumentationLinks.ListByFeature;
+
+public record ListFeatureDocumentationLinksResponse(IReadOnlyCollection<FeatureDocumentationLink> Items);

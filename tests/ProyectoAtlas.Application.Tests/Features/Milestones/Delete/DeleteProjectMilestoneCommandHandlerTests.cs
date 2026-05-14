@@ -18,7 +18,10 @@ public class DeleteProjectMilestoneCommandHandlerTests
     {
       MilestoneBySlug = milestone
     };
-    DeleteProjectMilestoneCommandHandler handler = new(milestoneRepository, projectRepository);
+    DeleteProjectMilestoneCommandHandler handler = new(
+        milestoneRepository,
+        new FakeMilestoneFeatureLinkRepository(),
+        projectRepository);
 
     await handler.Execute("proyecto-atlas", milestone.Slug);
 
@@ -31,9 +34,29 @@ public class DeleteProjectMilestoneCommandHandlerTests
     Project project = CreateProject();
     DeleteProjectMilestoneCommandHandler handler = new(
         new FakeMilestoneRepository(),
+        new FakeMilestoneFeatureLinkRepository(),
         new FakeProjectRepository { ProjectBySlug = project });
 
     await Assert.ThrowsAsync<MilestoneNotFoundException>(() => handler.Execute("proyecto-atlas", "missing-milestone"));
+  }
+
+  [Fact]
+  public async Task Execute_ShouldThrowMilestoneDeleteBlockedException_WhenFeatureLinksExist()
+  {
+    Project project = CreateProject();
+    Milestone milestone = new(project.Id, "MVP Release", "Cerrar la primera entrega publica.", MilestoneStatus.Planned);
+    DeleteProjectMilestoneCommandHandler handler = new(
+        new FakeMilestoneRepository { MilestoneBySlug = milestone },
+        new FakeMilestoneFeatureLinkRepository
+        {
+          MilestoneLinks =
+          [
+            new MilestoneFeatureLink(project.Id, milestone.Id, Guid.NewGuid())
+          ]
+        },
+        new FakeProjectRepository { ProjectBySlug = project });
+
+    await Assert.ThrowsAsync<MilestoneDeleteBlockedException>(() => handler.Execute("proyecto-atlas", milestone.Slug));
   }
 
   private static Project CreateProject()

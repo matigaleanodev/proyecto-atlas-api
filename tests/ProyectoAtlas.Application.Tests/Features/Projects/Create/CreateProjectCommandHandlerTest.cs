@@ -8,7 +8,8 @@ public class CreateProjectCommandHandlerTests
   public async Task Execute_ShouldReturnProject()
   {
     FakeProjectRepository projectRepository = new FakeProjectRepository();
-    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository);
+    FakeAuditEventRepository auditEventRepository = new();
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository, auditEventRepository);
     CreateProjectCommand input = new CreateProjectCommand(
         "Proyecto Atlas",
         "Backend for project documentation based on markdown",
@@ -23,13 +24,15 @@ public class CreateProjectCommandHandlerTests
     Assert.Equal(input.Color, result.Color);
     Assert.NotEqual(Guid.Empty, result.Id);
     Assert.Same(result, projectRepository.AddedProject);
+    Assert.NotNull(auditEventRepository.AddedAuditEvent);
+    Assert.Equal(Domain.Audit.AuditAction.Created, auditEventRepository.AddedAuditEvent.Action);
   }
 
   [Fact]
   public async Task Execute_ShouldReturnProjectWithLinks_WhenLinksAreProvided()
   {
     FakeProjectRepository projectRepository = new FakeProjectRepository();
-    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository);
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository, new FakeAuditEventRepository());
     CreateProjectCommand input = new CreateProjectCommand(
         "Proyecto Atlas",
         "Backend for project documentation based on markdown",
@@ -55,7 +58,7 @@ public class CreateProjectCommandHandlerTests
   public async Task Execute_ShouldNormalizeSlug_WhenTitleContainsAccentsAndSymbols()
   {
     FakeProjectRepository projectRepository = new FakeProjectRepository();
-    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository);
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(projectRepository, new FakeAuditEventRepository());
     CreateProjectCommand input = new CreateProjectCommand(
         "Átlas API: Guía / Inicial",
         "Backend for project documentation based on markdown",
@@ -86,7 +89,7 @@ public class CreateProjectCommandHandlerTests
       string? repositoryUrl,
       string? color)
   {
-    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(new FakeProjectRepository());
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(new FakeProjectRepository(), new FakeAuditEventRepository());
     CreateProjectCommand input = new CreateProjectCommand(title!, description!, repositoryUrl!, color!);
 
     await Assert.ThrowsAnyAsync<ArgumentException>(() => createProjectUseCase.Execute(input));
@@ -95,7 +98,7 @@ public class CreateProjectCommandHandlerTests
   [Fact]
   public async Task Execute_ShouldThrowInvalidProjectLinkItemException_WhenLinksContainDuplicateSortOrders()
   {
-    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(new FakeProjectRepository());
+    CreateProjectCommandHandler createProjectUseCase = new CreateProjectCommandHandler(new FakeProjectRepository(), new FakeAuditEventRepository());
     CreateProjectCommand input = new CreateProjectCommand(
         "Proyecto Atlas",
         "Backend for project documentation based on markdown",

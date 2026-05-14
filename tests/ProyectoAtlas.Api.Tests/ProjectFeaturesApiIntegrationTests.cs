@@ -82,6 +82,41 @@ public class ProjectFeaturesApiIntegrationTests(ApiTestWebApplicationFactory fac
   }
 
   [Fact]
+  public async Task GetFeatures_ShouldFilterByLinkedDocumentationSlug()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/features?linkedDocumentationSlug=getting-started");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("authentication-api", items[0].GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task GetFeatures_ShouldReturnEmpty_WhenLinkedDocumentationSlugHasNoMatches()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/features?linkedDocumentationSlug=adr-001-architecture");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Empty(items.EnumerateArray());
+  }
+
+  [Fact]
   public async Task GetFeatureBySlug_ShouldReturnFeature_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
@@ -132,10 +167,26 @@ public class ProjectFeaturesApiIntegrationTests(ApiTestWebApplicationFactory fac
   public async Task DeleteFeature_ShouldReturnNoContent_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
+    CreateProjectFeatureCommand input = new("Metrics API", "Expose metrics endpoints.", FeatureStatus.Planned);
+
+    HttpResponseMessage createResponse = await client.PostAsJsonAsync("/projects/proyecto-atlas/features", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/features/metrics-api");
+
+    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteFeature_ShouldReturnConflict_WhenFeatureHasActiveLinks()
+  {
+    HttpClient client = Factory.CreateClient();
 
     HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/features/authentication-api");
 
-    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.FeatureDeleteBlocked, "cannot be deleted");
   }
 
   [Fact]

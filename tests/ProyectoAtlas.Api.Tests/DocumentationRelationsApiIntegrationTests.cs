@@ -86,6 +86,24 @@ public class DocumentationRelationsApiIntegrationTests(ApiTestWebApplicationFact
   }
 
   [Fact]
+  public async Task GetIncomingDocumentationRelations_ShouldReturnIncomingRelations()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.GetAsync("/projects/proyecto-atlas/documentations/adr-001-architecture/relations/incoming");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("Implements", items[0].GetProperty("kind").GetString());
+  }
+
+  [Fact]
   public async Task DeleteDocumentationRelation_ShouldReturnNoContent_WhenRelationExists()
   {
     HttpClient client = Factory.CreateClient();

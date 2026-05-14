@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using ProyectoAtlas.Api.Errors;
+using ProyectoAtlas.Domain.Audit;
 using ProyectoAtlas.Domain.Documentations;
 using ProyectoAtlas.Domain.Features;
 using ProyectoAtlas.Domain.Milestones;
@@ -143,6 +144,100 @@ public static class OpenApiExampleTransformers
             "totalItems": 1
           }
           """),
+      Type currentType when currentType == typeof(AuditEvent) => ParseJson(
+          """
+          {
+            "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "entityType": "Documentation",
+            "entityId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "entitySlug": "getting-started",
+            "entityTitle": "Getting Started",
+            "action": "Updated",
+            "occurredAtUtc": "2026-04-16T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListProjectAuditEventsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "documentationId": null,
+                "entityType": "Project",
+                "entityId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "entitySlug": "proyecto-atlas",
+                "entityTitle": "Proyecto Atlas",
+                "action": "Updated",
+                "occurredAtUtc": "2026-04-16T12:00:00Z"
+              }
+            ]
+          }
+          """),
+      Type currentType when currentType == typeof(ListDocumentationAuditEventsResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "5f57b8bb-a4f7-4b6a-aa5f-f5624d2af6f7",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "entityType": "Documentation",
+                "entityId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "entitySlug": "getting-started",
+                "entityTitle": "Getting Started",
+                "action": "Updated",
+                "occurredAtUtc": "2026-04-16T12:00:00Z"
+              }
+            ]
+          }
+          """),
+      Type currentType when currentType == typeof(CreateFeatureDocumentationLinkCommand) => ParseJson(
+          """
+          {
+            "documentationSlug": "getting-started"
+          }
+          """),
+      Type currentType when currentType == typeof(FeatureDocumentationLink) => ParseJson(
+          """
+          {
+            "id": "9c0f0f43-b4d0-4b6b-a0f8-a1eb0f4a5dd0",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+            "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+            "createdAtUtc": "2026-04-22T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListFeatureDocumentationLinksResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "9c0f0f43-b4d0-4b6b-a0f8-a1eb0f4a5dd0",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "createdAtUtc": "2026-04-22T12:00:00Z"
+              }
+            ]
+          }
+          """),
+      Type currentType when currentType == typeof(ListDocumentationFeatureLinksResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "9c0f0f43-b4d0-4b6b-a0f8-a1eb0f4a5dd0",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "documentationId": "d7f2cb87-86bc-4c25-bb77-27e4f7c38b67",
+                "createdAtUtc": "2026-04-22T12:00:00Z"
+              }
+            ]
+          }
+          """),
       Type currentType when currentType == typeof(CreateProjectRelationCommand) => ParseJson(
           """
           {
@@ -255,6 +350,50 @@ public static class OpenApiExampleTransformers
             "targetDateUtc": "2026-05-15T00:00:00Z",
             "createdAtUtc": "2026-04-08T12:00:00Z",
             "updatedAtUtc": "2026-04-08T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(CreateMilestoneFeatureLinkCommand) => ParseJson(
+          """
+          {
+            "featureSlug": "authentication-api"
+          }
+          """),
+      Type currentType when currentType == typeof(MilestoneFeatureLink) => ParseJson(
+          """
+          {
+            "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+            "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+            "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+            "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+            "createdAtUtc": "2026-04-24T12:00:00Z"
+          }
+          """),
+      Type currentType when currentType == typeof(ListMilestoneFeatureLinksResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+                "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "createdAtUtc": "2026-04-24T12:00:00Z"
+              }
+            ]
+          }
+          """),
+      Type currentType when currentType == typeof(ListFeatureMilestoneLinksResponse) => ParseJson(
+          """
+          {
+            "items": [
+              {
+                "id": "a1a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "projectId": "8b658c72-8f6f-4fef-9d65-f2fa6eb60bd7",
+                "milestoneId": "e39bc9ba-4a39-48f8-9220-5af3eb68c737",
+                "featureId": "b9a57f81-8729-4f58-a65a-4f0b7b8fc11d",
+                "createdAtUtc": "2026-04-24T12:00:00Z"
+              }
+            ]
           }
           """),
       Type currentType when currentType == typeof(ListProjectMilestonesResponse) => ParseJson(

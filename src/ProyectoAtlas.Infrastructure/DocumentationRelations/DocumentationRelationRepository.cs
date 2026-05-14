@@ -23,6 +23,16 @@ public class DocumentationRelationRepository(ProyectoAtlasDbContext dbContext) :
         .ToListAsync(cancellationToken);
   }
 
+  public async Task<IReadOnlyCollection<DocumentationRelation>> GetIncomingList(
+      Guid targetDocumentationId,
+      CancellationToken cancellationToken = default)
+  {
+    return await dbContext.DocumentationRelations
+        .Where(relation => relation.TargetDocumentationId == targetDocumentationId)
+        .OrderBy(relation => relation.CreatedAtUtc)
+        .ToListAsync(cancellationToken);
+  }
+
   public async Task<DocumentationRelation?> GetById(
       Guid sourceDocumentationId,
       Guid relationId,

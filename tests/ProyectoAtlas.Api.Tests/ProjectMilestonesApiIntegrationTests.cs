@@ -86,6 +86,41 @@ public class ProjectMilestonesApiIntegrationTests(ApiTestWebApplicationFactory f
   }
 
   [Fact]
+  public async Task GetMilestones_ShouldFilterByQuery()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync("/projects/proyecto-atlas/milestones?query=general");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("general-availability", items[0].GetProperty("slug").GetString());
+  }
+
+  [Fact]
+  public async Task GetMilestones_ShouldFilterByTargetDateRange()
+  {
+    HttpClient client = Factory.CreateClient();
+
+    HttpResponseMessage response = await client.GetAsync(
+        "/projects/proyecto-atlas/milestones?targetDateUtcFrom=2026-05-01T00:00:00Z&targetDateUtcTo=2026-05-31T23:59:59Z");
+
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+    string content = await response.Content.ReadAsStringAsync();
+    using JsonDocument jsonDocument = JsonDocument.Parse(content);
+    JsonElement items = jsonDocument.RootElement.GetProperty("items");
+
+    Assert.Single(items.EnumerateArray());
+    Assert.Equal("mvp-release", items[0].GetProperty("slug").GetString());
+  }
+
+  [Fact]
   public async Task GetMilestoneBySlug_ShouldReturnMilestone_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
@@ -145,10 +180,26 @@ public class ProjectMilestonesApiIntegrationTests(ApiTestWebApplicationFactory f
   public async Task DeleteMilestone_ShouldReturnNoContent_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
+    CreateProjectMilestoneCommand input = new("Beta Release", "Cerrar la beta.", MilestoneStatus.Planned);
+
+    HttpResponseMessage createResponse = await client.PostAsJsonAsync("/projects/proyecto-atlas/milestones", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/milestones/beta-release");
+
+    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteMilestone_ShouldReturnConflict_WhenMilestoneHasActiveLinks()
+  {
+    HttpClient client = Factory.CreateClient();
 
     HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas/milestones/mvp-release");
 
-    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.MilestoneDeleteBlocked, "cannot be deleted");
   }
 
   [Fact]

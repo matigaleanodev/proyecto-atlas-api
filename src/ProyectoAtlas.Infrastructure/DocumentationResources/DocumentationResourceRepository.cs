@@ -25,11 +25,21 @@ public class DocumentationResourceRepository(ProyectoAtlasDbContext dbContext) :
 
   public async Task<IReadOnlyCollection<DocumentationResource>> GetList(
       Guid documentationId,
+      DocumentationResourceKind? kind = null,
       CancellationToken cancellationToken = default)
   {
-    return await dbContext.DocumentationResources
+    IQueryable<DocumentationResource> query = dbContext.DocumentationResources
         .Where(resource => resource.DocumentationId == documentationId)
-        .OrderBy(resource => resource.Title)
+        .AsQueryable();
+
+    if (kind.HasValue)
+    {
+      query = query.Where(resource => resource.Kind == kind.Value);
+    }
+
+    return await query
+        .OrderBy(resource => resource.SortOrder)
+        .ThenBy(resource => resource.Title)
         .ToListAsync(cancellationToken);
   }
 

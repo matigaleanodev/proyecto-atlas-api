@@ -1,0 +1,3 @@
+namespace ProyectoAtlas.Application.Features.ProjectActivityFeed;
+
+public record GetProjectActivityFeedResponse(IReadOnlyCollection<ProjectActivityFeedItem> Items);

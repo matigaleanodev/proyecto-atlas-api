@@ -22,6 +22,61 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ProyectoAtlas.Domain.Audit.AuditEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("action");
+
+                    b.Property<Guid?>("DocumentationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("documentation_id");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntitySlug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("entity_slug");
+
+                    b.Property<string>("EntityTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("entity_title");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("entity_type");
+
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at_utc");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentationId", "OccurredAtUtc");
+
+                    b.HasIndex("ProjectId", "OccurredAtUtc");
+
+                    b.ToTable("audit_events", (string)null);
+                });
+
             modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.Documentation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -169,6 +224,11 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at_utc");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(280)
+                        .HasColumnType("character varying(280)")
+                        .HasColumnName("description");
+
                     b.Property<Guid>("DocumentationId")
                         .HasColumnType("uuid")
                         .HasColumnName("documentation_id");
@@ -190,6 +250,10 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)")
                         .HasColumnName("normalized_url");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -339,6 +403,40 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                     b.ToTable("features", (string)null);
                 });
 
+            modelBuilder.Entity("ProyectoAtlas.Domain.Features.FeatureDocumentationLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid>("DocumentationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("documentation_id");
+
+                    b.Property<Guid>("FeatureId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("feature_id");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentationId");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("ProjectId", "FeatureId", "DocumentationId")
+                        .IsUnique();
+
+                    b.ToTable("feature_documentation_links", (string)null);
+                });
+
             modelBuilder.Entity("ProyectoAtlas.Domain.Milestones.Milestone", b =>
                 {
                     b.Property<Guid>("Id")
@@ -390,6 +488,40 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("milestones", (string)null);
+                });
+
+            modelBuilder.Entity("ProyectoAtlas.Domain.Milestones.MilestoneFeatureLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid>("FeatureId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("feature_id");
+
+                    b.Property<Guid>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("MilestoneId");
+
+                    b.HasIndex("ProjectId", "MilestoneId", "FeatureId")
+                        .IsUnique();
+
+                    b.ToTable("milestone_feature_links", (string)null);
                 });
 
             modelBuilder.Entity("ProyectoAtlas.Domain.Projects.Project", b =>
@@ -520,6 +652,20 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                     b.ToTable("project_relations", (string)null);
                 });
 
+            modelBuilder.Entity("ProyectoAtlas.Domain.Audit.AuditEvent", b =>
+                {
+                    b.HasOne("ProyectoAtlas.Domain.Documentations.Documentation", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProyectoAtlas.Domain.Documentations.Documentation", b =>
                 {
                     b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
@@ -595,8 +741,50 @@ namespace ProyectoAtlas.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProyectoAtlas.Domain.Features.FeatureDocumentationLink", b =>
+                {
+                    b.HasOne("ProyectoAtlas.Domain.Documentations.Documentation", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoAtlas.Domain.Features.Feature", null)
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProyectoAtlas.Domain.Milestones.Milestone", b =>
                 {
+                    b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProyectoAtlas.Domain.Milestones.MilestoneFeatureLink", b =>
+                {
+                    b.HasOne("ProyectoAtlas.Domain.Features.Feature", null)
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProyectoAtlas.Domain.Milestones.Milestone", null)
+                        .WithMany()
+                        .HasForeignKey("MilestoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ProyectoAtlas.Domain.Projects.Project", null)
                         .WithMany()
                         .HasForeignKey("ProjectId")

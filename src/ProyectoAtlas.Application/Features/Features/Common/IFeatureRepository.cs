@@ -12,6 +12,7 @@ public interface IFeatureRepository
       int pageSize,
       string? query = null,
       FeatureStatus? status = null,
+      string? linkedDocumentationSlug = null,
       CancellationToken cancellationToken = default);
 
   Task<Feature?> GetBySlug(Guid projectId, string slug, CancellationToken cancellationToken = default);

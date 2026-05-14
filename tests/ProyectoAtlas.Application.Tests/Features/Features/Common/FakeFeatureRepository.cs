@@ -12,6 +12,7 @@ internal sealed class FakeFeatureRepository : IFeatureRepository
   public int ReceivedPageSize { get; private set; }
   public string? ReceivedQuery { get; private set; }
   public FeatureStatus? ReceivedStatus { get; private set; }
+  public string? ReceivedLinkedDocumentationSlug { get; private set; }
   public IEnumerable<Feature> PagedFeatures { get; set; } = [];
   public int PagedTotalCount { get; set; }
   public Feature? FeatureBySlug { get; set; }
@@ -28,6 +29,7 @@ internal sealed class FakeFeatureRepository : IFeatureRepository
       int pageSize,
       string? query = null,
       FeatureStatus? status = null,
+      string? linkedDocumentationSlug = null,
       CancellationToken cancellationToken = default)
   {
     ReceivedProjectId = projectId;
@@ -35,6 +37,7 @@ internal sealed class FakeFeatureRepository : IFeatureRepository
     ReceivedPageSize = pageSize;
     ReceivedQuery = query;
     ReceivedStatus = status;
+    ReceivedLinkedDocumentationSlug = linkedDocumentationSlug;
 
     return Task.FromResult((PagedFeatures, PagedTotalCount));
   }

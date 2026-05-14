@@ -17,15 +17,29 @@ public class ListProjectMilestonesQueryHandlerTests
     FakeMilestoneRepository milestoneRepository = new()
     {
       PagedMilestones = [milestone],
-      PagedTotalCount = 1
+      PagedTotalCount = 2
     };
     ListProjectMilestonesQueryHandler handler = new(milestoneRepository, projectRepository);
+    ListProjectMilestonesQuery input = new(
+        Page: 2,
+        PageSize: 1,
+        Query: "release",
+        Status: MilestoneStatus.Planned,
+        TargetDateUtcFrom: new DateTime(2026, 5, 1, 0, 0, 0, DateTimeKind.Utc),
+        TargetDateUtcTo: new DateTime(2026, 5, 31, 0, 0, 0, DateTimeKind.Utc));
 
-    ListProjectMilestonesResponse result = await handler.Execute("proyecto-atlas", new ListProjectMilestonesQuery());
+    ListProjectMilestonesResponse result = await handler.Execute("proyecto-atlas", input);
 
     Assert.Single(result.Items);
-    Assert.Equal(1, result.TotalItems);
+    Assert.Equal(2, result.TotalItems);
+    Assert.Equal(2, result.TotalPages);
     Assert.Equal(project.Id, milestoneRepository.ReceivedProjectId);
+    Assert.Equal(input.Page, milestoneRepository.ReceivedPage);
+    Assert.Equal(input.PageSize, milestoneRepository.ReceivedPageSize);
+    Assert.Equal(input.Query, milestoneRepository.ReceivedQuery);
+    Assert.Equal(input.Status, milestoneRepository.ReceivedStatus);
+    Assert.Equal(input.TargetDateUtcFrom, milestoneRepository.ReceivedTargetDateUtcFrom);
+    Assert.Equal(input.TargetDateUtcTo, milestoneRepository.ReceivedTargetDateUtcTo);
   }
 
   private static Project CreateProject()

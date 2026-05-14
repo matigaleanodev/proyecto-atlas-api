@@ -14,7 +14,9 @@ public class ListDocumentationResourcesQueryHandlerTests
         documentation.Id,
         "OpenAPI Spec",
         "https://api.example.com/openapi.json",
-        DocumentationResourceKind.ApiSpec);
+        DocumentationResourceKind.ApiSpec,
+        "Generated API contract",
+        2);
     FakeProjectRepository projectRepository = new()
     {
       ProjectBySlug = project
@@ -29,10 +31,14 @@ public class ListDocumentationResourcesQueryHandlerTests
     };
     ListDocumentationResourcesQueryHandler handler = new(resourceRepository, documentationRepository, projectRepository);
 
-    ListDocumentationResourcesResponse result = await handler.Execute("proyecto-atlas", documentation.Slug);
+    ListDocumentationResourcesResponse result = await handler.Execute(
+        "proyecto-atlas",
+        documentation.Slug,
+        new ListDocumentationResourcesQuery(DocumentationResourceKind.ApiSpec));
 
     Assert.Single(result.Items);
     Assert.Equal(documentation.Id, resourceRepository.ReceivedDocumentationId);
+    Assert.Equal(DocumentationResourceKind.ApiSpec, resourceRepository.ReceivedKind);
   }
 
   private static Project CreateProject()
