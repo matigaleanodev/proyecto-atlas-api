@@ -41,11 +41,14 @@ public class DocumentationResourcesController(
   public async Task<IActionResult> GetResources(
       string projectSlug,
       string documentationSlug,
+      [FromQuery] DocumentationResourceKind? kind = null,
       CancellationToken cancellationToken = default)
   {
+    ListDocumentationResourcesQuery query = new(kind);
     ListDocumentationResourcesResponse response = await listDocumentationResourcesQueryHandler.Execute(
         projectSlug,
         documentationSlug,
+        query,
         cancellationToken);
 
     return Ok(response);

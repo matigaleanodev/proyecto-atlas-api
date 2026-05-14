@@ -1,7 +1,9 @@
 using ProyectoAtlas.Domain.Projects;
 namespace ProyectoAtlas.Application.Features.Projects.Update;
 
-public class UpdateProjectCommandHandler(IProjectRepository projectRepository)
+public class UpdateProjectCommandHandler(
+    IProjectRepository projectRepository,
+    IAuditEventRepository auditEventRepository)
 {
   public async Task<Project> Execute(string slug, UpdateProjectCommand input, CancellationToken cancellationToken = default)
   {
@@ -59,6 +61,7 @@ public class UpdateProjectCommandHandler(IProjectRepository projectRepository)
     }
 
     await projectRepository.Update(project, cancellationToken);
+    await auditEventRepository.Add(AuditEventFactory.ForProject(project, Domain.Audit.AuditAction.Updated), cancellationToken);
 
     return project;
   }

@@ -49,6 +49,14 @@ Reglas vigentes:
 - `GET /projects/{slug}`
 - `PATCH /projects/{slug}`
 - `DELETE /projects/{slug}`
+- `GET /projects/{projectSlug}/audit-events`
+
+### Project relations
+
+- `POST /projects/{projectSlug}/relations`
+- `GET /projects/{projectSlug}/relations`
+- `GET /projects/{projectSlug}/relations/incoming`
+- `DELETE /projects/{projectSlug}/relations/{relationId}`
 
 ### Project documentations
 
@@ -57,6 +65,8 @@ Reglas vigentes:
 - `GET /projects/{projectSlug}/documentations/{slug}`
 - `PATCH /projects/{projectSlug}/documentations/{slug}`
 - `DELETE /projects/{projectSlug}/documentations/{slug}`
+- `GET /projects/{projectSlug}/documentations/{slug}/audit-events`
+- `GET /projects/{projectSlug}/documentations/{slug}/relations/incoming`
 
 El listado soporta filtros opcionales por `query`, `kind`, `status`, `area` y `tag`.
 
@@ -260,6 +270,9 @@ Hasta este punto, Atlas ya tiene:
 - organizacion inicial de `Documentation` mediante `area`
 - clasificacion transversal de `Documentation` mediante `tags`
 - FAQ estructurada con `faqItems` y reemplazo completo de coleccion en update
+- auditoria basica para create, update y delete en `Project` y `Documentation`
+- relaciones salientes y entrantes entre proyectos
+- relaciones salientes y entrantes entre documentaciones
 - OpenAPI y Swagger en desarrollo
 - CI base
 - contrato uniforme de errores para toda la API

@@ -33,6 +33,8 @@ public class ListProjectMilestonesQueryHandler(
         input.PageSize,
         input.Query,
         input.Status,
+        input.TargetDateUtcFrom,
+        input.TargetDateUtcTo,
         cancellationToken);
 
     int totalPages = totalCount == 0

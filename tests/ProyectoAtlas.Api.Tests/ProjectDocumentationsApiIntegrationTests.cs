@@ -875,16 +875,40 @@ public class ProjectDocumentationsApiIntegrationTests(ApiTestWebApplicationFacto
   public async Task DeleteProjectDocumentation_ShouldReturnNoContent_WhenDocumentationExists()
   {
     HttpClient client = _factory.CreateClient();
+    CreateProjectDocumentationCommand input = new(
+        "Runbook",
+        "# Runbook",
+        10,
+        DocumentationKind.Note,
+        DocumentationStatus.Draft,
+        DocumentationArea.Operations);
+
+    HttpResponseMessage createResponse =
+        await client.PostAsJsonAsync("/projects/proyecto-atlas/documentations", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 
     HttpResponseMessage deleteResponse =
-        await client.DeleteAsync("/projects/proyecto-atlas/documentations/getting-started");
+        await client.DeleteAsync("/projects/proyecto-atlas/documentations/runbook");
 
     Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
     HttpResponseMessage getResponse =
-        await client.GetAsync("/projects/proyecto-atlas/documentations/getting-started");
+        await client.GetAsync("/projects/proyecto-atlas/documentations/runbook");
 
     Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteProjectDocumentation_ShouldReturnConflict_WhenDocumentationHasActiveLinks()
+  {
+    HttpClient client = _factory.CreateClient();
+
+    HttpResponseMessage response =
+        await client.DeleteAsync("/projects/proyecto-atlas/documentations/getting-started");
+
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.DocumentationDeleteBlocked, "cannot be deleted");
   }
 
   [Fact]

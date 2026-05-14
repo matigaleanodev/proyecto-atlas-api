@@ -34,6 +34,7 @@ public class ListProjectFeaturesQueryHandler(
         input.PageSize,
         input.Query,
         input.Status,
+        input.LinkedDocumentationSlug,
         cancellationToken);
 
     int totalPages = totalCount == 0

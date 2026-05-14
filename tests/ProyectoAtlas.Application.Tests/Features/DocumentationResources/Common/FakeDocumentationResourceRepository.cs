@@ -8,6 +8,7 @@ internal sealed class FakeDocumentationResourceRepository : IDocumentationResour
   public DocumentationResource? DeletedResource { get; private set; }
   public Guid ReceivedDocumentationId { get; private set; }
   public Guid ReceivedResourceId { get; private set; }
+  public DocumentationResourceKind? ReceivedKind { get; private set; }
   public IReadOnlyCollection<DocumentationResource> Resources { get; set; } = [];
   public DocumentationResource? ResourceById { get; set; }
 
@@ -17,9 +18,13 @@ internal sealed class FakeDocumentationResourceRepository : IDocumentationResour
     return Task.CompletedTask;
   }
 
-  public Task<IReadOnlyCollection<DocumentationResource>> GetList(Guid documentationId, CancellationToken cancellationToken = default)
+  public Task<IReadOnlyCollection<DocumentationResource>> GetList(
+      Guid documentationId,
+      DocumentationResourceKind? kind = null,
+      CancellationToken cancellationToken = default)
   {
     ReceivedDocumentationId = documentationId;
+    ReceivedKind = kind;
     return Task.FromResult(Resources);
   }
 

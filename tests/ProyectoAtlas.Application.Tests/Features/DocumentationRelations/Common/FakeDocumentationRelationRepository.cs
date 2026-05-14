@@ -7,8 +7,10 @@ internal sealed class FakeDocumentationRelationRepository : IDocumentationRelati
   public DocumentationRelation? AddedRelation { get; private set; }
   public DocumentationRelation? DeletedRelation { get; private set; }
   public Guid ReceivedSourceDocumentationId { get; private set; }
+  public Guid ReceivedTargetDocumentationId { get; private set; }
   public Guid ReceivedRelationId { get; private set; }
   public IReadOnlyCollection<DocumentationRelation> OutgoingRelations { get; set; } = [];
+  public IReadOnlyCollection<DocumentationRelation> IncomingRelations { get; set; } = [];
   public DocumentationRelation? RelationById { get; set; }
 
   public Task Add(DocumentationRelation relation, CancellationToken cancellationToken = default)
@@ -23,6 +25,14 @@ internal sealed class FakeDocumentationRelationRepository : IDocumentationRelati
   {
     ReceivedSourceDocumentationId = sourceDocumentationId;
     return Task.FromResult(OutgoingRelations);
+  }
+
+  public Task<IReadOnlyCollection<DocumentationRelation>> GetIncomingList(
+      Guid targetDocumentationId,
+      CancellationToken cancellationToken = default)
+  {
+    ReceivedTargetDocumentationId = targetDocumentationId;
+    return Task.FromResult(IncomingRelations);
   }
 
   public Task<DocumentationRelation?> GetById(

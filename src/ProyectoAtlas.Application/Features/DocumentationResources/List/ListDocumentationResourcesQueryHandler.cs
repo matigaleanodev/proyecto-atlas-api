@@ -11,6 +11,7 @@ public class ListDocumentationResourcesQueryHandler(
   public async Task<ListDocumentationResourcesResponse> Execute(
       string projectSlug,
       string documentationSlug,
+      ListDocumentationResourcesQuery query,
       CancellationToken cancellationToken = default)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(projectSlug);
@@ -24,6 +25,7 @@ public class ListDocumentationResourcesQueryHandler(
 
     IReadOnlyCollection<DocumentationResource> resources = await documentationResourceRepository.GetList(
         documentation.Id,
+        query.Kind,
         cancellationToken);
 
     return new ListDocumentationResourcesResponse(resources);

@@ -356,10 +356,31 @@ public class ProjectsApiIntegrationTests(ApiTestWebApplicationFactory factory)
   public async Task DeleteProject_ShouldReturnNoContent_WhenSlugExists()
   {
     HttpClient client = Factory.CreateClient();
+    string suffix = Guid.NewGuid().ToString("N")[..8];
+    CreateProjectCommand input = new(
+        $"Sandbox {suffix}",
+        "Temporary project for delete tests",
+        $"https://github.com/example/sandbox-{suffix}",
+        "#0F172A");
+
+    HttpResponseMessage createResponse = await client.PostAsJsonAsync("/projects", input);
+
+    Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+    HttpResponseMessage response = await client.DeleteAsync($"/projects/sandbox-{suffix.ToLowerInvariant()}");
+
+    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task DeleteProject_ShouldReturnConflict_WhenProjectHasActiveDomainLinks()
+  {
+    HttpClient client = Factory.CreateClient();
 
     HttpResponseMessage response = await client.DeleteAsync("/projects/proyecto-atlas");
 
-    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    await AssertErrorResponse(response, HttpStatusCode.Conflict, AtlasErrorCodes.ProjectDeleteBlocked, "cannot be deleted");
   }
 
   [Fact]

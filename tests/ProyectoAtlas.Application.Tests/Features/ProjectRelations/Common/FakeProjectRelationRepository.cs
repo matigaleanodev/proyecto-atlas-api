@@ -7,8 +7,10 @@ internal sealed class FakeProjectRelationRepository : IProjectRelationRepository
   public ProjectRelation? AddedRelation { get; private set; }
   public ProjectRelation? DeletedRelation { get; private set; }
   public Guid ReceivedSourceProjectId { get; private set; }
+  public Guid ReceivedTargetProjectId { get; private set; }
   public Guid ReceivedRelationId { get; private set; }
   public IReadOnlyCollection<ProjectRelation> OutgoingRelations { get; set; } = [];
+  public IReadOnlyCollection<ProjectRelation> IncomingRelations { get; set; } = [];
   public ProjectRelation? RelationById { get; set; }
 
   public Task Add(ProjectRelation relation, CancellationToken cancellationToken = default)
@@ -23,6 +25,14 @@ internal sealed class FakeProjectRelationRepository : IProjectRelationRepository
   {
     ReceivedSourceProjectId = sourceProjectId;
     return Task.FromResult(OutgoingRelations);
+  }
+
+  public Task<IReadOnlyCollection<ProjectRelation>> GetIncomingList(
+      Guid targetProjectId,
+      CancellationToken cancellationToken = default)
+  {
+    ReceivedTargetProjectId = targetProjectId;
+    return Task.FromResult(IncomingRelations);
   }
 
   public Task<ProjectRelation?> GetById(

@@ -17,7 +17,8 @@ public class CreateDocumentationUseCaseTests
           "#1E293B"),
     };
     FakeDocumentationRepository documentationRepository = new();
-    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    FakeAuditEventRepository auditEventRepository = new();
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, auditEventRepository, projectRepository);
     CreateProjectDocumentationCommand input = new(
         "Getting Started",
         "# Atlas",
@@ -37,6 +38,8 @@ public class CreateDocumentationUseCaseTests
     Assert.Equal(projectRepository.ProjectBySlug!.Id, result.ProjectId);
     Assert.NotEqual(Guid.Empty, result.Id);
     Assert.Same(result, documentationRepository.AddedDocumentation);
+    Assert.NotNull(auditEventRepository.AddedAuditEvent);
+    Assert.Equal(Domain.Audit.AuditAction.Created, auditEventRepository.AddedAuditEvent.Action);
   }
 
   [Fact]
@@ -51,7 +54,7 @@ public class CreateDocumentationUseCaseTests
           "#1E293B"),
     };
     FakeDocumentationRepository documentationRepository = new();
-    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, new FakeAuditEventRepository(), projectRepository);
     CreateProjectDocumentationCommand input = new(
         Title: "Common Questions",
         ContentMarkdown: "## Intro",
@@ -85,7 +88,7 @@ public class CreateDocumentationUseCaseTests
           "#1E293B"),
     };
     FakeDocumentationRepository documentationRepository = new();
-    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, new FakeAuditEventRepository(), projectRepository);
     CreateProjectDocumentationCommand input = new(
         Title: "Getting Started",
         ContentMarkdown: "# Atlas",
@@ -121,7 +124,7 @@ public class CreateDocumentationUseCaseTests
           "#1E293B"),
     };
     FakeDocumentationRepository documentationRepository = new();
-    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, projectRepository);
+    CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(documentationRepository, new FakeAuditEventRepository(), projectRepository);
     CreateProjectDocumentationCommand input = new(
         "Guía API: sección / inicial",
         "# Atlas",
@@ -148,6 +151,7 @@ public class CreateDocumentationUseCaseTests
     };
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
         "Decision without ADR prefix",
@@ -169,6 +173,7 @@ public class CreateDocumentationUseCaseTests
   {
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         new FakeProjectRepository());
     CreateProjectDocumentationCommand input = new(
         "Getting Started",
@@ -195,6 +200,7 @@ public class CreateDocumentationUseCaseTests
     };
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
         Title: "Common Questions",
@@ -223,6 +229,7 @@ public class CreateDocumentationUseCaseTests
     };
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
         Title: "Common Questions",
@@ -254,6 +261,7 @@ public class CreateDocumentationUseCaseTests
     };
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
         Title: "Getting Started",
@@ -284,6 +292,7 @@ public class CreateDocumentationUseCaseTests
     };
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
         Title: "Getting Started",
@@ -327,6 +336,7 @@ public class CreateDocumentationUseCaseTests
     };
     CreateProjectDocumentationCommandHandler createDocumentationUseCase = new(
         new FakeDocumentationRepository(),
+        new FakeAuditEventRepository(),
         projectRepository);
     CreateProjectDocumentationCommand input = new(
         title!,

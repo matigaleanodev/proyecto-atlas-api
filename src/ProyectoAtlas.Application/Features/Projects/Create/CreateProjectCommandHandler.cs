@@ -2,7 +2,9 @@ using ProyectoAtlas.Domain.Projects;
 
 namespace ProyectoAtlas.Application.Features.Projects.Create;
 
-public class CreateProjectCommandHandler(IProjectRepository projectRepository)
+public class CreateProjectCommandHandler(
+    IProjectRepository projectRepository,
+    IAuditEventRepository auditEventRepository)
 {
 
   public async Task<Project> Execute(CreateProjectCommand input, CancellationToken cancellationToken = default)
@@ -66,6 +68,7 @@ public class CreateProjectCommandHandler(IProjectRepository projectRepository)
     }
 
     await projectRepository.Add(project, cancellationToken);
+    await auditEventRepository.Add(AuditEventFactory.ForProject(project, Domain.Audit.AuditAction.Created), cancellationToken);
 
     return project;
   }

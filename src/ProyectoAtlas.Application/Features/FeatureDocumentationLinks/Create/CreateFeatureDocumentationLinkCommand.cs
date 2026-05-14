@@ -1,0 +1,3 @@
+namespace ProyectoAtlas.Application.Features.FeatureDocumentationLinks.Create;
+
+public record CreateFeatureDocumentationLinkCommand(string DocumentationSlug);

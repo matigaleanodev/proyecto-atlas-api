@@ -12,6 +12,7 @@ public class ProjectsController(
     CreateProjectCommandHandler createProjectCommandHandler,
     ListProjectsQueryHandler listProjectsQueryHandler,
     GetProjectBySlugQueryHandler getProjectBySlugQueryHandler,
+    GetProjectOverviewQueryHandler getProjectOverviewQueryHandler,
     UpdateProjectCommandHandler updateProjectCommandHandler,
     DeleteProjectCommandHandler deleteProjectCommandHandler
   ) : ControllerBase
@@ -56,6 +57,17 @@ public class ProjectsController(
     return Ok(project);
   }
 
+  [HttpGet("{slug}/overview")]
+  [ProducesResponseType(typeof(ProjectOverviewSummary), StatusCodes.Status200OK)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  public async Task<IActionResult> GetProjectOverview(
+      string slug,
+      CancellationToken cancellationToken = default)
+  {
+    ProjectOverviewSummary response = await getProjectOverviewQueryHandler.Execute(slug, cancellationToken);
+    return Ok(response);
+  }
+
   [HttpPatch("{slug}")]
   [ProducesResponseType(typeof(Project), StatusCodes.Status200OK)]
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
@@ -73,6 +85,7 @@ public class ProjectsController(
   [HttpDelete("{slug}")]
   [ProducesResponseType(StatusCodes.Status204NoContent)]
   [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
+  [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status409Conflict)]
   public async Task<IActionResult> DeleteProject(
       string slug,
       CancellationToken cancellationToken = default)

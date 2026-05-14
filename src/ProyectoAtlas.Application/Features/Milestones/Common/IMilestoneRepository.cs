@@ -11,6 +11,8 @@ public interface IMilestoneRepository
       int pageSize,
       string? query = null,
       MilestoneStatus? status = null,
+      DateTime? targetDateUtcFrom = null,
+      DateTime? targetDateUtcTo = null,
       CancellationToken cancellationToken = default);
   Task<Milestone?> GetBySlug(Guid projectId, string slug, CancellationToken cancellationToken = default);
   Task Update(Milestone milestone, CancellationToken cancellationToken = default);

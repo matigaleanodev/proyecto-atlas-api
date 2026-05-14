@@ -10,6 +10,10 @@ public interface IDocumentationRelationRepository
       Guid sourceDocumentationId,
       CancellationToken cancellationToken = default);
 
+  Task<IReadOnlyCollection<DocumentationRelation>> GetIncomingList(
+      Guid targetDocumentationId,
+      CancellationToken cancellationToken = default);
+
   Task<DocumentationRelation?> GetById(
       Guid sourceDocumentationId,
       Guid relationId,

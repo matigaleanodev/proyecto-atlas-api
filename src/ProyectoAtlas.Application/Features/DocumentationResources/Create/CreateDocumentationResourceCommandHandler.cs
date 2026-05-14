@@ -31,7 +31,9 @@ public class CreateDocumentationResourceCommandHandler(
           documentation.Id,
           command.Title,
           command.Url,
-          command.Kind);
+          command.Kind,
+          command.Description,
+          command.SortOrder);
     }
     catch (InvalidDocumentationResourceException exception)
     {

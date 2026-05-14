@@ -19,6 +19,7 @@ public class FeatureRepository(ProyectoAtlasDbContext dbContext) : IFeatureRepos
       int pageSize,
       string? query = null,
       FeatureStatus? status = null,
+      string? linkedDocumentationSlug = null,
       CancellationToken cancellationToken = default)
   {
     IQueryable<Feature> featuresQuery = dbContext.Features
@@ -36,6 +37,19 @@ public class FeatureRepository(ProyectoAtlasDbContext dbContext) : IFeatureRepos
     if (status.HasValue)
     {
       featuresQuery = featuresQuery.Where(feature => feature.Status == status.Value);
+    }
+
+    if (!string.IsNullOrWhiteSpace(linkedDocumentationSlug))
+    {
+      string normalizedSlug = linkedDocumentationSlug.Trim();
+
+      featuresQuery = featuresQuery.Where(feature =>
+          dbContext.FeatureDocumentationLinks.Any(link =>
+              link.FeatureId == feature.Id &&
+              dbContext.Documentations.Any(documentation =>
+                  documentation.Id == link.DocumentationId &&
+                  documentation.ProjectId == projectId &&
+                  documentation.Slug == normalizedSlug)));
     }
 
     int totalCount = await featuresQuery.CountAsync(cancellationToken);
